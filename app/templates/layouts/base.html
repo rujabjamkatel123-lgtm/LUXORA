@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+{% block title %}
+LUXORA
+{% endblock %}
+</title>
+    <script src="https://cdn.tailwindcss.com">
+</script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { ink: '#171714', cream: '#fffaf5', sand: '#f4e8dc', gold: '#b77945', coral: '#ef6f61', lavender: '#e8ddff' },
+                    fontFamily: { display: ['Playfair Display', 'serif'], sans: ['DM Sans', 'sans-serif'] }
+                }
+            }
+        };
+    </script>
+    <style>
+        @keyframes luxora-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes luxora-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes luxora-fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        .luxora-marquee-track { animation: luxora-marquee 11s linear infinite; width: max-content; }
+        .luxora-float { animation: luxora-float 5s ease-in-out infinite; }
+        .luxora-fade-up { animation: luxora-fade-up .7s ease both; }
+        .luxora-delay-1 { animation-delay: .12s; } .luxora-delay-2 { animation-delay: .24s; }
+        .luxora-nav-link { position: relative; display: inline-block; }
+        .luxora-nav-link::after { content: ''; position: absolute; left: 0; bottom: -9px; width: 0; height: 2px; background: #111; transition: width .28s ease; }
+        .luxora-nav-link:hover::after, .luxora-nav-link:focus-visible::after { width: 100%; }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; } }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-cream text-ink font-sans antialiased">
+    <div class="overflow-hidden bg-gradient-to-r from-fuchsia-700 via-violet-700 to-indigo-700 px-4 py-2 text-[11px] tracking-wide text-white">
+        <div class="luxora-marquee-track flex gap-12 whitespace-nowrap"><span>Free shipping on orders over $50</span><span>Easy 30-day returns</span><span>Use WELCOME10 for 10% off</span><span>Free shipping on orders over $50</span><span>Easy 30-day returns</span><span>Use WELCOME10 for 10% off</span></div>
+    </div>
+    <header class="sticky top-0 z-40 border-b border-stone-200 bg-cream/95 backdrop-blur">
+        <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-5 px-5 py-5 lg:px-8">
+            <a class="font-display text-2xl tracking-[0.2em]" href="{{ url_for('store.home') }}">LUXORA</a>
+            <nav class="order-3 flex w-full gap-6 overflow-x-auto text-sm text-stone-600 lg:order-2 lg:w-auto lg:flex-1 lg:justify-center">
+                <a class="luxora-nav-link whitespace-nowrap hover:text-ink" href="{{ url_for('store.home') }}">Home</a>
+                <a class="luxora-nav-link whitespace-nowrap hover:text-ink" href="{{ url_for('store.shop') }}">Shop</a>
+                <a class="luxora-nav-link whitespace-nowrap hover:text-ink" href="{{ url_for('store.shop', sort='price_asc') }}">Deals</a>
+                <a class="luxora-nav-link whitespace-nowrap hover:text-ink" href="{{ url_for('store.shop', sort='newest') }}">New arrivals</a>
+            </nav>
+            <form class="order-2 flex min-w-0 flex-1 border-b border-ink lg:order-3 lg:max-w-xs" action="{{ url_for('store.search') }}">
+                <input class="min-w-0 flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-stone-400" name="q" placeholder="Search products…">
+                <button class="px-2 text-lg" aria-label="Search">⌕</button>
+            </form>
+	            <div class="order-1 flex items-center gap-4 text-sm lg:order-4">
+	                <a href="{{ url_for('store.wishlist') if session.get('user_id') else url_for('auth.login', next='/wishlist') }}">♡</a>
+                <a class="transition hover:scale-110" href="{{ url_for('auth.login') if not session.get('user_id') else url_for('store.account') }}" aria-label="Account"><img class="h-7 w-7 rounded-full object-cover ring-2 ring-transparent transition hover:ring-gold" src="{{ url_for('static', filename='images/profile-icon.png') }}" alt="Account"></a>
+	                <a href="{{ url_for('store.cart') }}">Bag <sup class="rounded-full bg-ink px-1.5 py-0.5 text-[10px] text-white">{{ cart_count }}</sup>
+	</a>
+	                {% if session.get('user_id') %}
+	                    <a class="text-xs text-stone-500 hover:text-ink" href="{{ url_for('auth.logout') }}">Logout</a>
+	                {% endif %}
+	            </div>
+        </div>
+    </header>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="fixed right-5 top-24 z-50 space-y-2">
+{% for category, message in messages %}
+<div class="rounded-lg border border-stone-200 bg-white px-5 py-3 text-sm shadow-xl {{ 'text-red-700' if category == 'error' else 'text-emerald-700' }}">{{ message }}</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% block content %}
+{% endblock %}
+<footer class="bg-ink px-6 py-14 text-stone-300 lg:px-16">
+        <div class="mx-auto grid max-w-7xl gap-10 md:grid-cols-4">
+            <div>
+<a class="font-display text-2xl tracking-[0.2em] text-white" href="{{ url_for('store.home') }}">LUXORA</a>
+<p class="mt-4 max-w-xs text-sm leading-6 text-stone-400">Everything you love, all in one place. Premium products for modern living.</p>
+</div>
+            <div>
+<h3 class="text-xs font-bold uppercase tracking-widest text-white">Shop</h3>
+<div class="mt-4 grid gap-3 text-sm">
+<a href="{{ url_for('store.shop') }}">All products</a>
+<a href="{{ url_for('store.shop', category='fashion') }}">Fashion</a>
+<a href="{{ url_for('store.shop', category='electronics') }}">Electronics</a>
+</div>
+</div>
+            <div>
+<h3 class="text-xs font-bold uppercase tracking-widest text-white">Customer service</h3>
+<div class="mt-4 grid gap-3 text-sm text-stone-400">
+<span>Shipping info</span>
+<span>Returns & exchanges</span>
+<span>Contact us</span>
+</div>
+</div>
+            <div>
+<h3 class="text-xs font-bold uppercase tracking-widest text-white">About LUXORA</h3>
+<div class="mt-4 grid gap-3 text-sm text-stone-400">
+<span>Our story</span>
+<span>Sustainability</span>
+<span>Privacy</span>
+</div>
+</div>
+        </div>
+    </footer>
+</body>
+</html>

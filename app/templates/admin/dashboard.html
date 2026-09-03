@@ -1,0 +1,22 @@
+{% extends 'layouts/admin_base.html' %}
+
+{% block title %}Admin dashboard · LUXORA{% endblock %}
+{% block page_heading %}Overview{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl">
+    <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-ink via-stone-800 to-stone-700 p-8 text-white shadow-xl lg:p-10">
+        <div class="relative z-10 max-w-2xl"><p class="text-[10px] font-bold uppercase tracking-[0.25em] text-amber-300">Good morning, {{ session.name }}</p><h2 class="mt-4 font-display text-5xl leading-tight lg:text-6xl">Run your store<br><em class="text-amber-200">with clarity.</em></h2><p class="mt-5 max-w-lg leading-7 text-stone-300">Your LUXORA command center for products, inventory, orders, and customer experience.</p><a class="mt-7 inline-block rounded bg-white px-5 py-3 text-sm font-semibold text-ink" href="{{ url_for('admin.products') }}">Manage catalog →</a></div><div class="absolute -right-10 -top-20 h-80 w-80 rounded-full border border-white/10"></div><div class="absolute -bottom-32 right-20 h-72 w-72 rounded-full border border-amber-200/10"></div>
+    </section>
+    <section class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {% for key, value, icon, tone in [('revenue', stats.revenue, '↗', 'bg-emerald-50 text-emerald-700'), ('orders', stats.orders, '▣', 'bg-blue-50 text-blue-700'), ('customers', stats.customers, '♙', 'bg-violet-50 text-violet-700'), ('products', stats.products, '□', 'bg-amber-50 text-amber-700'), ('low_stock', stats.low_stock, '!', 'bg-red-50 text-red-700')] %}
+        <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-stone-200"><div class="flex items-center justify-between"><span class="grid h-9 w-9 place-items-center rounded-lg text-lg {{ tone }}">{{ icon }}</span><span class="text-[10px] uppercase tracking-wider text-stone-400">Live</span></div><p class="mt-6 text-xs uppercase tracking-wider text-stone-500">{{ key|replace('_',' ')|title }}</p><b class="mt-1 block font-display text-3xl">{{ value }}</b>{% if key == 'low_stock' and value %}<p class="mt-2 text-xs text-red-600">Needs attention</p>{% else %}<p class="mt-2 text-xs text-emerald-600">Up to date</p>{% endif %}</div>
+        {% endfor %}
+    </section>
+    <section class="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+        <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-stone-200"><div class="flex items-center justify-between"><div><p class="text-[10px] font-bold uppercase tracking-widest text-gold">Operations</p><h2 class="mt-2 font-display text-3xl">Quick actions</h2></div><span class="text-2xl text-stone-300">✦</span></div><div class="mt-6 grid gap-3 sm:grid-cols-2">{% for label, desc, endpoint, icon in [('Add product','Create a new catalog item','admin.products','＋'),('Review orders','Update fulfillment status','admin.orders','→'),('Check inventory','Resolve low-stock items','admin.products','▤'),('View analytics','Understand performance','admin.analytics','↗')] %}<a class="group flex items-center gap-4 rounded-lg border border-stone-200 p-4 transition hover:border-ink hover:bg-cream" href="{{ url_for(endpoint) }}"><span class="grid h-10 w-10 place-items-center rounded-full bg-stone-100 text-lg group-hover:bg-ink group-hover:text-white">{{ icon }}</span><span><b class="block text-sm">{{ label }}</b><small class="mt-1 block text-xs text-stone-500">{{ desc }}</small></span></a>{% endfor %}</div></div>
+        <div class="rounded-xl bg-sand p-6"><p class="text-[10px] font-bold uppercase tracking-widest text-gold">Store health</p><h2 class="mt-2 font-display text-3xl">Everything in view.</h2><p class="mt-4 text-sm leading-6 text-stone-600">Keep your catalog fresh and stock levels healthy. Products marked hidden will not be shown to customers.</p><div class="mt-8 space-y-4"><div><div class="flex justify-between text-xs"><span>Catalog published</span><b>{{ stats.products - stats.low_stock if stats.products else 0 }}/{{ stats.products }}</b></div><div class="mt-2 h-2 rounded-full bg-white"><div class="h-2 rounded-full bg-ink" style="width: {{ ((stats.products - stats.low_stock) / stats.products * 100) if stats.products else 0 }}%"></div></div></div><div class="flex items-center gap-3 border-t border-stone-300/60 pt-4 text-sm"><span class="text-xl text-gold">✓</span><span>MySQL database connected and ready</span></div></div>
+        </div>
+    </section>
+</div>
+{% endblock %}

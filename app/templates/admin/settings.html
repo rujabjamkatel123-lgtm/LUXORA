@@ -1,0 +1,38 @@
+{% extends 'layouts/admin_base.html' %}
+{% block title %}Settings · LUXORA
+{% endblock %}
+{% block page_heading %}Store settings
+{% endblock %}
+{% block content %} <div class="mx-auto max-w-5xl">
+<div class="rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-rose-600 p-8 text-white shadow-xl">
+    <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-white/75">Control center</p>
+    <h2 class="mt-3 font-display text-5xl">Make the store<br>feel like yours.</h2>
+    <p class="mt-4 max-w-lg text-sm leading-6 text-white/80">Update the basics your customers see and the commerce rules used by your storefront.</p>
+</div>
+<form class="mt-8 grid gap-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-stone-200 sm:grid-cols-2" method="post">
+    <div class="col-span-full">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-gold">Store identity</p>
+        <h2 class="mt-2 font-display text-3xl">General settings</h2>
+    </div>
+    <label class="text-xs font-semibold">Store name<input class="mt-2 w-full border border-stone-300 px-4 py-3" name="store_name" value="{{ settings.get('store_name', 'LUXORA') }}
+    ">
+</label>
+<label class="text-xs font-semibold">Currency<input class="mt-2 w-full border border-stone-300 px-4 py-3" name="currency" value="{{ settings.get('currency', 'USD') }}
+">
+</label>
+<div class="col-span-full border-t border-stone-200 pt-6">
+    <p class="text-[10px] font-bold uppercase tracking-widest text-gold">Commerce rules</p>
+</div>
+<label class="text-xs font-semibold">Free shipping threshold<input class="mt-2 w-full border border-stone-300 px-4 py-3" name="free_shipping_threshold" type="number" step=".01" value="{{ settings.get('free_shipping_threshold', '50') }}
+">
+</label>
+<label class="text-xs font-semibold">Tax rate (%)<input class="mt-2 w-full border border-stone-300 px-4 py-3" name="tax_rate" type="number" step=".01" value="{{ settings.get('tax_rate', '8') }}
+">
+</label>
+<div class="col-span-full flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 pt-6">
+    <p class="text-xs text-stone-500">Changes are saved to your database.</p>
+    <button class="bg-ink px-6 py-3 text-sm font-semibold text-white hover:bg-orange-600">Save settings</button>
+</div>
+</form>
+</div>
+{% endblock %}

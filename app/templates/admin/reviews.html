@@ -1,0 +1,23 @@
+{% extends 'layouts/admin_base.html' %}
+{% block content %}
+<main class="mx-auto max-w-5xl px-5 py-16">
+<h1 class="font-display text-6xl">Reviews</h1>
+<div class="mt-8 space-y-3">
+{% for r in reviews %}
+<div class="flex flex-wrap items-center justify-between gap-4 bg-white p-5">
+<span>
+<b>{{ r.product_name }}</b>
+<small class="ml-2 text-xs text-stone-500">by {{ r.user_name }}</small>
+</span>
+<span>★ {{ r.rating }}</span>
+<span class="text-xs text-stone-500">{{ r.status }}</span>
+{% if r.status == 'Pending' %}
+<form method="post" action="{{ url_for('admin.review_action', rid=r.id, action='approve') }}">
+<button class="bg-ink px-3 py-2 text-xs text-white">Approve</button>
+</form>
+{% endif %}
+</div>
+{% endfor %}
+</div>
+</main>
+{% endblock %}

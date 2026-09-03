@@ -1,0 +1,66 @@
+{% extends 'layouts/admin_base.html' %}
+{% block title %}Analytics · LUXORA
+{% endblock %}
+{% block page_heading %}Analytics
+{% endblock %}
+{% block content %} <div class="mx-auto max-w-7xl">
+<p class="text-sm text-stone-500">Track store performance and understand what customers are buying.</p>
+<div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {% for label,key,color in [('Total revenue','revenue','from-emerald-500 to-teal-600'),('Orders','orders','from-blue-500 to-indigo-600'),('Average order','average_order','from-amber-400 to-orange-500'),('Customers','customers','from-fuchsia-500 to-purple-600')] %}<div class="rounded-xl bg-gradient-to-br {{ color }}
+    p-6 text-white shadow-lg">
+    <p class="text-xs uppercase tracking-widest text-white/70">{{ label }}
+</p>
+<b class="mt-4 block font-display text-4xl">
+    {% if key in ['revenue','average_order'] %}${{ '%.2f'|format(summary[key]) }}
+{% else %}
+    {{ summary[key] }}
+{% endif %}
+</b>
+<p class="mt-2 text-xs text-white/70">All time</p>
+</div>
+{% endfor %}
+</div>
+<div class="mt-8 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+    <section class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-stone-200">
+        <div class="flex justify-between">
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-gold">Performance</p>
+                <h2 class="mt-2 font-display text-3xl">Revenue by day</h2>
+            </div>
+            <span class="rounded-full bg-emerald-50 px-3 py-2 text-xs text-emerald-700">Live data</span>
+        </div>
+        {% if orders %}<div class="mt-8 flex h-56 items-end gap-3 border-b border-stone-200">
+        {% for r in orders %}<div class="group flex flex-1 flex-col items-center justify-end gap-2">
+        <span class="rounded bg-ink px-2 py-1 text-[10px] text-white opacity-0 transition group-hover:opacity-100">${{ '%.0f'|format(r.revenue) }}
+    </span>
+    <div class="w-full rounded-t bg-gradient-to-t from-violet-500 to-fuchsia-400" style="height: {{ [((r.revenue / (orders|map(attribute='revenue')|list|max)) * 100), 8]|max }}
+    %">
+</div>
+<small class="text-[9px] text-stone-400">{{ r.day[-5:] }}
+</small>
+</div>
+{% endfor %}
+</div>
+{% else %}
+    <div class="mt-8 grid h-56 place-items-center rounded-lg bg-gradient-to-br from-violet-50 to-sky-50 text-sm text-stone-500">Sales data will appear after your first order.</div>
+{% endif %}
+</section>
+<section class="rounded-xl bg-sand p-6">
+    <p class="text-[10px] font-bold uppercase tracking-widest text-gold">Best sellers</p>
+    <h2 class="mt-2 font-display text-3xl">Top products</h2>
+    <div class="mt-6 space-y-4">
+        {% for product in top_products %}<div class="flex items-center justify-between border-b border-stone-300/70 pb-3 text-sm">
+        <span>{{ loop.index }}
+        . {{ product.name }}
+    </span>
+    <b>{{ product.units }}
+    sold</b>
+</div>
+{% else %}
+    <p class="mt-8 text-sm text-stone-500">Your best-selling products will appear here.</p>
+{% endfor %}
+</div>
+</section>
+</div>
+</div>
+{% endblock %}

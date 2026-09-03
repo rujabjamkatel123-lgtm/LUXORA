@@ -1,0 +1,53 @@
+{% extends 'layouts/base.html' %}
+{% block title %}
+Shop · LUXORA
+{% endblock %}
+{% block content %}
+<main class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">LUXORA collection</p>
+    <h1 class="mt-3 font-display text-6xl">Shop all products</h1>
+    <form class="mt-10 grid gap-3 rounded border border-stone-200 bg-white p-4 md:grid-cols-[1fr_190px_190px_auto]">
+        <input class="border border-stone-200 px-4 py-3 text-sm outline-none focus:border-gold" name="q" value="{{ q }}" placeholder="Search by name or brand…">
+        <select class="border border-stone-200 px-4 py-3 text-sm" name="category" onchange="this.form.submit()">
+<option value="">All categories</option>
+{% for c in nav_categories %}
+<option value="{{ c.slug }}"
+{% if active_category == c.slug %}
+selected
+{% endif %}
+>{{ c.name }}</option>
+{% endfor %}
+</select>
+        <select class="border border-stone-200 px-4 py-3 text-sm" name="sort" onchange="this.form.submit()">
+<option value="newest">Newest</option>
+<option value="price_asc"
+{% if sort == 'price_asc' %}
+selected
+{% endif %}
+>Price low → high</option>
+<option value="price_desc"
+{% if sort == 'price_desc' %}
+selected
+{% endif %}
+>Price high → low</option>
+<option value="rating"
+{% if sort == 'rating' %}
+selected
+{% endif %}
+>Highest rated</option>
+</select>
+        <button class="bg-ink px-5 py-3 text-sm font-semibold text-white">Search</button>
+    </form>
+    <p class="mt-8 text-sm text-stone-500">{{ products|length }} results</p>
+    <div class="mt-8 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+{% for p in products %}
+{% include 'components/product_card.html' %}
+{% else %}
+<div class="col-span-full rounded bg-white py-24 text-center">
+<h2 class="font-display text-3xl">No products found</h2>
+<p class="mt-2 text-stone-500">Try another search or browse all categories.</p>
+</div>
+{% endfor %}
+</div>
+</main>
+{% endblock %}

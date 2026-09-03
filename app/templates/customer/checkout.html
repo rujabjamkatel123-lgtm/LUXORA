@@ -1,0 +1,28 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Checkout · LUXORA{% endblock %}
+
+{% block content %}
+<main class="mx-auto grid max-w-6xl gap-12 px-5 py-16 lg:grid-cols-[1fr_340px] lg:px-8">
+    <div>
+        <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">Secure checkout</p>
+        <h1 class="mt-3 font-display text-6xl">Complete your order</h1>
+        <div class="mt-8 flex gap-5 border-b border-stone-200 pb-4 text-xs">
+            <b class="text-gold">1 Information</b><span class="text-stone-400">2 Shipping</span><span class="text-stone-400">3 Payment</span><span class="text-stone-400">4 Review</span>
+        </div>
+        <form class="mt-8 grid gap-5 sm:grid-cols-2" method="post" action="{{ url_for('store.place_order') }}">
+            <h2 class="col-span-full font-display text-3xl">Delivery information</h2>
+            <label class="grid gap-2 text-xs font-semibold">Full name<input class="border border-stone-300 bg-white px-4 py-3 font-normal outline-none focus:border-gold" name="full_name" value="{{ session.get('name', '') }}" required></label>
+            <label class="grid gap-2 text-xs font-semibold">Email<input class="border border-stone-300 bg-white px-4 py-3 font-normal outline-none focus:border-gold" name="email" type="email" value="{{ session.get('email', '') }}" required></label>
+            <label class="grid gap-2 text-xs font-semibold">Phone number<input class="border border-stone-300 bg-white px-4 py-3 font-normal outline-none focus:border-gold" name="phone" type="tel" required></label>
+            <label class="grid gap-2 text-xs font-semibold sm:col-span-2">Street address<input class="border border-stone-300 bg-white px-4 py-3 font-normal outline-none focus:border-gold" name="line1" required></label>
+            <label class="grid gap-2 text-xs font-semibold">City / Municipality<input class="border border-stone-300 bg-white px-4 py-3 font-normal outline-none focus:border-gold" name="city" required></label>
+            <label class="grid gap-2 text-xs font-semibold">Province / State<select class="border border-stone-300 bg-white px-4 py-3 font-normal outline-none focus:border-gold" name="state" required><option value="">Choose a province</option>{% for state in ['Koshi Province','Madhesh Province','Bagmati Province','Gandaki Province','Lumbini Province','Karnali Province','Sudurpashchim Province'] %}<option value="{{ state }}">{{ state }}</option>{% endfor %}</select></label>
+            <label class="grid gap-2 text-xs font-semibold sm:col-span-2">Country<select class="border border-stone-300 bg-white px-4 py-3 font-normal outline-none focus:border-gold" name="country" required><option value="Nepal" selected>Nepal</option></select></label>
+            <label class="col-span-full grid gap-2 text-xs font-semibold">Payment method<select class="border border-stone-300 bg-white px-4 py-3 font-normal" name="payment_method"><option>Cash on Delivery</option><option>Credit/Debit Card (mock)</option><option>Digital Wallet (mock)</option></select></label>
+            <button class="col-span-full bg-ink px-5 py-4 text-sm font-semibold text-white">Place order · ${{ '%.2f'|format(totals.total) }}</button>
+        </form>
+    </div>
+    <aside class="h-fit bg-white p-6"><h2 class="font-display text-2xl">Order summary</h2>{% for i in items %}<p class="mt-4 flex justify-between gap-4 text-sm text-stone-500"><span>{{ i.quantity }} × {{ i.name }}</span><b class="text-ink">${{ '%.2f'|format((i.sale_price or i.price) * i.quantity) }}</b></p>{% endfor %}<hr class="my-5"><p class="flex justify-between font-display text-2xl">Total <b>${{ '%.2f'|format(totals.total) }}</b></p></aside>
+</main>
+{% endblock %}

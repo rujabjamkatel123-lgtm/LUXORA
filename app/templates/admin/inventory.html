@@ -1,0 +1,30 @@
+{% extends 'layouts/admin_base.html' %}
+{% block content %}
+<main class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+<h1 class="font-display text-6xl">Inventory</h1>
+<div class="mt-8 overflow-x-auto bg-white">
+<table class="w-full text-left text-sm">
+<tr class="border-b border-stone-200 text-xs uppercase tracking-wider text-stone-500">
+<th class="p-4">Product</th>
+<th class="p-4">SKU</th>
+<th class="p-4">Stock</th>
+<th class="p-4">Update</th>
+</tr>
+{% for p in products %}
+<tr class="border-b border-stone-100">
+<td class="p-4">{{ p.name }}</td>
+<td class="p-4">{{ p.sku }}</td>
+<td class="p-4">{{ p.stock }}</td>
+<td class="p-4">
+<form class="flex gap-2" method="post">
+<input type="hidden" name="product_id" value="{{ p.id }}">
+<input class="w-20 border border-stone-300 px-2 py-2" name="stock" type="number" value="{{ p.stock }}">
+<button class="border border-ink px-3 text-xs">Save</button>
+</form>
+</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+</main>
+{% endblock %}

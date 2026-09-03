@@ -1,0 +1,38 @@
+{% extends 'layouts/admin_base.html' %}
+{% block content %}
+<main class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+<h1 class="font-display text-6xl">Orders</h1>
+<div class="mt-8 overflow-x-auto bg-white">
+<table class="w-full text-left text-sm">
+<tr class="border-b border-stone-200 text-xs uppercase tracking-wider text-stone-500">
+<th class="p-4">Order</th>
+<th class="p-4">Customer</th>
+<th class="p-4">Total</th>
+<th class="p-4">Status</th>
+</tr>
+{% for o in orders %}
+<tr class="border-b border-stone-100">
+<td class="p-4">#{{ o.id }}<small class="block text-xs text-stone-400">{{ o.created_at }}</small>
+</td>
+<td class="p-4">{{ o.name }}<small class="block text-xs text-stone-400">{{ o.email }}</small>
+</td>
+<td class="p-4">${{ o.total }}</td>
+<td class="p-4">
+<form method="post" action="{{ url_for('admin.status', order_id=o.id) }}">
+<select class="border border-stone-300 px-2 py-2 text-xs" name="status" onchange="this.form.submit()">
+{% for s in ['Pending','Confirmed','Processing','Shipped','Out for Delivery','Delivered','Cancelled','Refunded'] %}
+<option
+{% if s == o.status %}
+selected
+{% endif %}
+>{{ s }}</option>
+{% endfor %}
+</select>
+</form>
+</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+</main>
+{% endblock %}

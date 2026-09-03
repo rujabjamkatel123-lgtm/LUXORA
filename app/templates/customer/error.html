@@ -1,0 +1,10 @@
+{% extends 'layouts/base.html' %}
+{% block content %}
+<main class="grid min-h-[600px] place-items-center px-5 text-center">
+<div>
+<h1 class="font-display text-8xl">{{ code }}</h1>
+<p class="mt-4 text-stone-500">{{ message }}</p>
+<a class="mt-7 inline-block bg-ink px-6 py-3 text-sm text-white" href="{{ url_for('store.home') }}">Return home</a>
+</div>
+</main>
+{% endblock %}

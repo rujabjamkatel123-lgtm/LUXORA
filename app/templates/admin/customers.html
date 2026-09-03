@@ -1,0 +1,24 @@
+{% extends 'layouts/admin_base.html' %}
+{% block content %}
+<main class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+<h1 class="font-display text-6xl">Customers</h1>
+<div class="mt-8 overflow-x-auto bg-white">
+<table class="w-full text-left text-sm">
+<tr class="border-b border-stone-200 text-xs uppercase tracking-wider text-stone-500">
+<th class="p-4">Name</th>
+<th class="p-4">Email</th>
+<th class="p-4">Orders</th>
+<th class="p-4">Total spent</th>
+</tr>
+{% for c in customers %}
+<tr class="border-b border-stone-100">
+<td class="p-4">{{ c.name }}</td>
+<td class="p-4">{{ c.email }}</td>
+<td class="p-4">{{ c.order_count }}</td>
+<td class="p-4">${{ c.total_spent }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+</main>
+{% endblock %}

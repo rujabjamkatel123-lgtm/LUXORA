@@ -1,0 +1,104 @@
+{% extends 'layouts/base.html' %}
+{% block title %}
+LUXORA · Everything You Love
+{% endblock %}
+{% block content %}
+<main>
+    <section class="mx-auto grid max-w-7xl items-center gap-10 px-5 py-16 lg:grid-cols-2 lg:px-8 lg:py-24">
+        <div class="luxora-fade-up">
+            <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">LUXORA editorial lifestyle</p>
+            <h1 class="mt-5 font-display text-6xl leading-[0.95] tracking-tight sm:text-8xl">Discover products<br>
+<em class="text-gold">you'll love.</em>
+</h1>
+            <p class="mt-7 max-w-lg text-base leading-7 text-stone-600">LUXORA brings together fashion, electronics, beauty, and home essentials — curated for quality, priced for everyone.</p>
+            <div class="mt-8 flex flex-wrap gap-3">
+<a class="bg-ink px-6 py-3 text-sm font-semibold text-white transition hover:bg-stone-700" href="{{ url_for('store.shop') }}">Shop now →</a>
+<a class="border border-ink px-6 py-3 text-sm font-semibold" href="#categories">Explore categories</a>
+</div>
+            <div class="mt-16 flex gap-8">
+<div>
+<b class="font-display text-2xl">50K+</b>
+<p class="text-xs text-stone-500">Happy customers</p>
+</div>
+<div>
+<b class="font-display text-2xl">4.9</b>
+<p class="text-xs text-stone-500">Average rating</p>
+</div>
+<div>
+<b class="font-display text-2xl">8K+</b>
+<p class="text-xs text-stone-500">Products listed</p>
+</div>
+</div>
+        </div>
+        <div class="luxora-fade-up luxora-delay-1 flex min-h-[430px] items-center justify-center bg-gradient-to-br from-rose-300 via-violet-300 to-sky-300 p-10">
+<div class="luxora-float flex h-80 w-64 flex-col justify-center bg-cream/80 p-8 font-display tracking-[0.15em] shadow-2xl">
+<span class="text-xs">NEW SEASON</span>
+<strong class="mt-3 text-4xl tracking-normal">COLLECTION</strong>
+<small class="mt-8 font-sans text-xs tracking-normal text-stone-600">Curated for modern living</small>
+</div>
+</div>
+    </section>
+    <section id="categories" class="border-y border-stone-200 bg-white px-5 py-20 lg:px-8">
+<div class="mx-auto max-w-7xl">
+<p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">Curated for you</p>
+<h2 class="mt-3 font-display text-5xl">Shop by category</h2>
+<p class="mt-4 max-w-xl text-stone-500">From everyday essentials to luxury finds — explore our carefully curated collections.</p>
+<div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+{% for c in nav_categories %}
+<a class="group flex min-h-52 flex-col justify-end p-6 transition hover:-translate-y-1 hover:shadow-xl {% if loop.index == 1 %}bg-gradient-to-br from-rose-200 to-orange-100{% elif loop.index == 2 %}bg-gradient-to-br from-sky-200 to-indigo-100{% elif loop.index == 3 %}bg-gradient-to-br from-lime-200 to-emerald-100{% elif loop.index == 4 %}bg-gradient-to-br from-amber-200 to-yellow-100{% else %}bg-gradient-to-br from-fuchsia-200 to-purple-100{% endif %}" href="{{ url_for('store.category', slug=c.slug) }}">
+<span class="text-[10px] uppercase tracking-widest text-stone-500">Explore</span>
+<h3 class="mt-2 font-display text-2xl">{{ c.name }}</h3>
+<span class="mt-1 text-xs text-stone-500">Curated essentials</span>
+</a>
+{% endfor %}
+</div>
+</div>
+</section>
+    <section class="mx-auto max-w-7xl px-5 py-20 lg:px-8">
+<div class="flex items-end justify-between">
+<div>
+<p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">Editor's picks</p>
+<h2 class="mt-3 font-display text-5xl">Featured products</h2>
+</div>
+<a class="hidden text-sm underline underline-offset-4 sm:block" href="{{ url_for('store.shop') }}">View all products →</a>
+</div>
+<div class="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+{% for p in products %}
+{% include 'components/product_card.html' %}
+{% endfor %}
+</div>
+</section>
+    <section class="bg-sand px-5 py-24 lg:px-24">
+<div class="max-w-xl">
+<p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">Limited time offer</p>
+<h2 class="mt-4 font-display text-6xl leading-none">Upgrade your<br>
+<em>everyday.</em>
+</h2>
+<p class="mt-6 leading-7 text-stone-600">Premium products. Better prices. Smarter shopping. Up to 40% off across all categories this week.</p>
+<a class="mt-8 inline-block bg-ink px-6 py-3 text-sm font-semibold text-white" href="{{ url_for('store.shop', sort='price_asc') }}">Shop deals →</a>
+</div>
+</section>
+    <section class="mx-auto max-w-7xl px-5 py-20 text-center lg:px-8">
+<p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">Why choose us</p>
+<h2 class="mt-3 font-display text-5xl">The LUXORA promise</h2>
+<div class="mt-12 grid gap-10 text-left sm:grid-cols-2 lg:grid-cols-4">
+{% for title,desc in [('Secure payments','Every transaction protected with modern security.'),('Fast delivery','Free 2-day shipping on orders over $50.'),('Easy returns','Return any item within 30 days, no questions asked.'),('24/7 support','Our dedicated team is here around the clock.') ] %}
+<div>
+<div class="text-3xl text-gold">✦</div>
+<h3 class="mt-3 font-display text-xl">{{ title }}</h3>
+<p class="mt-2 text-sm leading-6 text-stone-500">{{ desc }}</p>
+</div>
+{% endfor %}
+</div>
+</section>
+    <section class="bg-ink px-5 py-20 text-center text-white">
+<p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">Exclusive offer</p>
+<h2 class="mt-3 font-display text-5xl">Get 10% off your first order</h2>
+<p class="mx-auto mt-4 max-w-lg text-stone-400">Join our newsletter for early access to new arrivals and style inspiration.</p>
+<form class="mx-auto mt-8 flex max-w-md">
+<input class="min-w-0 flex-1 px-4 py-3 text-sm text-ink outline-none" placeholder="Your email address">
+<button class="bg-gold px-5 text-sm font-semibold">Subscribe</button>
+</form>
+</section>
+</main>
+{% endblock %}
