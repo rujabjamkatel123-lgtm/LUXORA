@@ -35,14 +35,30 @@ LUXORA
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root { --paper:#f9f9fb; --ink:#1a1a1a; --violet:#6d4aff; --shadow:0 18px 50px rgba(31,24,59,.08); --ease:cubic-bezier(.4,0,.2,1); }
+        body { background:var(--paper) !important; color:var(--ink); }
+        .luxora-logo { letter-spacing:.26em; font-family:'Manrope',sans-serif; font-weight:800; }
+        .luxora-nav-link, a, button, select, input { transition:all .35s var(--ease); }
+        .luxora-nav-link::after { height:3px !important; border-radius:99px; bottom:-10px !important; }
+        .luxora-nav-link:hover { transform:translateY(-2px); }
+        .luxora-bag { display:inline-flex; align-items:center; gap:.45rem; }
+        .luxora-bag sup { min-width:1.35rem; height:1.35rem; display:inline-grid; place-items:center; background:var(--violet) !important; font-size:.68rem; font-weight:800; animation:luxora-bag-pulse 2.4s ease-in-out infinite; }
+        .luxora-product-card { transition:transform .45s var(--ease),box-shadow .45s var(--ease); }
+        .luxora-product-card:hover { transform:scale(1.02) translateY(-4px); box-shadow:var(--shadow); }
+        .luxora-product-grid > article { animation:luxora-reveal .65s var(--ease) both; }
+        @keyframes luxora-bag-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(109,74,255,.25)} 50%{box-shadow:0 0 0 7px rgba(109,74,255,0)} }
+        @keyframes luxora-reveal { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+    </style>
 </head>
-<body class="bg-cream text-ink font-sans antialiased">
-    <div class="overflow-hidden bg-gradient-to-r from-fuchsia-700 via-violet-700 to-indigo-700 px-4 py-2 text-[11px] tracking-wide text-white">
+<body class="luxora-shell bg-cream text-ink font-sans antialiased">
+    <div class="luxora-marquee overflow-hidden bg-gradient-to-r from-fuchsia-700 via-violet-700 to-indigo-700 px-4 py-2 text-[11px] tracking-wide text-white">
         <div class="luxora-marquee-track flex gap-12 whitespace-nowrap"><span>Free shipping on orders over $50</span><span>Easy 30-day returns</span><span>Use WELCOME10 for 10% off</span><span>Free shipping on orders over $50</span><span>Easy 30-day returns</span><span>Use WELCOME10 for 10% off</span></div>
     </div>
-    <header class="sticky top-0 z-40 border-b border-stone-200 bg-cream/95 backdrop-blur">
+    <header class="luxora-header sticky top-0 z-40 border-b border-stone-200 bg-cream/95 backdrop-blur">
         <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-5 px-5 py-5 lg:px-8">
-            <a class="font-display text-2xl tracking-[0.2em]" href="{{ url_for('store.home') }}">LUXORA</a>
+            <a class="luxora-logo font-display text-2xl tracking-[0.2em]" href="{{ url_for('store.home') }}">LUXORA</a>
             <nav class="order-3 flex w-full gap-6 overflow-x-auto text-sm text-stone-600 lg:order-2 lg:w-auto lg:flex-1 lg:justify-center">
                 <a class="luxora-nav-link whitespace-nowrap hover:text-ink" href="{{ url_for('store.home') }}">Home</a>
                 <a class="luxora-nav-link whitespace-nowrap hover:text-ink" href="{{ url_for('store.shop') }}">Shop</a>
@@ -56,7 +72,7 @@ LUXORA
 	            <div class="order-1 flex items-center gap-4 text-sm lg:order-4">
 	                <a href="{{ url_for('store.wishlist') if session.get('user_id') else url_for('auth.login', next='/wishlist') }}">♡</a>
                 <a class="transition hover:scale-110" href="{{ url_for('auth.login') if not session.get('user_id') else url_for('store.account') }}" aria-label="Account"><img class="h-7 w-7 rounded-full object-cover ring-2 ring-transparent transition hover:ring-gold" src="{{ url_for('static', filename='images/profile-icon.png') }}" alt="Account"></a>
-	                <a href="{{ url_for('store.cart') }}">Bag <sup class="rounded-full bg-ink px-1.5 py-0.5 text-[10px] text-white">{{ cart_count }}</sup>
+                <a class="luxora-bag" href="{{ url_for('store.cart') }}">Bag <sup class="rounded-full bg-ink px-1.5 py-0.5 text-[10px] text-white">{{ cart_count }}</sup>
 	</a>
 	                {% if session.get('user_id') %}
 	                    <a class="text-xs text-stone-500 hover:text-ink" href="{{ url_for('auth.logout') }}">Logout</a>
@@ -75,7 +91,7 @@ LUXORA
 {% endwith %}
 {% block content %}
 {% endblock %}
-<footer class="bg-ink px-6 py-14 text-stone-300 lg:px-16">
+    <footer class="luxora-footer bg-ink px-6 py-14 text-stone-300 lg:px-16">
         <div class="mx-auto grid max-w-7xl gap-10 md:grid-cols-4">
             <div>
 <a class="font-display text-2xl tracking-[0.2em] text-white" href="{{ url_for('store.home') }}">LUXORA</a>
@@ -107,5 +123,38 @@ LUXORA
 </div>
         </div>
     </footer>
+    <script>
+    (() => {
+        const badge = (count) => document.querySelectorAll('.luxora-bag sup').forEach((item) => item.textContent = count);
+        const notice = (text, error = false) => { const item = document.createElement('div'); item.className = 'fixed right-5 top-24 z-50 rounded-lg border border-stone-200 bg-white px-5 py-3 text-sm shadow-xl ' + (error ? 'text-red-700' : 'text-emerald-700'); item.textContent = text; document.body.appendChild(item); setTimeout(() => item.remove(), 3500); };
+        document.querySelectorAll('.luxora-flash').forEach((item) => setTimeout(() => item.remove(), 4200));
+        document.querySelectorAll('[data-cart-form]').forEach((form) => form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const button = form.querySelector('button');
+            if (button) { button.disabled = true; button.dataset.label = button.textContent; button.textContent = 'Adding…'; }
+            try {
+                const response = await fetch(form.action, { method:'POST', body:new FormData(form), headers:{'X-Requested-With':'XMLHttpRequest', 'Accept':'application/json'} });
+                const data = await response.json();
+                if (!response.ok || !data.ok) throw new Error(data.message || 'Unable to update your cart.');
+                badge(data.count);
+                if (data.totals) {
+                    const money = (value) => '$' + Number(value || 0).toFixed(2);
+                    const subtotal = document.querySelector('#cart-subtotal');
+                    const shipping = document.querySelector('#cart-shipping');
+                    const tax = document.querySelector('#cart-tax');
+                    const total = document.querySelector('#cart-total');
+                    if (subtotal) subtotal.textContent = money(data.totals.subtotal);
+                    if (shipping) shipping.textContent = Number(data.totals.shipping) ? money(data.totals.shipping) : 'Free';
+                    if (tax) tax.textContent = money(data.totals.tax);
+                    if (total) total.textContent = money(data.totals.total);
+                    const quantity = form.querySelector('[name=quantity]');
+                    if (quantity && Number(quantity.value) === 0) form.closest('.flex')?.remove();
+                }
+                notice(data.message || 'Cart updated.');
+            } catch (error) { notice(error.message, true); }
+            finally { if (button) { button.disabled = false; button.textContent = button.dataset.label; } }
+        }));
+    })();
+    </script>
 </body>
 </html>

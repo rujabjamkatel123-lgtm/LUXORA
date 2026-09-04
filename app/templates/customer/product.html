@@ -30,7 +30,7 @@
 Out of stock
 {% endif %}
 </p>
-<form class="mt-7 flex gap-3" method="post" action="{{ url_for('store.add_cart', product_id=product.id) }}">
+<form data-cart-form class="mt-7 flex gap-3" method="post" action="{{ url_for('store.add_cart', product_id=product.id) }}">
 <input class="w-16 border border-stone-300 px-3 py-3 text-center" type="number" min="1" max="{{ product.stock }}" name="quantity" value="1">
 <button class="bg-ink px-7 py-3 text-sm font-semibold text-white"
 {% if not product.stock %}

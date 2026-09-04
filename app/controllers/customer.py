@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from decimal import Decimal
 from flask import (
     Blueprint,
@@ -21,6 +22,50 @@ def uid():
 
 def items():
     return db.cart_items(uid(), request.cookies.get("luxora_session", "guest"))
+
+
+def promo_details(code, subtotal):
+    """Return a valid coupon and discount amount for the current subtotal."""
+    code = (code or "").strip().upper()
+    if not code:
+        return None, Decimal("0"), None
+    coupon = db.one(
+        "SELECT * FROM coupons WHERE code=? AND active=1",
+        (code,),
+    )
+    if not coupon:
+        return None, Decimal("0"), "That promo code is not valid."
+    if coupon["expires_at"]:
+        expiry_text = str(coupon["expires_at"])
+        try:
+            expiry = datetime.fromisoformat(expiry_text.replace("Z", "+00:00")).date()
+        except ValueError:
+            expiry = None
+        if expiry and expiry < date.today():
+            return None, Decimal("0"), "That promo code has expired."
+    subtotal = Decimal(str(subtotal))
+    if subtotal < Decimal(str(coupon["min_purchase"] or 0)):
+        return None, Decimal("0"), f"This code requires a minimum purchase of ${Decimal(str(coupon['min_purchase'])):.2f}."
+    if coupon["usage_limit"] is not None:
+        used = db.one(
+            "SELECT COUNT(*) AS total FROM coupon_usage WHERE coupon_id=?",
+            (coupon["id"],),
+        )["total"]
+        if used >= int(coupon["usage_limit"]):
+            return None, Decimal("0"), "That promo code has reached its usage limit."
+    value = Decimal(str(coupon["value"] or 0))
+    discount = subtotal * value / Decimal("100") if coupon["kind"] == "percent" else value
+    return coupon, min(discount, subtotal).quantize(Decimal("0.01")), None
+
+
+def checkout_totals(data, code=None):
+    base = db.totals(data)
+    coupon, discount, error = promo_details(code, base["subtotal"])
+    taxable_subtotal = base["subtotal"] - discount
+    base["discount"] = discount
+    base["tax"] = (taxable_subtotal * Decimal("0.08")).quantize(Decimal("0.01"))
+    base["total"] = taxable_subtotal + base["shipping"] + base["tax"]
+    return base, coupon, error
 
 
 def product_query(extra="", args=()):
@@ -107,7 +152,10 @@ def add_cart(product_id):
     p = db.one("SELECT * FROM products WHERE id=? AND is_published=1", (product_id,))
     qty = max(1, int(request.form.get("quantity", 1)))
     if not p or p["stock"] < qty:
-        flash("This product is unavailable or low in stock.", "error")
+        message = "This product is unavailable or low in stock."
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify({"ok": False, "message": message}), 409
+        flash(message, "error")
         return redirect(request.referrer or url_for("store.shop"))
     cid = db.cart_id(uid(), request.cookies.get("luxora_session", "guest"))
     existing = db.one(
@@ -122,6 +170,15 @@ def add_cart(product_id):
         db.execute(
             "INSERT INTO cart_items(cart_id,product_id,quantity) VALUES(?,?,?)",
             (cid, product_id, qty),
+        )
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        current_items = items()
+        return jsonify(
+            {
+                "ok": True,
+                "message": "Product added to cart.",
+                "count": sum(int(item["quantity"]) for item in current_items),
+            }
         )
     flash("Product added to cart.", "success")
     return redirect(
@@ -188,17 +245,45 @@ def wishlist_toggle(product_id):
 @store_bp.route("/checkout")
 @login_required
 def checkout():
-    return render_template("customer/checkout.html", items=items(), totals=db.totals(items()))
+    data = items()
+    totals, coupon, error = checkout_totals(data, session.get("promo_code"))
+    return render_template(
+        "customer/checkout.html",
+        items=data,
+        totals=totals,
+        promo_code=session.get("promo_code", ""),
+        promo_coupon=coupon,
+        promo_error=error,
+    )
+
+
+@store_bp.route("/checkout/apply-promo", methods=["POST"])
+@login_required
+def apply_promo():
+    code = request.form.get("promo_code", "").strip().upper()
+    data = items()
+    _, coupon, error = checkout_totals(data, code)
+    if error or not coupon:
+        session.pop("promo_code", None)
+        flash(error or "Please enter a valid promo code.", "error")
+    else:
+        session["promo_code"] = code
+        flash(f"Promo code {code} applied.", "success")
+    return redirect(url_for("store.checkout"))
 
 
 @store_bp.route("/checkout/place", methods=["POST"])
 @login_required
 def place_order():
     data = items()
-    totals = db.totals(data)
+    promo_code = request.form.get("promo_code", "").strip().upper() or session.get("promo_code")
+    totals, coupon, promo_error = checkout_totals(data, promo_code)
     if not data:
         flash("Your cart is empty.", "error")
         return redirect(url_for("store.cart"))
+    if promo_error:
+        flash(promo_error, "error")
+        return redirect(url_for("store.checkout"))
     for i in data:
         p = db.one("SELECT stock FROM products WHERE id=?", (i["product_id"],))
         if not p or p["stock"] < i["quantity"]:
@@ -206,11 +291,12 @@ def place_order():
             return redirect(url_for("store.cart"))
     addr = f"{request.form.get('full_name')}, {request.form.get('line1')}, {request.form.get('city')}, {request.form.get('state')}, {request.form.get('country')}"
     oid = db.execute(
-        "INSERT INTO orders(user_id,payment_method,subtotal,shipping,tax,total,shipping_address) VALUES(?,?,?,?,?,?,?)",
+        "INSERT INTO orders(user_id,payment_method,subtotal,discount,shipping,tax,total,shipping_address) VALUES(?,?,?,?,?,?,?,?)",
         (
             uid(),
             request.form.get("payment_method", "Cash on Delivery"),
             str(totals["subtotal"]),
+            str(totals["discount"]),
             str(totals["shipping"]),
             str(totals["tax"]),
             str(totals["total"]),
@@ -232,6 +318,15 @@ def place_order():
             "UPDATE products SET stock=stock-? WHERE id=?",
             (i["quantity"], i["product_id"]),
         )
+    if coupon:
+        db.execute(
+            "INSERT INTO coupon_usage(coupon_id,user_id) VALUES(?,?)",
+            (coupon["id"], uid()),
+        )
+    session.pop("promo_code", None)
+    # Empty the authenticated customer's cart before showing order success.
+    # This is intentionally safe to run more than once, which also handles
+    # refreshes or a stale browser page after a successful checkout.
     cid = db.cart_id(uid(), request.cookies.get("luxora_session", "guest"))
     db.execute("DELETE FROM cart_items WHERE cart_id=?", (cid,))
     return redirect(url_for("store.success", order_id=oid))
@@ -242,6 +337,9 @@ def place_order():
 def success(order_id):
     order = db.one("SELECT * FROM orders WHERE id=? AND user_id=?", (order_id, uid()))
     its = db.query("SELECT * FROM order_items WHERE order_id=?", (order_id,))
+    if order:
+        cid = db.cart_id(uid(), request.cookies.get("luxora_session", "guest"))
+        db.execute("DELETE FROM cart_items WHERE cart_id=?", (cid,))
     return render_template("customer/success.html", order=order, items=its)
 
 

@@ -27,9 +27,22 @@ def login_required(view):
 def admin_required(view):
     @wraps(view)
     def wrapped(*args, **kwargs):
-        if not session.get("user_id"):
+        user_id = session.get("user_id")
+        if not user_id:
             return redirect(url_for("auth.login", next=request.full_path))
-        if session.get("role") != "admin":
+        user = db.one("SELECT id,name,email,role FROM users WHERE id=?", (user_id,))
+        if not user:
+            session.clear()
+            return redirect(url_for("auth.login", next=request.full_path))
+        # Keep the session synchronized with the database. This prevents an old
+        # role value in a long-lived browser session from causing a false 403.
+        session.update(
+            user_id=user["id"],
+            name=user["name"],
+            email=user["email"],
+            role=user["role"],
+        )
+        if user["role"] != "admin":
             return ("Forbidden", 403)
         return view(*args, **kwargs)
 

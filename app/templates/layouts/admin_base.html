@@ -12,9 +12,22 @@
         }}};
     </script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --line:#e9e7ed; --violet:#6d4aff; --shadow:0 18px 50px rgba(31,24,59,.08); --ease:cubic-bezier(.4,0,.2,1); }
+        .luxora-admin-body { background:linear-gradient(135deg,#f9f9fb,#f0eff8) !important; }
+        .luxora-admin-sidebar { background:linear-gradient(180deg,#1d192b,#271b48) !important; box-shadow:12px 0 40px rgba(31,24,59,.14); }
+        .luxora-admin-sidebar a, .luxora-admin-header a, button, input, select, textarea { transition:all .35s var(--ease); }
+        .luxora-admin-sidebar a:hover { background:rgba(255,255,255,.14) !important; }
+        .luxora-admin-header { background:rgba(255,255,255,.85) !important; backdrop-filter:blur(14px); }
+        .luxora-admin-card, .luxora-kpi { border-radius:1.2rem !important; box-shadow:var(--shadow); border-color:var(--line) !important; }
+        .luxora-kpi { transition:transform .35s var(--ease),box-shadow .35s var(--ease); }
+        .luxora-kpi:hover { transform:translateY(-4px); box-shadow:0 24px 56px rgba(31,24,59,.15); }
+        input:focus, textarea:focus, select:focus { border-color:var(--violet) !important; box-shadow:0 0 0 4px rgba(109,74,255,.12); outline:none; }
+        @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important}}
+    </style>
 </head>
-<body class="min-h-screen bg-cream font-sans text-ink antialiased">
-    <aside class="fixed inset-y-0 left-0 hidden w-64 bg-ink px-5 py-7 text-stone-300 lg:block">
+<body class="luxora-admin-body min-h-screen bg-cream font-sans text-ink antialiased">
+    <aside class="luxora-admin-sidebar fixed inset-y-0 left-0 hidden w-64 bg-ink px-5 py-7 text-stone-300 lg:block">
         <a class="font-display text-2xl tracking-[0.2em] text-white" href="{{ url_for('admin.dashboard') }}">LUXORA</a>
         <p class="mt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">Admin workspace</p>
         <nav class="mt-12 grid gap-1 text-sm">
@@ -25,8 +38,8 @@
         <div class="absolute bottom-8 left-5 right-5 border-t border-white/10 pt-5 text-xs"><a class="block py-2 text-stone-400 hover:text-white" href="{{ url_for('store.home') }}">← View storefront</a><a class="block py-2 text-stone-400 hover:text-white" href="{{ url_for('auth.logout') }}">Sign out</a></div>
     </aside>
     <div class="lg:pl-64">
-        <header class="flex items-center justify-between border-b border-stone-200 bg-white px-5 py-5 lg:px-10"><div><p class="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">Management console</p><h1 class="font-display text-2xl">{% block page_heading %}Admin workspace{% endblock %}</h1></div><div class="flex items-center gap-4 text-sm"><span class="hidden text-stone-500 sm:inline">{{ session.name }}</span><a class="rounded-full bg-ink px-4 py-2 text-xs font-semibold text-white" href="{{ url_for('store.home') }}">Storefront</a></div></header>
-        <main class="px-5 py-8 lg:px-10 lg:py-12">{% block content %}{% endblock %}</main>
+        <header class="luxora-admin-header flex items-center justify-between border-b border-stone-200 bg-white px-5 py-5 lg:px-10"><div><p class="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">Management console</p><h1 class="font-display text-2xl">{% block page_heading %}Admin workspace{% endblock %}</h1></div><div class="flex items-center gap-4 text-sm"><span class="hidden text-stone-500 sm:inline">{{ session.name }}</span><a class="luxora-button rounded-full bg-ink px-4 py-2 text-xs font-semibold text-white" href="{{ url_for('store.home') }}">Storefront</a></div></header>
+        <main class="luxora-admin-main px-5 py-8 lg:px-10 lg:py-12">{% block content %}{% endblock %}</main>
     </div>
 </body>
 </html>
