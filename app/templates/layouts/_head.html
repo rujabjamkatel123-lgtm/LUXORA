@@ -1,0 +1,79 @@
+{#
+  Shared <head> for both layouts. Single source of truth for the Tailwind
+  token config, fonts and the design system stylesheet.
+
+  The <title> block stays in each layout — Jinja blocks declared inside an
+  {% include %} cannot be overridden by the extending template.
+#}
+<script>document.documentElement.classList.add('lux-js');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="LUXORA — fashion, electronics, beauty and home essentials, curated for quality and priced for everyone.">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    paper: '#ffffff',
+                    surface: '#fafafa',
+                    surface2: '#f2f2f2',
+                    ink: '#000000',
+                    'ink-60': '#5c5c5c',
+                    'ink-40': '#8a8a8a',
+                    line: '#000000',
+                    'line-soft': '#e4e4e4',
+                    signal: '#ff4a1c',
+                    'signal-ink': '#c4300b',
+                    /* Aliases from the previous two palettes. Kept so any
+                       class left behind resolves in-palette instead of
+                       silently rendering nothing (which is what bg-sand did
+                       in the admin layout). */
+                    cream: '#ffffff',
+                    sand: '#fafafa',
+                    gold: '#c4300b',
+                    coral: '#ff4a1c',
+                    lavender: '#f2f2f2'
+                },
+                fontFamily: {
+                    display: ['Archivo', 'Inter', 'system-ui', 'sans-serif'],
+                    sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+                    mono: ['ui-monospace', 'SF Mono', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace']
+                },
+                borderRadius: {
+                    DEFAULT: '0',
+                    sm: '0',
+                    md: '0',
+                    lg: '0',
+                    xl: '0',
+                    '2xl': '0',
+                    '3xl': '0',
+                    full: '9999px',
+                    none: '0'
+                },
+                boxShadow: {
+                    hard: '6px 6px 0 #000000',
+                    'hard-sm': '4px 4px 0 #000000',
+                    'hard-lg': '10px 10px 0 #000000',
+                    'hard-signal': '6px 6px 0 #ff4a1c',
+                    none: 'none'
+                },
+                transitionTimingFunction: {
+                    out: 'cubic-bezier(.2,.8,.2,1)',
+                    hard: 'cubic-bezier(.7,0,.3,1)'
+                },
+                letterSpacing: {
+                    display: '-0.035em'
+                }
+            }
+        }
+    };
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/luxora.css') }}">

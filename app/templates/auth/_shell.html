@@ -1,0 +1,56 @@
+{#
+  Shared split-screen shell for the four auth pages.
+
+  Sits between layouts/base.html and each auth page so the black editorial
+  panel is defined once. Pages override {% block auth_body %} and, when the
+  copy should differ, {% block auth_headline %}.
+#}
+{% extends 'layouts/base.html' %}
+{% from 'components/icons.html' import icon %}
+
+{% block content %}
+<main class="grid lg:min-h-[calc(100vh-11rem)] lg:grid-cols-[1fr_1.1fr]">
+
+    <!-- ============================================== EDITORIAL PANEL -->
+    <aside class="lux-band lux-auth-aside relative hidden flex-col justify-between overflow-hidden p-12 lg:flex xl:p-16">
+        <div>
+            <span class="lux-logo text-xl text-paper">LUXORA</span>
+        </div>
+
+        <div>
+            {% block auth_headline %}
+            <p class="lux-eyebrow lux-eyebrow--invert">Members get more</p>
+            <h2 class="mt-6 font-display text-[clamp(2.5rem,4.5vw,4rem)] uppercase leading-[0.92]">
+                Everything<br>you love,<br>
+                <span class="lux-outline-invert">in one place.</span>
+            </h2>
+            {% endblock %}
+        </div>
+
+        <div class="grid gap-px border border-white/20 bg-white/20">
+            {% for name, title, desc in [
+                ('truck', 'Free delivery', 'On every order over $50'),
+                ('refresh', '30-day returns', 'No questions asked'),
+                ('shield', 'Secure by default', 'Modern encryption throughout')
+            ] %}
+            <div class="flex items-center gap-4 bg-ink px-5 py-4">
+                <span class="grid h-9 w-9 shrink-0 place-items-center border border-white/30">{{ icon(name, 'h-4 w-4') }}</span>
+                <span>
+                    <b class="block text-sm">{{ title }}</b>
+                    <small class="lux-dim text-xs">{{ desc }}</small>
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="lux-auth-glow" aria-hidden="true"></div>
+    </aside>
+
+    <!-- ============================================== FORM -->
+    <div class="grid place-items-center px-5 py-16 lg:px-12 xl:px-20">
+        <div class="w-full max-w-md" data-reveal>
+            {% block auth_body %}{% endblock %}
+        </div>
+    </div>
+</main>
+{% endblock %}

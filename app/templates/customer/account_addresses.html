@@ -1,29 +1,84 @@
 {% extends 'layouts/base.html' %}
+{% from 'components/icons.html' import icon %}
 
 {% block title %}Addresses · LUXORA{% endblock %}
 
 {% block content %}
-<main class="mx-auto max-w-3xl px-5 py-16">
-    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">My account</p>
-    <h1 class="mt-3 font-display text-6xl">Addresses</h1>
-    <div class="mt-8 space-y-3">
-        {% for a in addresses %}
-        <div class="bg-white p-5">
-            <b>{{ a.full_name }}</b>
-            <p class="mt-2 text-sm leading-6 text-stone-500">{{ a.line1 }}<br>{{ a.city }}, {{ a.state }}<br>{{ a.country }}</p>
-        </div>
-        {% else %}
-        <p class="text-sm text-stone-500">No saved addresses yet.</p>
-        {% endfor %}
+{% set provinces = ['Koshi Province','Madhesh Province','Bagmati Province','Gandaki Province','Lumbini Province','Karnali Province','Sudurpashchim Province'] %}
+
+<main class="mx-auto max-w-3xl px-5 py-14 lg:py-20">
+
+    <div class="border-b border-ink pb-8" data-reveal>
+        <p class="lux-eyebrow lux-eyebrow--signal">My account</p>
+        <h1 class="mt-4 font-display text-[clamp(2.5rem,7vw,4.5rem)] uppercase">Addresses</h1>
     </div>
-    <form class="mt-10 grid gap-4 bg-white p-6 sm:grid-cols-2" method="post">
-        <h2 class="col-span-full font-display text-3xl">Add a Nepal address</h2>
-        <input class="border border-stone-300 px-4 py-3" name="full_name" placeholder="Full name" required>
-        <input class="border border-stone-300 px-4 py-3 sm:col-span-2" name="line1" placeholder="Street address" required>
-        <input class="border border-stone-300 px-4 py-3" name="city" placeholder="City / Municipality" required>
-        <select class="border border-stone-300 px-4 py-3" name="state" required><option value="">Choose a province</option>{% for state in ['Koshi Province','Madhesh Province','Bagmati Province','Gandaki Province','Lumbini Province','Karnali Province','Sudurpashchim Province'] %}<option value="{{ state }}">{{ state }}</option>{% endfor %}</select>
-        <select class="border border-stone-300 bg-white px-4 py-3 sm:col-span-2" name="country" required><option value="Nepal" selected>Nepal</option></select>
-        <button class="col-span-full bg-ink px-5 py-3 text-sm font-semibold text-white">Save address</button>
+
+    <!-- ============================================== SAVED -->
+    <section class="mt-10" data-reveal>
+        <h2 class="lux-eyebrow">Saved addresses</h2>
+
+        <div class="mt-5 grid gap-4 sm:grid-cols-2">
+            {% for a in addresses %}
+            <div class="lux-panel lux-lift p-5" data-reveal style="--i: {{ loop.index0 % 4 }}">
+                <div class="flex items-start justify-between gap-3">
+                    <b class="text-sm">{{ a.full_name }}</b>
+                    {{ icon('pin', 'h-4 w-4 text-ink-40') }}
+                </div>
+                <p class="mt-3 text-sm leading-7 lux-muted">
+                    {{ a.line1 }}<br>{{ a.city }}, {{ a.state }}<br>{{ a.country }}
+                </p>
+            </div>
+            {% else %}
+            <div class="lux-empty col-span-full py-14">
+                <span class="mx-auto grid h-12 w-12 place-items-center border border-ink">{{ icon('pin', 'h-5 w-5') }}</span>
+                <p class="mt-5 text-sm lux-muted">No saved addresses yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- ============================================== ADD -->
+    <form class="lux-panel mt-10" method="post" data-reveal>
+        <div class="lux-panel__head">
+            <h2 class="font-display text-xl uppercase">Add a Nepal address</h2>
+            {{ icon('plus', 'h-4 w-4') }}
+        </div>
+
+        <div class="lux-panel__body grid gap-5 sm:grid-cols-2">
+            <label class="lux-field sm:col-span-2">
+                <span class="lux-label">Full name</span>
+                <input class="lux-input" name="full_name" placeholder="Full name" required>
+            </label>
+
+            <label class="lux-field sm:col-span-2">
+                <span class="lux-label">Street address</span>
+                <input class="lux-input" name="line1" placeholder="Street address" required>
+            </label>
+
+            <label class="lux-field">
+                <span class="lux-label">City / Municipality</span>
+                <input class="lux-input" name="city" placeholder="City / Municipality" required>
+            </label>
+
+            <label class="lux-field">
+                <span class="lux-label">Province / State</span>
+                <select class="lux-select" name="state" required>
+                    <option value="">Choose a province</option>
+                    {% for state in provinces %}
+                    <option value="{{ state }}">{{ state }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label class="lux-field sm:col-span-2">
+                <span class="lux-label">Country</span>
+                <select class="lux-select" name="country" required>
+                    <option value="Nepal" selected>Nepal</option>
+                </select>
+            </label>
+
+            <button class="lux-btn lux-btn--primary sm:col-span-2" type="submit">Save address</button>
+        </div>
     </form>
 </main>
 {% endblock %}

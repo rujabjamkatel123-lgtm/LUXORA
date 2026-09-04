@@ -1,53 +1,173 @@
 {% extends 'layouts/base.html' %}
-{% block title %}
-{{ product.name }} · LUXORA
-{% endblock %}
+{% from 'components/icons.html' import icon %}
+
+{% block title %}{{ product.name }} · LUXORA{% endblock %}
+
 {% block content %}
-<main class="mx-auto grid max-w-7xl gap-12 px-5 py-16 lg:grid-cols-2 lg:px-8 lg:py-24">
-    <div class="aspect-square overflow-hidden bg-stone-200">
-{% if product.image %}
-<img class="h-full w-full object-cover" src="{{ product.image }}" alt="{{ product.name }}">
-{% else %}
-<div class="flex h-full items-center justify-center bg-gradient-to-br from-stone-200 to-stone-400 font-display text-[10rem] text-stone-500">{{ product.category_name[:1] }}</div>
-{% endif %}
-</div>
-    <div class="self-center">
-<p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">{{ product.category_name }} · {{ product.brand or 'LUXORA edit' }}</p>
-<h1 class="mt-5 font-display text-6xl leading-none">{{ product.name }}</h1>
-<p class="mt-5 text-sm">★ {{ product.rating }} <span class="text-stone-400">({{ product.review_count }} reviews)</span>
-</p>
-<div class="mt-6">
-<strong class="text-2xl">${{ '%.2f'|format(product.sale_price or product.price) }}</strong>
-{% if product.sale_price %}
-<del class="ml-3 text-stone-400">${{ '%.2f'|format(product.price) }}</del>
-{% endif %}
-</div>
-<p class="mt-7 max-w-lg leading-7 text-stone-600">{{ product.description }}</p>
-<p class="mt-6 text-sm text-emerald-700">
-{% if product.stock > 0 %}
-● In stock · {{ product.stock }} available
-{% else %}
-Out of stock
-{% endif %}
-</p>
-<form data-cart-form class="mt-7 flex gap-3" method="post" action="{{ url_for('store.add_cart', product_id=product.id) }}">
-<input class="w-16 border border-stone-300 px-3 py-3 text-center" type="number" min="1" max="{{ product.stock }}" name="quantity" value="1">
-<button class="bg-ink px-7 py-3 text-sm font-semibold text-white"
-{% if not product.stock %}
-disabled
-{% endif %}
->Add to cart</button>
-</form>
-<p class="mt-6 text-xs text-stone-500">Free shipping over $50 · Easy 30-day returns</p>
-</div>
+{% set unit = product.sale_price or product.price %}
+
+<main class="mx-auto max-w-7xl px-5 lg:px-8">
+
+    <!-- ============================================== BREADCRUMB -->
+    <nav class="flex items-center gap-2 py-6 text-xs lux-muted" aria-label="Breadcrumb">
+        <a class="hover:text-ink" href="{{ url_for('store.home') }}">Home</a>
+        {{ icon('chevron-right', 'h-3 w-3 text-ink-40') }}
+        <a class="hover:text-ink" href="{{ url_for('store.shop') }}">Shop</a>
+        {{ icon('chevron-right', 'h-3 w-3 text-ink-40') }}
+        <a class="hover:text-ink" href="{{ url_for('store.category', slug=product.category_slug) }}">{{ product.category_name }}</a>
+        {{ icon('chevron-right', 'h-3 w-3 text-ink-40') }}
+        <span class="text-ink">{{ product.name }}</span>
+    </nav>
+
+    <div class="grid gap-12 border-t border-ink pt-10 lg:grid-cols-2 lg:gap-16 lg:pb-16">
+
+        <!-- ========================================== GALLERY -->
+        <div class="lg:sticky lg:top-24 lg:self-start" data-reveal>
+            <div class="lux-media aspect-square border border-ink">
+                {% if product.image %}
+                <img src="{{ product.image }}" alt="{{ product.name }}" decoding="async">
+                {% else %}
+                <div class="lux-media__fallback text-[9rem]">{{ product.category_name[:1] }}</div>
+                {% endif %}
+
+                <div class="lux-media__tags">
+                    {% if product.sale_price and product.price %}
+                    <span class="lux-badge lux-badge--signal">Sale −{{ ((product.price - product.sale_price) / product.price * 100) | round | int }}%</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-3 gap-px border border-ink bg-ink">
+                {% for name, label in [('truck', 'Free over $50'), ('refresh', '30-day returns'), ('shield', 'Secure payment')] %}
+                <div class="flex flex-col items-center gap-2 bg-paper px-2 py-4 text-center">
+                    {{ icon(name, 'h-4 w-4') }}
+                    <span class="lux-eyebrow">{{ label }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ========================================== DETAILS -->
+        <div data-reveal style="--i: 1">
+            <p class="lux-eyebrow lux-eyebrow--signal">{{ product.category_name }} · {{ product.brand or 'LUXORA edit' }}</p>
+
+            <h1 class="mt-5 font-display text-[clamp(2.25rem,5.5vw,4rem)] uppercase">{{ product.name }}</h1>
+
+            <div class="mt-5 flex flex-wrap items-center gap-4 text-sm">
+                <span class="flex items-center gap-1.5">
+                    <span class="lux-stars">{{ icon('star', 'h-4 w-4') }}</span>
+                    <b class="lux-num">{{ product.rating }}</b>
+                    <span class="lux-dim lux-num">({{ product.review_count }} reviews)</span>
+                </span>
+                {% if product.sku %}
+                <span class="lux-eyebrow">SKU {{ product.sku }}</span>
+                {% endif %}
+            </div>
+
+            <div class="mt-7 flex items-baseline gap-3 border-y border-ink py-6">
+                <strong class="font-display text-4xl lux-num">${{ '%.2f'|format(unit) }}</strong>
+                {% if product.sale_price %}
+                <del class="text-lg lux-dim lux-num">${{ '%.2f'|format(product.price) }}</del>
+                <span class="lux-badge lux-badge--signal">You save ${{ '%.2f'|format(product.price - product.sale_price) }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Stock -->
+            <div class="mt-6">
+                {% if product.stock > 0 %}
+                <p class="flex items-center gap-2 text-sm font-semibold">
+                    <span class="h-2 w-2 bg-ink"></span>
+                    In stock · <span class="lux-num">{{ product.stock }}</span> available
+                </p>
+                {% if product.stock <= 5 %}
+                <div class="lux-meter mt-3 max-w-xs">
+                    <span class="lux-meter__fill lux-meter__fill--signal is-in" style="width: {{ (product.stock / 5 * 100) | round | int }}%"></span>
+                </div>
+                <p class="mt-2 text-xs" style="color: var(--signal-ink)">Only a few left — order soon.</p>
+                {% endif %}
+                {% else %}
+                <p class="flex items-center gap-2 text-sm font-semibold lux-dim">
+                    <span class="h-2 w-2 bg-ink-40"></span> Out of stock
+                </p>
+                {% endif %}
+            </div>
+
+            <!-- Add to cart -->
+            <form data-cart-form class="mt-8 flex flex-wrap items-stretch gap-3" method="post" action="{{ url_for('store.add_cart', product_id=product.id) }}">
+                <div class="lux-qty" data-qty>
+                    <button class="lux-qty__btn" type="button" data-qty-step="-1" aria-label="Decrease quantity">{{ icon('minus', 'h-4 w-4') }}</button>
+                    <label class="sr-only" for="product-qty">Quantity</label>
+                    <input id="product-qty" type="number" min="1" max="{{ product.stock }}" name="quantity" value="1">
+                    <button class="lux-qty__btn" type="button" data-qty-step="1" aria-label="Increase quantity">{{ icon('plus', 'h-4 w-4') }}</button>
+                </div>
+
+                <button class="lux-btn lux-btn--primary flex-1 sm:flex-none sm:px-10" data-cart-submit type="submit" {% if not product.stock %}disabled{% endif %}>
+                    <span data-cart-label>Add to cart</span>
+                </button>
+            </form>
+
+            <p class="mt-5 text-xs lux-muted">Free shipping over $50 · Easy 30-day returns</p>
+
+            <!-- Details accordion -->
+            <div class="lux-accordion mt-10">
+                <details class="lux-accordion__item" open>
+                    <summary class="lux-accordion__summary">Description {{ icon('chevron-down', 'h-4 w-4') }}</summary>
+                    <div class="lux-accordion__body">{{ product.description or 'No description available for this product yet.' }}</div>
+                </details>
+
+                <details class="lux-accordion__item">
+                    <summary class="lux-accordion__summary">Shipping &amp; delivery {{ icon('chevron-down', 'h-4 w-4') }}</summary>
+                    <div class="lux-accordion__body">
+                        Standard delivery in 2–5 business days. Free shipping on orders over $50, otherwise a flat rate applies at checkout.
+                        Orders placed before 2pm are dispatched the same day.
+                    </div>
+                </details>
+
+                <details class="lux-accordion__item">
+                    <summary class="lux-accordion__summary">Returns {{ icon('chevron-down', 'h-4 w-4') }}</summary>
+                    <div class="lux-accordion__body">
+                        Return any item within 30 days of delivery, no questions asked. Items should be unused and in their original packaging.
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== REVIEWS -->
+    <section class="border-t border-ink py-16">
+        <div class="flex flex-wrap items-end justify-between gap-4" data-reveal>
+            <div>
+                <p class="lux-eyebrow lux-eyebrow--signal">Verified feedback</p>
+                <h2 class="mt-4 font-display text-[clamp(1.875rem,4vw,3rem)] uppercase">Customer reviews</h2>
+            </div>
+            <span class="lux-chip lux-chip--ok lux-num">{{ reviews|length }} published</span>
+        </div>
+
+        {% if reviews %}
+        <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {% for r in reviews %}
+            <blockquote class="lux-panel lux-lift p-6" data-reveal style="--i: {{ loop.index0 % 6 }}">
+                <div class="flex items-center gap-3">
+                    <span class="grid h-10 w-10 place-items-center border border-ink font-display text-sm uppercase">{{ r.name[:1] }}</span>
+                    <div>
+                        <b class="block text-sm">{{ r.name }}</b>
+                        <span class="flex items-center gap-1 text-xs">
+                            <span class="lux-stars">{{ icon('star', 'h-3 w-3') }}</span>
+                            <span class="lux-num">{{ r.rating }}</span>
+                        </span>
+                    </div>
+                </div>
+                <p class="mt-5 text-sm leading-7 lux-muted">“{{ r.comment }}”</p>
+            </blockquote>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="lux-empty mt-10">
+            <span class="mx-auto grid h-14 w-14 place-items-center border border-ink">{{ icon('quote', 'h-6 w-6') }}</span>
+            <h3 class="mt-6 font-display text-2xl uppercase">No reviews yet</h3>
+            <p class="mx-auto mt-3 max-w-sm text-sm leading-7 lux-muted">Be the first to share your experience after purchase.</p>
+        </div>
+        {% endif %}
+    </section>
 </main>
-<section class="mx-auto max-w-7xl px-5 pb-20 lg:px-8">
-<h2 class="font-display text-4xl">Customer reviews</h2>
-{% for r in reviews %}
-<blockquote class="mt-5 max-w-2xl border-l-2 border-gold bg-white p-6 text-sm leading-7">“{{ r.comment }}”<footer class="mt-3 text-xs text-stone-500">★ {{ r.rating }} · {{ r.name }}</footer>
-</blockquote>
-{% else %}
-<p class="mt-5 text-sm text-stone-500">No reviews yet. Be the first to share your experience after purchase.</p>
-{% endfor %}
-</section>
 {% endblock %}

@@ -1,0 +1,114 @@
+{#
+  LUXORA icon set — inline SVG, no network dependency.
+
+  Usage:
+    {% from 'components/icons.html' import icon %}
+    {{ icon('bag', 'h-5 w-5') }}
+
+  Geometry follows the Lucide 24x24 grid but uses square caps and miter
+  joins to match the hard-edged monochrome system.
+#}
+
+{%- macro icon(name, cls='h-5 w-5', sw='1.5') -%}
+<svg class="{{ cls }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ sw }}" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true" focusable="false">
+{%- if name == 'search' -%}
+<circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>
+{%- elif name == 'heart' -%}
+<path d="M12 20s-7-4.5-7-9.5A4 4 0 0 1 12 8a4 4 0 0 1 7-.5c0 5-7 12.5-7 12.5Z"/>
+{%- elif name == 'bag' -%}
+<path d="M4 7h16l-1 13H5L4 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/>
+{%- elif name == 'user' -%}
+<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.3 3.1-5.5 7-5.5s7 2.2 7 5.5"/>
+{%- elif name == 'menu' -%}
+<path d="M3 6h18M3 12h18M3 18h18"/>
+{%- elif name == 'close' -%}
+<path d="M6 6l12 12M18 6 6 18"/>
+{%- elif name == 'chevron-down' -%}
+<path d="m6 9 6 6 6-6"/>
+{%- elif name == 'chevron-up' -%}
+<path d="m6 15 6-6 6 6"/>
+{%- elif name == 'chevron-right' -%}
+<path d="m9 6 6 6-6 6"/>
+{%- elif name == 'chevron-left' -%}
+<path d="m15 6-6 6 6 6"/>
+{%- elif name == 'arrow-right' -%}
+<path d="M4 12h16M14 6l6 6-6 6"/>
+{%- elif name == 'arrow-left' -%}
+<path d="M20 12H4M10 6l-6 6 6 6"/>
+{%- elif name == 'arrow-up-right' -%}
+<path d="M7 17 17 7M8 7h9v9"/>
+{%- elif name == 'plus' -%}
+<path d="M12 5v14M5 12h14"/>
+{%- elif name == 'minus' -%}
+<path d="M5 12h14"/>
+{%- elif name == 'check' -%}
+<path d="m4 12.5 5 5L20 6.5"/>
+{%- elif name == 'check-square' -%}
+<path d="M4 4h16v16H4z"/><path d="m8 12 3 3 5-6"/>
+{%- elif name == 'alert' -%}
+<path d="M12 4 2.5 20h19L12 4Z"/><path d="M12 10v4"/><path d="M12 17.2v.1"/>
+{%- elif name == 'info' -%}
+<circle cx="12" cy="12" r="8.5"/><path d="M12 11v6"/><path d="M12 7.8v.1"/>
+{%- elif name == 'trash' -%}
+<path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v5M14 11v5"/>
+{%- elif name == 'package' -%}
+<path d="m12 3 9 4.5v9L12 21 3 16.5v-9L12 3Z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/>
+{%- elif name == 'box' -%}
+<path d="M4 4h16v16H4z"/><path d="M4 9.5h16"/>
+{%- elif name == 'truck' -%}
+<path d="M2 6h11v10H2z"/><path d="M13 9h4l4 3.5V16h-8"/><circle cx="6.5" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/>
+{%- elif name == 'shield' -%}
+<path d="M12 3l8 3v6c0 4.5-3.4 7.8-8 9-4.6-1.2-8-4.5-8-9V6l8-3Z"/><path d="m8.8 12 2.2 2.2 4.2-4.4"/>
+{%- elif name == 'refresh' -%}
+<path d="M3.5 12a8.5 8.5 0 0 1 14.4-6.1L21 9"/><path d="M21 4v5h-5"/><path d="M20.5 12a8.5 8.5 0 0 1-14.4 6.1L3 15"/><path d="M3 20v-5h5"/>
+{%- elif name == 'support' -%}
+<path d="M4 13a8 8 0 0 1 16 0"/><path d="M4 13h3v6H4zM17 13h3v6h-3z"/><path d="M20 19a3 3 0 0 1-3 3h-3"/>
+{%- elif name == 'star' -%}
+<path d="m12 3.5 2.7 5.6 6.1.8-4.4 4.3 1.1 6-5.5-3-5.5 3 1.1-6L3.2 9.9l6.1-.8L12 3.5Z" fill="currentColor" stroke="none"/>
+{%- elif name == 'star-line' -%}
+<path d="m12 3.5 2.7 5.6 6.1.8-4.4 4.3 1.1 6-5.5-3-5.5 3 1.1-6L3.2 9.9l6.1-.8L12 3.5Z"/>
+{%- elif name == 'trending-up' -%}
+<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>
+{%- elif name == 'users' -%}
+<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.2 2.9-5.3 6.5-5.3s6.5 2.1 6.5 5.3"/><path d="M16.5 5.2a3.5 3.5 0 0 1 0 6.6"/><path d="M18 14.9c2.1.6 3.5 2.1 3.5 4.1"/>
+{%- elif name == 'tag' -%}
+<path d="M4 4h7.5L20 12.5 12.5 20 4 11.5V4Z"/><path d="M8 8v.1"/>
+{%- elif name == 'chart' -%}
+<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>
+{%- elif name == 'sliders' -%}
+<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>
+{%- elif name == 'grid' -%}
+<path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/>
+{%- elif name == 'list' -%}
+<path d="M8 6h13M8 12h13M8 18h13M3.5 6v.1M3.5 12v.1M3.5 18v.1"/>
+{%- elif name == 'image' -%}
+<path d="M4 4h16v16H4z"/><circle cx="9" cy="9.5" r="1.6"/><path d="m4 17 5-4.5 4 3.5 3-2.5 4 3.5"/>
+{%- elif name == 'card' -%}
+<path d="M2.5 6h19v12h-19z"/><path d="M2.5 10h19"/><path d="M6 14.5h4"/>
+{%- elif name == 'pin' -%}
+<path d="M12 21s6.5-6.1 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 14.9 12 21 12 21Z"/><circle cx="12" cy="10.3" r="2.4"/>
+{%- elif name == 'mail' -%}
+<path d="M2.5 5h19v14h-19z"/><path d="m2.5 6 9.5 7 9.5-7"/>
+{%- elif name == 'phone' -%}
+<path d="M7 3h4l1.5 5-2.5 1.5a10 10 0 0 0 4.5 4.5L16 11.5 21 13v4c0 1.1-.9 2-2 2A16 16 0 0 1 5 5c0-1.1.9-2 2-2Z"/>
+{%- elif name == 'lock' -%}
+<path d="M5 11h14v10H5z"/><path d="M8.5 11V7.5a3.5 3.5 0 0 1 7 0V11"/>
+{%- elif name == 'spark' -%}
+<path d="M12 3v5M12 16v5M3 12h5M16 12h5"/><path d="m6.5 6.5 3 3M14.5 14.5l3 3M17.5 6.5l-3 3M9.5 14.5l-3 3"/>
+{%- elif name == 'clock' -%}
+<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.5 2"/>
+{%- elif name == 'gift' -%}
+<path d="M3 9h18v3H3zM4.5 12h15v9h-15z"/><path d="M12 9v12"/><path d="M12 9 9 5.5M12 9l3-3.5"/>
+{%- elif name == 'zap' -%}
+<path d="M13.5 2 4 13.5h6L10.5 22 20 10.5h-6L13.5 2Z"/>
+{%- elif name == 'eye' -%}
+<path d="M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.8"/>
+{%- elif name == 'settings' -%}
+<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>
+{%- elif name == 'store' -%}
+<path d="M3 9h18v11H3z"/><path d="m3 9 2-5h14l2 5"/><path d="M9 20v-6h6v6"/>
+{%- elif name == 'quote' -%}
+<path d="M9 6H4v6h5V6ZM20 6h-5v6h5V6Z"/><path d="M9 12c0 3.5-1.7 5.4-5 6M20 12c0 3.5-1.7 5.4-5 6"/>
+{%- endif -%}
+</svg>
+{%- endmacro -%}

@@ -1,0 +1,2047 @@
+/* ==========================================================================
+   LUXORA — design system
+   High-contrast monochrome. Black, white, one signal accent.
+   Square corners, hairline rules, hard shadows, crisp motion.
+   Loaded after the Tailwind Play CDN. Component classes here own
+   appearance; Tailwind utilities in templates own layout only.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. TOKENS
+   -------------------------------------------------------------------------- */
+
+:root {
+    /* Surfaces */
+    --paper: #ffffff;
+    --surface: #fafafa;
+    --surface-2: #f2f2f2;
+
+    /* Ink */
+    --ink: #000000;
+    --ink-60: #5c5c5c;
+    --ink-40: #8a8a8a;
+
+    /* Rules */
+    --line: #000000;
+    --line-soft: #e4e4e4;
+
+    /* Accent — fills and graphics only. Always pair with black text. */
+    --signal: #ff4a1c;
+    /* Accent for small text on white (5.6:1). */
+    --signal-ink: #c4300b;
+
+    /* Type */
+    --font-display: 'Archivo', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+
+    /* Motion */
+    --ease-out: cubic-bezier(.2, .8, .2, 1);
+    --ease-hard: cubic-bezier(.7, 0, .3, 1);
+    --dur-fast: 180ms;
+    --dur: 280ms;
+    --dur-slow: 420ms;
+
+    /* Hard shadow offsets */
+    --lift: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   2. BASE
+   -------------------------------------------------------------------------- */
+
+html {
+    scroll-behavior: smooth;
+    scrollbar-color: var(--ink) var(--surface);
+}
+
+body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+    background: var(--signal);
+    color: var(--ink);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--ink);
+}
+
+/* Display type. Scoped to the utility class so heading-shaped labels that
+   use tracking-widest are never dragged into tight display tracking. */
+.font-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -.035em;
+    line-height: .94;
+}
+
+.lux-logo {
+    font-family: var(--font-display);
+    font-weight: 900;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+}
+
+.lux-mono {
+    font-family: var(--font-mono);
+}
+
+/* Prices and stats must not reflow when JS rewrites them. */
+.lux-num,
+.lux-price,
+.lux-table td,
+.lux-kpi__value {
+    font-variant-numeric: tabular-nums;
+}
+
+.lux-eyebrow {
+    font-family: var(--font-mono);
+    font-size: .625rem;
+    font-weight: 600;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+}
+
+.lux-eyebrow--signal {
+    color: var(--signal-ink);
+}
+
+.lux-eyebrow--invert {
+    color: rgb(255 255 255 / .65);
+}
+
+.lux-label {
+    font-size: .625rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+}
+
+.lux-muted {
+    color: var(--ink-60);
+}
+
+.lux-dim {
+    color: var(--ink-40);
+}
+
+/* Visible, high-contrast focus on everything interactive. */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+}
+
+.lux-band a:focus-visible,
+.lux-band button:focus-visible {
+    outline-color: var(--signal);
+}
+
+/* Inverted surfaces */
+.lux-band {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.lux-band .lux-muted {
+    color: rgb(255 255 255 / .66);
+}
+
+.lux-band .lux-dim {
+    color: rgb(255 255 255 / .48);
+}
+
+/* Links and icon buttons inherit the inverted treatment automatically. */
+.lux-band .lux-nav-link,
+.lux-drawer__panel .lux-nav-link {
+    color: rgb(255 255 255 / .7);
+}
+
+.lux-band .lux-nav-link:hover,
+.lux-band .lux-nav-link:focus-visible,
+.lux-drawer__panel .lux-nav-link:hover {
+    color: var(--paper);
+}
+
+.lux-band .lux-nav-link::after,
+.lux-drawer__panel .lux-nav-link::after {
+    background: var(--signal);
+}
+
+/* --------------------------------------------------------------------------
+   3. BUTTONS
+   Hover wipes a fill in from the left via background-size — no pseudo
+   element, so no stacking-context surprises on filled variants.
+   -------------------------------------------------------------------------- */
+
+.lux-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    padding: .875rem 1.5rem;
+    border: 1px solid var(--ink);
+    border-radius: 0;
+    background-color: var(--paper);
+    background-image: linear-gradient(var(--ink), var(--ink));
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 0% 100%;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    transition: background-size var(--dur) var(--ease-hard),
+                color var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out);
+}
+
+.lux-btn:hover,
+.lux-btn:focus-visible {
+    background-size: 100% 100%;
+    color: var(--paper);
+}
+
+.lux-btn:active {
+    transform: translateY(1px);
+}
+
+.lux-btn--primary {
+    background-color: var(--ink);
+    background-image: linear-gradient(var(--paper), var(--paper));
+    color: var(--paper);
+}
+
+.lux-btn--primary:hover,
+.lux-btn--primary:focus-visible {
+    color: var(--ink);
+}
+
+.lux-btn--signal {
+    background-color: var(--signal);
+    background-image: linear-gradient(var(--ink), var(--ink));
+    color: var(--ink);
+}
+
+.lux-btn--signal:hover,
+.lux-btn--signal:focus-visible {
+    color: var(--paper);
+}
+
+.lux-btn--danger {
+    border-color: var(--signal-ink);
+    background-image: linear-gradient(var(--signal-ink), var(--signal-ink));
+    color: var(--signal-ink);
+}
+
+.lux-btn--danger:hover,
+.lux-btn--danger:focus-visible {
+    color: var(--paper);
+}
+
+.lux-btn--quiet {
+    border-color: var(--line-soft);
+}
+
+.lux-btn--quiet:hover,
+.lux-btn--quiet:focus-visible {
+    border-color: var(--ink);
+}
+
+.lux-btn--sm {
+    padding: .5rem .875rem;
+    font-size: .625rem;
+    letter-spacing: .1em;
+}
+
+.lux-btn--lg {
+    padding: 1.125rem 2rem;
+    font-size: .8125rem;
+}
+
+.lux-btn--block {
+    width: 100%;
+}
+
+.lux-btn:disabled,
+.lux-btn[aria-disabled='true'] {
+    opacity: .38;
+    cursor: not-allowed;
+    background-size: 0% 100%;
+    color: var(--ink);
+}
+
+.lux-btn--primary:disabled {
+    color: var(--paper);
+}
+
+/* Buttons sitting on an inverted band */
+.lux-band .lux-btn {
+    border-color: var(--paper);
+    background-color: transparent;
+    background-image: linear-gradient(var(--paper), var(--paper));
+    color: var(--paper);
+}
+
+.lux-band .lux-btn:hover,
+.lux-band .lux-btn:focus-visible {
+    color: var(--ink);
+}
+
+.lux-band .lux-btn--primary {
+    background-color: var(--paper);
+    background-image: linear-gradient(var(--signal), var(--signal));
+    color: var(--ink);
+}
+
+.lux-band .lux-btn--primary:hover,
+.lux-band .lux-btn--primary:focus-visible {
+    color: var(--ink);
+}
+
+/* Icon-only control */
+.lux-icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: border-color var(--dur-fast), background var(--dur-fast),
+                color var(--dur-fast), transform var(--dur-fast) var(--ease-out);
+}
+
+.lux-icon-btn:hover {
+    border-color: var(--ink);
+    transform: translateY(-1px);
+}
+
+.lux-icon-btn--filled:hover {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.lux-band .lux-icon-btn,
+.lux-drawer__panel .lux-icon-btn {
+    color: var(--paper);
+}
+
+.lux-band .lux-icon-btn:hover,
+.lux-drawer__panel .lux-icon-btn:hover {
+    border-color: var(--paper);
+}
+
+/* --------------------------------------------------------------------------
+   4. FORM CONTROLS
+   -------------------------------------------------------------------------- */
+
+.lux-field {
+    display: grid;
+    gap: .5rem;
+}
+
+.lux-input,
+.lux-select,
+.lux-textarea {
+    width: 100%;
+    border: 1px solid var(--ink);
+    border-radius: 0;
+    background: var(--paper);
+    padding: .8125rem 1rem;
+    font-family: var(--font-sans);
+    font-size: .875rem;
+    font-weight: 500;
+    color: var(--ink);
+    transition: box-shadow var(--dur-fast) var(--ease-out),
+                background var(--dur-fast);
+}
+
+.lux-textarea {
+    min-height: 7rem;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.lux-input::placeholder,
+.lux-textarea::placeholder {
+    color: var(--ink-40);
+    font-weight: 400;
+}
+
+.lux-input:focus,
+.lux-select:focus,
+.lux-textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--signal);
+}
+
+.lux-input:disabled,
+.lux-select:disabled {
+    background: var(--surface-2);
+    color: var(--ink-40);
+}
+
+.lux-select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 2.75rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2.25' stroke-linecap='square'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right .875rem center;
+    background-size: 13px;
+    cursor: pointer;
+}
+
+.lux-input--mono {
+    font-family: var(--font-mono);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+/* Compact controls for dense admin tables. Padding only — size stays with
+   the Tailwind text-* utility on the element so the two never collide. */
+.lux-input--xs,
+.lux-select--xs {
+    padding: .5rem .625rem;
+}
+
+.lux-select--xs {
+    padding-right: 1.9rem;
+    background-position: right .5rem center;
+    background-size: 11px;
+}
+
+/* Out-of-range / attention state, e.g. low stock. */
+.lux-input--flag {
+    border-color: var(--signal-ink);
+    color: var(--signal-ink);
+}
+
+/* File input — the native button restyled as a hard chip. */
+.lux-file {
+    width: 100%;
+    border: 1px dashed var(--ink);
+    background: var(--surface);
+    padding: .625rem;
+    font-size: .75rem;
+    color: var(--ink-60);
+    cursor: pointer;
+    transition: background var(--dur-fast), border-color var(--dur-fast);
+}
+
+.lux-file:hover {
+    background: var(--surface-2);
+}
+
+.lux-file::file-selector-button {
+    margin-right: .75rem;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    padding: .4rem .75rem;
+    font-family: var(--font-sans);
+    font-size: .625rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background var(--dur-fast), color var(--dur-fast);
+}
+
+.lux-file::file-selector-button:hover {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.lux-file--xs {
+    padding: .375rem;
+}
+
+.lux-file--xs::file-selector-button {
+    margin-right: .5rem;
+    padding: .3rem .5rem;
+    font-size: .5625rem;
+}
+
+/* Quantity stepper — wraps an existing number input, never replaces it. */
+.lux-qty {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+}
+
+.lux-qty__btn {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    border: 0;
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background var(--dur-fast), color var(--dur-fast);
+}
+
+.lux-qty__btn:hover {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.lux-qty__btn:disabled {
+    color: var(--ink-40);
+    cursor: not-allowed;
+    background: var(--surface);
+}
+
+.lux-qty input {
+    width: 3rem;
+    border: 0;
+    border-left: 1px solid var(--ink);
+    border-right: 1px solid var(--ink);
+    background: var(--paper);
+    padding: .75rem .25rem;
+    font-family: var(--font-mono);
+    font-size: .875rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    color: var(--ink);
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.lux-qty input:focus {
+    outline: none;
+    background: var(--signal);
+}
+
+.lux-qty input::-webkit-outer-spin-button,
+.lux-qty input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   5. SURFACES
+   -------------------------------------------------------------------------- */
+
+.lux-panel {
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    border-radius: 0;
+}
+
+.lux-panel--surface {
+    background: var(--surface);
+}
+
+.lux-panel__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.125rem 1.5rem;
+    border-bottom: 1px solid var(--ink);
+}
+
+.lux-panel__body {
+    padding: 1.5rem;
+}
+
+.lux-panel__foot {
+    padding: 1.125rem 1.5rem;
+    border-top: 1px solid var(--line-soft);
+}
+
+/* Hard-shadow hover lift. No blur anywhere in this system. */
+.lux-lift {
+    transition: transform var(--dur) var(--ease-out),
+                box-shadow var(--dur) var(--ease-out);
+}
+
+.lux-lift:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--lift) var(--lift) 0 var(--ink);
+}
+
+.lux-empty {
+    border: 1px solid var(--ink);
+    background: var(--surface);
+    padding: 4.5rem 2rem;
+    text-align: center;
+}
+
+.lux-rule {
+    border: 0;
+    border-top: 1px solid var(--ink);
+}
+
+.lux-hairline {
+    border: 0;
+    border-top: 1px solid var(--line-soft);
+}
+
+.lux-sticky {
+    position: sticky;
+    top: 7rem;
+}
+
+/* Shop filter bar. Only sticky from md up — the mobile header is two rows
+   tall, so a sticky bar would sit under it. */
+.lux-filters {
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    padding: .75rem;
+}
+
+.lux-filters .lux-search input {
+    padding-top: .8125rem;
+    padding-bottom: .8125rem;
+}
+
+@media (min-width: 768px) {
+    .lux-filters {
+        position: sticky;
+        top: 4.25rem;
+        z-index: 20;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   6. BADGES, CHIPS, METERS
+   -------------------------------------------------------------------------- */
+
+.lux-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    padding: .3rem .55rem;
+    font-family: var(--font-sans);
+    font-size: .5625rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--ink);
+    white-space: nowrap;
+}
+
+.lux-badge--ink {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.lux-badge--signal {
+    background: var(--signal);
+    color: var(--ink);
+}
+
+.lux-badge--muted {
+    border-color: var(--line-soft);
+    color: var(--ink-60);
+}
+
+.lux-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    border: 1px solid var(--line-soft);
+    padding: .375rem .75rem;
+    font-size: .6875rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--ink-60);
+    white-space: nowrap;
+}
+
+.lux-chip::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: currentColor;
+    flex: none;
+}
+
+.lux-chip--ok {
+    border-color: var(--ink);
+    color: var(--ink);
+}
+
+.lux-chip--warn {
+    border-color: var(--signal-ink);
+    color: var(--signal-ink);
+}
+
+.lux-chip--flat::before {
+    display: none;
+}
+
+.lux-meter {
+    height: 6px;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    overflow: hidden;
+}
+
+.lux-meter__fill {
+    display: block;
+    height: 100%;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 900ms var(--ease-out);
+}
+
+.lux-meter__fill--signal {
+    background: var(--signal);
+}
+
+[data-reveal].is-in .lux-meter__fill,
+.lux-meter__fill.is-in {
+    transform: scaleX(1);
+}
+
+/* Star rating row */
+.lux-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: .1rem;
+    color: var(--ink);
+}
+
+.lux-stars svg {
+    width: 14px;
+    height: 14px;
+}
+
+.lux-stars--dim {
+    color: var(--ink-40);
+}
+
+/* --------------------------------------------------------------------------
+   7. TICKER
+   -------------------------------------------------------------------------- */
+
+.lux-ticker {
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.lux-ticker__track {
+    display: flex;
+    width: max-content;
+    gap: 3.5rem;
+    padding: .6rem 0;
+    white-space: nowrap;
+    animation: lux-marquee 30s linear infinite;
+}
+
+.lux-ticker:hover .lux-ticker__track,
+.lux-ticker:focus-within .lux-ticker__track {
+    animation-play-state: paused;
+}
+
+.lux-ticker__item {
+    display: inline-flex;
+    align-items: center;
+    gap: .75rem;
+    font-family: var(--font-mono);
+    font-size: .625rem;
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+
+.lux-ticker__item::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: var(--signal);
+    flex: none;
+}
+
+/* Inverted word band — larger display type on paper. */
+.lux-ticker--invert {
+    background: var(--paper);
+    color: var(--ink);
+}
+
+.lux-ticker--invert .lux-ticker__track {
+    gap: 2.5rem;
+    padding: .9rem 0;
+}
+
+.lux-ticker--invert .lux-ticker__item {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 800;
+    letter-spacing: -.02em;
+}
+
+/* --------------------------------------------------------------------------
+   7b. HERO
+   -------------------------------------------------------------------------- */
+
+.lux-outline {
+    color: var(--ink);
+}
+
+@supports (-webkit-text-stroke: 2px #000) {
+    .lux-outline {
+        color: transparent;
+        -webkit-text-stroke: 2px var(--ink);
+    }
+}
+
+.lux-hero-frame {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--ink);
+}
+
+.lux-hero-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgb(0 0 0 / .38), transparent 58%);
+    pointer-events: none;
+}
+
+@media (min-width: 1024px) {
+    .lux-hero-frame {
+        box-shadow: 12px 12px 0 var(--signal);
+    }
+}
+
+.lux-hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.15) brightness(.95);
+}
+
+/* --------------------------------------------------------------------------
+   7c. AUTH SPLIT PANEL
+   -------------------------------------------------------------------------- */
+
+.lux-outline-invert {
+    color: var(--paper);
+}
+
+@supports (-webkit-text-stroke: 2px #000) {
+    .lux-outline-invert {
+        color: transparent;
+        -webkit-text-stroke: 2px var(--paper);
+    }
+}
+
+/* isolation:isolate makes the aside a stacking context, so the decorative
+   square below paints above the panel background but under the content. */
+.lux-auth-aside {
+    isolation: isolate;
+}
+
+.lux-auth-glow {
+    position: absolute;
+    right: -7rem;
+    top: 30%;
+    z-index: -1;
+    width: 22rem;
+    height: 22rem;
+    border: 1px solid rgb(255 255 255 / .14);
+    pointer-events: none;
+    animation: lux-slow-spin 46s linear infinite;
+}
+
+.lux-auth-glow::before {
+    content: '';
+    position: absolute;
+    inset: 3.5rem;
+    border: 1px solid rgb(255 74 28 / .24);
+}
+
+@keyframes lux-slow-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* --------------------------------------------------------------------------
+   8. HEADER + NAV
+   -------------------------------------------------------------------------- */
+
+.lux-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgb(255 255 255 / .86);
+    backdrop-filter: blur(14px) saturate(1.6);
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    border-bottom: 1px solid var(--ink);
+    transition: background var(--dur), box-shadow var(--dur);
+}
+
+.lux-header.is-scrolled {
+    background: rgb(255 255 255 / .96);
+    box-shadow: 0 1px 0 0 var(--ink);
+}
+
+.lux-header__inner {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+    transition: padding var(--dur) var(--ease-out);
+}
+
+.lux-header.is-scrolled .lux-header__inner {
+    padding-top: .8125rem;
+    padding-bottom: .8125rem;
+}
+
+.lux-nav-link {
+    position: relative;
+    display: inline-block;
+    padding-bottom: .3rem;
+    font-size: .8125rem;
+    font-weight: 500;
+    color: var(--ink-60);
+    white-space: nowrap;
+    transition: color var(--dur-fast);
+}
+
+.lux-nav-link:hover,
+.lux-nav-link:focus-visible,
+.lux-nav-link.is-active {
+    color: var(--ink);
+}
+
+.lux-nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur) var(--ease-hard);
+}
+
+.lux-nav-link:hover::after,
+.lux-nav-link:focus-visible::after,
+.lux-nav-link.is-active::after {
+    transform: scaleX(1);
+}
+
+/* Header search */
+.lux-search {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    padding: 0 .75rem;
+    transition: box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.lux-search:focus-within {
+    box-shadow: 0 0 0 3px var(--signal);
+}
+
+.lux-search input {
+    min-width: 0;
+    flex: 1;
+    border: 0;
+    background: transparent;
+    padding: .625rem 0;
+    font-size: .8125rem;
+    color: var(--ink);
+}
+
+.lux-search input:focus {
+    outline: none;
+}
+
+.lux-search input::placeholder {
+    color: var(--ink-40);
+}
+
+.lux-search button {
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: var(--ink-60);
+    cursor: pointer;
+    transition: color var(--dur-fast), transform var(--dur-fast);
+}
+
+.lux-search button:hover {
+    color: var(--ink);
+    transform: scale(1.1);
+}
+
+/* Cart bag + count */
+.lux-bag {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .8125rem;
+    font-weight: 600;
+}
+
+.lux-bag:hover {
+    color: var(--ink);
+}
+
+.lux-bag sup,
+.lux-bag__count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.35rem;
+    height: 1.35rem;
+    padding: 0 .25rem;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: .625rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    /* <sup> defaults to vertical-align:super, which would lift the badge
+       off the baseline of the bag label. */
+    vertical-align: middle;
+}
+
+.lux-bag sup.is-bump,
+.lux-bag__count.is-bump {
+    animation: lux-bump var(--dur-slow) var(--ease-out),
+               lux-pulse 700ms var(--ease-out);
+}
+
+/* Account avatar */
+.lux-avatar {
+    width: 1.75rem;
+    height: 1.75rem;
+    object-fit: cover;
+    border: 1px solid var(--ink);
+    transition: box-shadow var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out);
+}
+
+a:hover > .lux-avatar {
+    transform: translateY(-1px);
+    box-shadow: 2px 2px 0 var(--signal);
+}
+
+/* --------------------------------------------------------------------------
+   9. MOBILE DRAWER
+   -------------------------------------------------------------------------- */
+
+.lux-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.lux-drawer.is-open {
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.lux-drawer__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgb(0 0 0 / .55);
+    opacity: 0;
+    transition: opacity var(--dur) var(--ease-out);
+}
+
+.lux-drawer.is-open .lux-drawer__backdrop {
+    opacity: 1;
+}
+
+.lux-drawer__panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: min(21rem, 88vw);
+    padding: 1.5rem;
+    background: var(--ink);
+    color: var(--paper);
+    border-left: 1px solid var(--ink);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform var(--dur-slow) var(--ease-hard);
+}
+
+.lux-drawer.is-open .lux-drawer__panel {
+    transform: translateX(0);
+}
+
+.lux-drawer__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .9rem 0;
+    border-bottom: 1px solid rgb(255 255 255 / .16);
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    color: var(--paper);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity var(--dur) var(--ease-out),
+                transform var(--dur) var(--ease-out),
+                padding-left var(--dur-fast) var(--ease-out);
+}
+
+.lux-drawer.is-open .lux-drawer__link {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: calc(140ms + var(--i, 0) * 45ms);
+}
+
+.lux-drawer__link:hover {
+    padding-left: .5rem;
+    color: var(--signal);
+}
+
+.lux-drawer__link svg {
+    flex: none;
+    transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.lux-drawer__link:hover svg {
+    transform: translateX(4px);
+}
+
+body.lux-locked {
+    overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   10. TOASTS
+   -------------------------------------------------------------------------- */
+
+.lux-toast-region {
+    position: fixed;
+    top: 5.75rem;
+    right: 1.25rem;
+    z-index: 60;
+    display: grid;
+    gap: .625rem;
+    width: min(22rem, calc(100vw - 2.5rem));
+    pointer-events: none;
+}
+
+.lux-toast {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: .625rem;
+    overflow: hidden;
+    padding: .875rem 2.5rem .875rem 1rem;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    font-size: .8125rem;
+    line-height: 1.45;
+    pointer-events: auto;
+    animation: lux-toast-in var(--dur) var(--ease-out) both;
+}
+
+.lux-toast--error {
+    background: var(--signal);
+    color: var(--ink);
+}
+
+.lux-toast.is-out {
+    animation: lux-toast-out var(--dur-fast) var(--ease-hard) both;
+}
+
+.lux-toast svg {
+    flex: none;
+    margin-top: 1px;
+}
+
+.lux-toast__bar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    opacity: .45;
+    transform-origin: left center;
+    animation: lux-toast-bar 4200ms linear both;
+}
+
+.lux-toast__close {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    opacity: .6;
+    cursor: pointer;
+    transition: opacity var(--dur-fast), transform var(--dur-fast);
+}
+
+.lux-toast__close:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+
+/* --------------------------------------------------------------------------
+   11. MODAL
+   -------------------------------------------------------------------------- */
+
+.lux-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: none;
+    place-items: center;
+    padding: 1.25rem;
+    background: rgb(0 0 0 / .6);
+}
+
+.lux-modal.is-open {
+    display: grid;
+    animation: lux-fade-in var(--dur-fast) var(--ease-out) both;
+}
+
+.lux-modal__panel {
+    width: 100%;
+    max-width: 28rem;
+    padding: 1.75rem;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--ink);
+    animation: lux-modal-in var(--dur) var(--ease-out) both;
+}
+
+/* --------------------------------------------------------------------------
+   12. PRODUCT CARD + MEDIA
+   -------------------------------------------------------------------------- */
+
+.lux-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    transition: transform var(--dur) var(--ease-out),
+                box-shadow var(--dur) var(--ease-out);
+}
+
+.lux-card:hover,
+.lux-card:focus-within {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--lift) var(--lift) 0 var(--ink);
+}
+
+.lux-media {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: var(--surface);
+}
+
+.lux-media > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(.32) contrast(1.04);
+    transition: transform 620ms var(--ease-out), filter 620ms var(--ease-out);
+    /* Opacity only — an animated transform with fill-mode:both would win
+       over the hover transition below and freeze the zoom. */
+    animation: lux-img-in 620ms var(--ease-out) both;
+}
+
+.lux-card:hover .lux-media > img,
+.lux-media:hover > img {
+    transform: scale(1.06);
+    filter: none;
+}
+
+.lux-media__fallback {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    background: var(--surface);
+    font-family: var(--font-display);
+    font-weight: 900;
+    color: var(--ink-40);
+    text-transform: uppercase;
+    background-image:
+        repeating-linear-gradient(45deg, var(--surface-2) 0 8px, transparent 8px 16px);
+}
+
+/* Bottom action bar that slides up out of the image edge */
+.lux-media__action {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: .75rem;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: .625rem;
+    font-weight: 800;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    text-align: center;
+    transform: translateY(100%);
+    transition: transform var(--dur) var(--ease-hard);
+}
+
+.lux-card:hover .lux-media__action,
+.lux-card:focus-within .lux-media__action {
+    transform: translateY(0);
+}
+
+.lux-media__tags {
+    position: absolute;
+    top: .625rem;
+    left: .625rem;
+    display: grid;
+    gap: .375rem;
+    justify-items: start;
+    z-index: 1;
+}
+
+.lux-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: .5rem;
+    padding: 1rem;
+    border-top: 1px solid var(--ink);
+}
+
+.lux-card__title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    line-height: 1.2;
+}
+
+.lux-card__title a:hover {
+    color: var(--signal-ink);
+}
+
+.lux-price {
+    display: flex;
+    align-items: baseline;
+    gap: .5rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+}
+
+.lux-price del {
+    color: var(--ink-40);
+    font-size: .75rem;
+    font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   13. CATEGORY / FEATURE TILES
+   -------------------------------------------------------------------------- */
+
+.lux-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2rem;
+    min-height: 13rem;
+    padding: 1.375rem;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    overflow: hidden;
+    transition: transform var(--dur) var(--ease-out),
+                box-shadow var(--dur) var(--ease-out),
+                background var(--dur) var(--ease-out),
+                color var(--dur) var(--ease-out);
+}
+
+.lux-tile:hover {
+    background: var(--ink);
+    color: var(--paper);
+    transform: translate(-3px, -3px);
+    box-shadow: var(--lift) var(--lift) 0 var(--signal);
+}
+
+.lux-tile__meta {
+    color: var(--ink-60);
+    transition: color var(--dur) var(--ease-out);
+}
+
+.lux-tile:hover .lux-tile__meta {
+    color: rgb(255 255 255 / .7);
+}
+
+.lux-tile__arrow {
+    transition: transform var(--dur) var(--ease-out);
+}
+
+.lux-tile:hover .lux-tile__arrow {
+    transform: translate(4px, -4px);
+}
+
+/* --------------------------------------------------------------------------
+   14. TABLES
+   -------------------------------------------------------------------------- */
+
+.lux-table-wrap {
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    overflow-x: auto;
+}
+
+.lux-table-wrap--tall {
+    overflow: auto;
+    max-height: min(72vh, 760px);
+}
+
+.lux-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .875rem;
+    text-align: left;
+}
+
+.lux-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--ink);
+    color: var(--paper);
+    padding: .8125rem 1rem;
+    font-size: .5625rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.lux-table tbody td {
+    padding: .9375rem 1rem;
+    border-bottom: 1px solid var(--line-soft);
+    vertical-align: middle;
+}
+
+.lux-table tbody tr {
+    transition: background var(--dur-fast);
+}
+
+.lux-table tbody tr:hover {
+    background: var(--surface);
+}
+
+.lux-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.lux-table--top tbody td {
+    vertical-align: top;
+}
+
+/* Lets a full-width empty state fill a colspan cell edge to edge. */
+.lux-table td.lux-td-flush {
+    padding: 0;
+}
+
+.lux-empty--bare {
+    border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   15. STEPPER + TIMELINE
+   -------------------------------------------------------------------------- */
+
+.lux-stepper {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.lux-stepper__step {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    color: var(--ink-40);
+}
+
+.lux-stepper__num {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    flex: none;
+    border: 1px solid currentColor;
+    font-family: var(--font-mono);
+    font-size: .75rem;
+    font-weight: 700;
+}
+
+.lux-stepper__label {
+    font-size: .625rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.lux-stepper__step--active {
+    color: var(--ink);
+}
+
+.lux-stepper__step--active .lux-stepper__num {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.lux-stepper__step--done {
+    color: var(--ink);
+}
+
+.lux-stepper__step--done .lux-stepper__num {
+    background: var(--signal);
+    border-color: var(--ink);
+    color: var(--ink);
+}
+
+.lux-stepper__line {
+    flex: 1;
+    min-width: .75rem;
+    height: 1px;
+    background: var(--line-soft);
+}
+
+.lux-timeline {
+    position: relative;
+    padding-left: 2.25rem;
+}
+
+.lux-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 1.75rem;
+    bottom: 1.75rem;
+    width: 1px;
+    background: var(--line-soft);
+}
+
+.lux-timeline__item {
+    position: relative;
+    padding: 1.125rem 0;
+    border-bottom: 1px solid var(--line-soft);
+    color: var(--ink-40);
+}
+
+.lux-timeline__item:last-child {
+    border-bottom: 0;
+}
+
+.lux-timeline__dot {
+    position: absolute;
+    left: -2.25rem;
+    top: 1.5rem;
+    display: grid;
+    place-items: center;
+    width: 15px;
+    height: 15px;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    transition: background var(--dur), box-shadow var(--dur);
+}
+
+.lux-timeline__item--done {
+    color: var(--ink);
+}
+
+.lux-timeline__item--done .lux-timeline__dot {
+    background: var(--ink);
+}
+
+.lux-timeline__item--current {
+    color: var(--ink);
+}
+
+.lux-timeline__item--current .lux-timeline__dot {
+    background: var(--signal);
+    box-shadow: 0 0 0 4px rgb(255 74 28 / .22);
+    animation: lux-pulse-square 2.4s var(--ease-out) infinite;
+}
+
+/* --------------------------------------------------------------------------
+   16. ACCORDION (native details/summary — no JS)
+   -------------------------------------------------------------------------- */
+
+.lux-accordion {
+    border-top: 1px solid var(--line-soft);
+}
+
+.lux-accordion__item {
+    border-bottom: 1px solid var(--line-soft);
+}
+
+.lux-accordion__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.0625rem .25rem;
+    font-size: .6875rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    list-style: none;
+    transition: color var(--dur-fast), padding-left var(--dur-fast) var(--ease-out);
+}
+
+.lux-accordion__summary::-webkit-details-marker {
+    display: none;
+}
+
+.lux-accordion__summary:hover {
+    padding-left: .5rem;
+}
+
+.lux-accordion__summary svg {
+    flex: none;
+    transition: transform var(--dur) var(--ease-hard);
+}
+
+.lux-accordion__item[open] .lux-accordion__summary svg {
+    transform: rotate(180deg);
+}
+
+.lux-accordion__body {
+    padding: 0 .25rem 1.25rem;
+    font-size: .875rem;
+    line-height: 1.75;
+    color: var(--ink-60);
+    animation: lux-fade-up var(--dur) var(--ease-out) both;
+}
+
+/* --------------------------------------------------------------------------
+   17. ADMIN SHELL
+   -------------------------------------------------------------------------- */
+
+.lux-admin-body {
+    background: var(--surface);
+}
+
+.lux-admin-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+    width: 16rem;
+    overflow-y: auto;
+    background: var(--ink);
+    color: rgb(255 255 255 / .72);
+    border-right: 1px solid var(--ink);
+    transform: translateX(-100%);
+    transition: transform var(--dur-slow) var(--ease-hard);
+}
+
+.lux-admin-sidebar.is-open {
+    transform: translateX(0);
+}
+
+.lux-admin-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    background: rgb(0 0 0 / .5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--dur) var(--ease-out), visibility var(--dur);
+}
+
+.lux-admin-scrim.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+@media (min-width: 1024px) {
+    .lux-admin-sidebar {
+        transform: translateX(0);
+    }
+
+    .lux-admin-scrim {
+        display: none;
+    }
+}
+
+.lux-admin-nav a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .75rem .875rem;
+    font-size: .8125rem;
+    font-weight: 500;
+    color: rgb(255 255 255 / .66);
+    transition: color var(--dur-fast), background var(--dur-fast),
+                padding-left var(--dur-fast) var(--ease-out);
+}
+
+.lux-admin-nav a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--signal);
+    transform: scaleY(0);
+    transform-origin: center;
+    transition: transform var(--dur) var(--ease-hard);
+}
+
+.lux-admin-nav a svg {
+    flex: none;
+    opacity: .7;
+    transition: opacity var(--dur-fast);
+}
+
+.lux-admin-nav a:hover {
+    background: rgb(255 255 255 / .07);
+    color: #fff;
+    padding-left: 1.125rem;
+}
+
+.lux-admin-nav a:hover svg {
+    opacity: 1;
+}
+
+.lux-admin-nav a.is-active {
+    background: rgb(255 255 255 / .1);
+    color: #fff;
+}
+
+.lux-admin-nav a.is-active::before {
+    transform: scaleY(1);
+}
+
+.lux-admin-nav a.is-active svg {
+    opacity: 1;
+}
+
+.lux-admin-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: rgb(255 255 255 / .9);
+    backdrop-filter: blur(14px) saturate(1.6);
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    border-bottom: 1px solid var(--ink);
+}
+
+.lux-kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    transition: transform var(--dur) var(--ease-out),
+                box-shadow var(--dur) var(--ease-out);
+}
+
+.lux-kpi:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 5px 5px 0 var(--ink);
+}
+
+.lux-kpi__icon {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--ink);
+    background: var(--surface);
+}
+
+.lux-kpi--accent .lux-kpi__icon {
+    background: var(--signal);
+}
+
+.lux-kpi__value {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: -.04em;
+    line-height: 1;
+}
+
+/* --------------------------------------------------------------------------
+   18. BAR CHART
+   -------------------------------------------------------------------------- */
+
+.lux-chart {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: .5rem;
+    height: 14rem;
+    border-bottom: 1px solid var(--ink);
+}
+
+.lux-chart__grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-rows: repeat(4, 1fr);
+    pointer-events: none;
+}
+
+.lux-chart__grid span {
+    border-top: 1px dashed var(--line-soft);
+}
+
+.lux-chart__col {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: .5rem;
+    min-width: 0;
+    height: 100%;
+}
+
+.lux-chart__bar {
+    width: 100%;
+    min-height: 3px;
+    background: var(--ink);
+    transform: scaleY(0);
+    transform-origin: bottom center;
+    transition: transform 700ms var(--ease-out), background var(--dur-fast);
+    transition-delay: calc(var(--i, 0) * 45ms);
+}
+
+[data-reveal].is-in .lux-chart__bar {
+    transform: scaleY(1);
+}
+
+.lux-chart__col:hover .lux-chart__bar {
+    background: var(--signal);
+}
+
+.lux-chart__tip {
+    padding: .2rem .4rem;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: .625rem;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity var(--dur-fast), transform var(--dur-fast) var(--ease-out);
+}
+
+.lux-chart__col:hover .lux-chart__tip {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   19. SCROLL REVEAL
+   Only armed once JS confirms it can disarm it — see .lux-js on <html>.
+   Without JS the content simply renders.
+   -------------------------------------------------------------------------- */
+
+.lux-js [data-reveal] {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity var(--dur-slow) var(--ease-out),
+                transform var(--dur-slow) var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 60ms);
+}
+
+.lux-js [data-reveal].is-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   20. KEYFRAMES
+   -------------------------------------------------------------------------- */
+
+@keyframes lux-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+@keyframes lux-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes lux-fade-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lux-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes lux-img-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes lux-toast-in {
+    from { opacity: 0; transform: translateX(24px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes lux-toast-out {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(24px); }
+}
+
+@keyframes lux-toast-bar {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+}
+
+@keyframes lux-modal-in {
+    from { opacity: 0; transform: translateY(12px) scale(.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes lux-bump {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+@keyframes lux-pulse {
+    from { box-shadow: 0 0 0 0 rgb(255 74 28 / .6); }
+    to { box-shadow: 0 0 0 11px rgb(255 74 28 / 0); }
+}
+
+@keyframes lux-pulse-square {
+    0%, 100% { box-shadow: 0 0 0 4px rgb(255 74 28 / .22); }
+    50% { box-shadow: 0 0 0 7px rgb(255 74 28 / .06); }
+}
+
+.lux-float {
+    animation: lux-float 6s ease-in-out infinite;
+}
+
+.lux-fade-up {
+    animation: lux-fade-up var(--dur-slow) var(--ease-out) both;
+}
+
+/* --------------------------------------------------------------------------
+   21. PAGE TRANSITIONS
+   Ignored silently by browsers without View Transitions.
+   -------------------------------------------------------------------------- */
+
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 240ms;
+    animation-timing-function: var(--ease-out);
+}
+
+/* --------------------------------------------------------------------------
+   22. REDUCED MOTION
+   One gate for the whole system.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        transition-delay: 0ms !important;
+    }
+
+    .lux-js [data-reveal] {
+        opacity: 1;
+        transform: none;
+    }
+
+    .lux-card:hover,
+    .lux-tile:hover,
+    .lux-kpi:hover,
+    .lux-lift:hover {
+        transform: none;
+    }
+
+    @view-transition {
+        navigation: none;
+    }
+}

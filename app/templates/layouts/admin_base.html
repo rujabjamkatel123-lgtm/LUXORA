@@ -1,45 +1,143 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Admin · LUXORA{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { theme: { extend: {
-            colors: { ink: '#171714', cream: '#f7f6f2', gold: '#a68a63' },
-            fontFamily: { display: ['Playfair Display', 'serif'], sans: ['DM Sans', 'sans-serif'] }
-        }}};
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
-    <style>
-        :root { --line:#e9e7ed; --violet:#6d4aff; --shadow:0 18px 50px rgba(31,24,59,.08); --ease:cubic-bezier(.4,0,.2,1); }
-        .luxora-admin-body { background:linear-gradient(135deg,#f9f9fb,#f0eff8) !important; }
-        .luxora-admin-sidebar { background:linear-gradient(180deg,#1d192b,#271b48) !important; box-shadow:12px 0 40px rgba(31,24,59,.14); }
-        .luxora-admin-sidebar a, .luxora-admin-header a, button, input, select, textarea { transition:all .35s var(--ease); }
-        .luxora-admin-sidebar a:hover { background:rgba(255,255,255,.14) !important; }
-        .luxora-admin-header { background:rgba(255,255,255,.85) !important; backdrop-filter:blur(14px); }
-        .luxora-admin-card, .luxora-kpi { border-radius:1.2rem !important; box-shadow:var(--shadow); border-color:var(--line) !important; }
-        .luxora-kpi { transition:transform .35s var(--ease),box-shadow .35s var(--ease); }
-        .luxora-kpi:hover { transform:translateY(-4px); box-shadow:0 24px 56px rgba(31,24,59,.15); }
-        input:focus, textarea:focus, select:focus { border-color:var(--violet) !important; box-shadow:0 0 0 4px rgba(109,74,255,.12); outline:none; }
-        @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important}}
-    </style>
+    {% include 'layouts/_head.html' %}
 </head>
-<body class="luxora-admin-body min-h-screen bg-cream font-sans text-ink antialiased">
-    <aside class="luxora-admin-sidebar fixed inset-y-0 left-0 hidden w-64 bg-ink px-5 py-7 text-stone-300 lg:block">
-        <a class="font-display text-2xl tracking-[0.2em] text-white" href="{{ url_for('admin.dashboard') }}">LUXORA</a>
-        <p class="mt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gold">Admin workspace</p>
-        <nav class="mt-12 grid gap-1 text-sm">
-            {% for label, endpoint in [('Overview','admin.dashboard'),('Products & inventory','admin.products'),('Orders','admin.orders'),('Customers','admin.customers'),('Reviews','admin.reviews'),('Discounts','admin.discounts'),('Analytics','admin.analytics'),('Settings','admin.settings')] %}
-            <a class="rounded px-3 py-3 transition hover:bg-white/10 hover:text-white {% if request.endpoint == endpoint %}bg-white/10 text-white{% endif %}" href="{{ url_for(endpoint) }}">{{ label }}</a>
+{% from 'components/icons.html' import icon %}
+{% set admin_nav = [
+    ('Overview', 'admin.dashboard', 'grid'),
+    ('Products & inventory', 'admin.products', 'box'),
+    ('Orders', 'admin.orders', 'package'),
+    ('Customers', 'admin.customers', 'users'),
+    ('Reviews', 'admin.reviews', 'star-line'),
+    ('Discounts', 'admin.discounts', 'tag'),
+    ('Analytics', 'admin.analytics', 'chart'),
+    ('Settings', 'admin.settings', 'settings')
+] %}
+<body class="lux-admin-body min-h-screen font-sans text-ink antialiased">
+
+    <div class="lux-admin-scrim" data-admin-close></div>
+
+    <!-- ================================================== SIDEBAR -->
+    <aside class="lux-admin-sidebar" id="lux-admin-sidebar" data-admin-sidebar>
+        <div class="flex items-start justify-between px-5 pt-7">
+            <div>
+                <a class="lux-logo text-xl text-paper" href="{{ url_for('admin.dashboard') }}">LUXORA</a>
+                <p class="lux-eyebrow lux-eyebrow--invert mt-2">Admin workspace</p>
+            </div>
+            <button class="lux-icon-btn lg:hidden" type="button" data-admin-close aria-label="Close menu">
+                {{ icon('close', 'h-5 w-5') }}
+            </button>
+        </div>
+
+        <nav class="lux-admin-nav mt-10 grid">
+            {% for label, endpoint, name in admin_nav %}
+            <a class="{{ 'is-active' if request.endpoint == endpoint }}" href="{{ url_for(endpoint) }}">
+                {{ icon(name, 'h-4 w-4') }} {{ label }}
+            </a>
             {% endfor %}
         </nav>
-        <div class="absolute bottom-8 left-5 right-5 border-t border-white/10 pt-5 text-xs"><a class="block py-2 text-stone-400 hover:text-white" href="{{ url_for('store.home') }}">← View storefront</a><a class="block py-2 text-stone-400 hover:text-white" href="{{ url_for('auth.logout') }}">Sign out</a></div>
+
+        <div class="mt-10 border-t border-white/10 px-5 py-5 text-xs">
+            <a class="flex items-center gap-2 py-2 text-white/55 hover:text-white" href="{{ url_for('store.home') }}">
+                {{ icon('store', 'h-3.5 w-3.5') }} View storefront
+            </a>
+            <a class="flex items-center gap-2 py-2 text-white/55 hover:text-white" href="{{ url_for('auth.logout') }}">
+                {{ icon('arrow-right', 'h-3.5 w-3.5') }} Sign out
+            </a>
+        </div>
     </aside>
+
+    <!-- ================================================== MAIN -->
     <div class="lg:pl-64">
-        <header class="luxora-admin-header flex items-center justify-between border-b border-stone-200 bg-white px-5 py-5 lg:px-10"><div><p class="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">Management console</p><h1 class="font-display text-2xl">{% block page_heading %}Admin workspace{% endblock %}</h1></div><div class="flex items-center gap-4 text-sm"><span class="hidden text-stone-500 sm:inline">{{ session.name }}</span><a class="luxora-button rounded-full bg-ink px-4 py-2 text-xs font-semibold text-white" href="{{ url_for('store.home') }}">Storefront</a></div></header>
-        <main class="luxora-admin-main px-5 py-8 lg:px-10 lg:py-12">{% block content %}{% endblock %}</main>
+        <header class="lux-admin-header flex items-center justify-between gap-4 px-5 py-4 lg:px-10 lg:py-5">
+            <div class="flex items-center gap-3">
+                <button class="lux-icon-btn lg:hidden" type="button" data-admin-toggle aria-label="Open menu" aria-controls="lux-admin-sidebar" aria-expanded="false">
+                    {{ icon('menu', 'h-5 w-5') }}
+                </button>
+                <div>
+                    <p class="lux-eyebrow lux-eyebrow--signal">Management console</p>
+                    <h1 class="mt-1 font-display text-xl uppercase lg:text-2xl">{% block page_heading %}Admin workspace{% endblock %}</h1>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <span class="hidden text-xs lux-muted sm:inline">{{ session.name }}</span>
+                <a class="lux-btn lux-btn--sm" href="{{ url_for('store.home') }}">Storefront</a>
+            </div>
+        </header>
+
+        <!-- Flash messages -->
+        <div class="lux-toast-region" data-toast-region aria-live="polite">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+            <div class="lux-toast {{ 'lux-toast--error' if category == 'error' }}" data-toast role="status">
+                {{ icon('alert' if category == 'error' else 'check', 'h-4 w-4') }}
+                <span>{{ message }}</span>
+                <button class="lux-toast__close" type="button" data-toast-close aria-label="Dismiss">{{ icon('close', 'h-3.5 w-3.5') }}</button>
+                <span class="lux-toast__bar"></span>
+            </div>
+            {% endfor %}
+            {% endwith %}
+        </div>
+
+        <main class="px-5 py-8 lg:px-10 lg:py-12">{% block content %}{% endblock %}</main>
     </div>
+
+    <script>
+    (() => {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* -------------------------------------------------- scroll reveal */
+        const revealables = document.querySelectorAll('[data-reveal]');
+        const revealAll = () => revealables.forEach((node) => node.classList.add('is-in'));
+        try {
+            if (reduce || !('IntersectionObserver' in window)) {
+                revealAll();
+            } else {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (!entry.isIntersecting) return;
+                        entry.target.classList.add('is-in');
+                        observer.unobserve(entry.target);
+                    });
+                }, { rootMargin: '0px 0px -6% 0px', threshold: 0.04 });
+                revealables.forEach((node) => observer.observe(node));
+            }
+        } catch (error) { revealAll(); }
+
+        /* -------------------------------------------------- sidebar */
+        const sidebar = document.querySelector('[data-admin-sidebar]');
+        const scrim = document.querySelector('.lux-admin-scrim');
+        const toggles = document.querySelectorAll('[data-admin-toggle]');
+
+        if (sidebar) {
+            const setOpen = (open) => {
+                sidebar.classList.toggle('is-open', open);
+                if (scrim) scrim.classList.toggle('is-open', open);
+                document.body.classList.toggle('lux-locked', open);
+                toggles.forEach((node) => node.setAttribute('aria-expanded', String(open)));
+            };
+            toggles.forEach((node) => node.addEventListener('click', () => setOpen(!sidebar.classList.contains('is-open'))));
+            document.querySelectorAll('[data-admin-close]').forEach((node) => node.addEventListener('click', () => setOpen(false)));
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && sidebar.classList.contains('is-open')) setOpen(false);
+            });
+        }
+
+        /* -------------------------------------------------- toasts */
+        document.querySelectorAll('[data-toast]').forEach((toast) => {
+            const timer = setTimeout(() => {
+                toast.classList.add('is-out');
+                setTimeout(() => toast.remove(), reduce ? 0 : 220);
+            }, 4200);
+            const closer = toast.querySelector('[data-toast-close]');
+            if (closer) closer.addEventListener('click', () => { clearTimeout(timer); toast.remove(); });
+        });
+    })();
+    </script>
+
+    {% block scripts %}{% endblock %}
 </body>
 </html>

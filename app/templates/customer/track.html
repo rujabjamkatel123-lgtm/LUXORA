@@ -1,32 +1,66 @@
 {% extends 'layouts/base.html' %}
+{% from 'components/icons.html' import icon %}
+
+{% block title %}Track order #{{ order.id }} · LUXORA{% endblock %}
+
 {% block content %}
-<main class="mx-auto max-w-2xl px-5 py-16">
-<p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">Order #{{ order.id }}</p>
-<h1 class="mt-3 font-display text-6xl">Track your order</h1>
-<div class="mt-10 border-l-2 border-stone-200 pl-7">
-{% for s in ['Pending','Confirmed','Processing','Shipped','Out for Delivery','Delivered'] %}
-<div class="relative border-b border-stone-100 py-5
-{% if s == order.status %}
-text-ink
-{% else %}
-text-stone-400
-{% endif %}
-">
-<span class="absolute -left-[39px] top-6 h-4 w-4 rounded-full border-4 border-cream
-{% if s == order.status %}
-bg-gold
-{% else %}
-bg-stone-300
-{% endif %}
-">
-</span>
-<b>{{ s }}</b>
-{% if s == order.status %}
-<p class="mt-1 text-xs text-gold">Current status</p>
-{% endif %}
-</div>
-{% endfor %}
-</div>
-<a class="mt-8 inline-block border border-ink px-6 py-3 text-sm" href="{{ url_for('store.account') }}">Back to account</a>
+{% set flow = ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered'] %}
+{% set current = flow.index(order.status) if order.status in flow else -1 %}
+
+<main class="mx-auto max-w-2xl px-5 py-14 lg:py-20">
+
+    <div class="border-b border-ink pb-8" data-reveal>
+        <p class="lux-eyebrow lux-eyebrow--signal lux-mono">Order #{{ order.id }}</p>
+        <h1 class="mt-4 font-display text-[clamp(2.5rem,7vw,4.5rem)] uppercase">Track your order</h1>
+    </div>
+
+    {% if current == -1 %}
+    <div class="lux-panel mt-8 flex items-center gap-4 p-5" data-reveal>
+        <span class="grid h-10 w-10 shrink-0 place-items-center border border-ink bg-signal">{{ icon('alert', 'h-4 w-4') }}</span>
+        <div>
+            <b class="text-sm">This order is {{ order.status|lower }}</b>
+            <p class="mt-1 text-xs lux-muted">It is no longer moving through the delivery stages below.</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="lux-panel mt-8" data-reveal style="--i: 1">
+        <div class="lux-panel__head">
+            <h2 class="font-display text-xl uppercase">Delivery progress</h2>
+            {% if current > -1 %}
+            <span class="lux-eyebrow lux-num">Step {{ current + 1 }} / {{ flow|length }}</span>
+            {% endif %}
+        </div>
+
+        <div class="lux-panel__body">
+            {% if current > -1 %}
+            <div class="lux-meter mb-8">
+                <span class="lux-meter__fill is-in" style="width: {{ ((current + 1) / flow|length * 100) | round | int }}%"></span>
+            </div>
+            {% endif %}
+
+            <ol class="lux-timeline">
+                {% for s in flow %}
+                {% set state = 'done' if loop.index0 < current else ('current' if loop.index0 == current else 'todo') %}
+                <li class="lux-timeline__item lux-timeline__item--{{ state }}">
+                    <span class="lux-timeline__dot">
+                        {% if state == 'done' %}{{ icon('check', 'h-2.5 w-2.5 text-paper', '3') }}{% endif %}
+                    </span>
+                    <b class="text-sm">{{ s }}</b>
+                    {% if state == 'current' %}
+                    <p class="lux-eyebrow lux-eyebrow--signal mt-1.5">Current status</p>
+                    {% elif state == 'done' %}
+                    <p class="lux-eyebrow mt-1.5">Completed</p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+
+    <div class="mt-8 flex flex-wrap gap-3" data-reveal style="--i: 2">
+        <a class="lux-btn" href="{{ url_for('store.account') }}">{{ icon('arrow-left', 'h-4 w-4') }} Back to account</a>
+        <a class="lux-btn" href="{{ url_for('store.shop') }}">Continue shopping</a>
+    </div>
 </main>
 {% endblock %}

@@ -1,139 +1,342 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-{% block title %}
-LUXORA
-{% endblock %}
-</title>
-    <script src="https://cdn.tailwindcss.com">
-</script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: { ink: '#171714', cream: '#fffaf5', sand: '#f4e8dc', gold: '#b77945', coral: '#ef6f61', lavender: '#e8ddff' },
-                    fontFamily: { display: ['Playfair Display', 'serif'], sans: ['DM Sans', 'sans-serif'] }
-                }
-            }
-        };
-    </script>
-    <style>
-        @keyframes luxora-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-        @keyframes luxora-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes luxora-fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-        .luxora-marquee-track { animation: luxora-marquee 11s linear infinite; width: max-content; }
-        .luxora-float { animation: luxora-float 5s ease-in-out infinite; }
-        .luxora-fade-up { animation: luxora-fade-up .7s ease both; }
-        .luxora-delay-1 { animation-delay: .12s; } .luxora-delay-2 { animation-delay: .24s; }
-        .luxora-nav-link { position: relative; display: inline-block; }
-        .luxora-nav-link::after { content: ''; position: absolute; left: 0; bottom: -9px; width: 0; height: 2px; background: #111; transition: width .28s ease; }
-        .luxora-nav-link:hover::after, .luxora-nav-link:focus-visible::after { width: 100%; }
-        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; } }
-    </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
-    <style>
-        :root { --paper:#f9f9fb; --ink:#1a1a1a; --violet:#6d4aff; --shadow:0 18px 50px rgba(31,24,59,.08); --ease:cubic-bezier(.4,0,.2,1); }
-        body { background:var(--paper) !important; color:var(--ink); }
-        .luxora-logo { letter-spacing:.26em; font-family:'Manrope',sans-serif; font-weight:800; }
-        .luxora-nav-link, a, button, select, input { transition:all .35s var(--ease); }
-        .luxora-nav-link::after { height:3px !important; border-radius:99px; bottom:-10px !important; }
-        .luxora-nav-link:hover { transform:translateY(-2px); }
-        .luxora-bag { display:inline-flex; align-items:center; gap:.45rem; }
-        .luxora-bag sup { min-width:1.35rem; height:1.35rem; display:inline-grid; place-items:center; background:var(--violet) !important; font-size:.68rem; font-weight:800; animation:luxora-bag-pulse 2.4s ease-in-out infinite; }
-        .luxora-product-card { transition:transform .45s var(--ease),box-shadow .45s var(--ease); }
-        .luxora-product-card:hover { transform:scale(1.02) translateY(-4px); box-shadow:var(--shadow); }
-        .luxora-product-grid > article { animation:luxora-reveal .65s var(--ease) both; }
-        @keyframes luxora-bag-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(109,74,255,.25)} 50%{box-shadow:0 0 0 7px rgba(109,74,255,0)} }
-        @keyframes luxora-reveal { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
-    </style>
+    <title>{% block title %}LUXORA{% endblock %}</title>
+    {% include 'layouts/_head.html' %}
 </head>
-<body class="luxora-shell bg-cream text-ink font-sans antialiased">
-    <div class="luxora-marquee overflow-hidden bg-gradient-to-r from-fuchsia-700 via-violet-700 to-indigo-700 px-4 py-2 text-[11px] tracking-wide text-white">
-        <div class="luxora-marquee-track flex gap-12 whitespace-nowrap"><span>Free shipping on orders over $50</span><span>Easy 30-day returns</span><span>Use WELCOME10 for 10% off</span><span>Free shipping on orders over $50</span><span>Easy 30-day returns</span><span>Use WELCOME10 for 10% off</span></div>
+{% from 'components/icons.html' import icon %}
+{% set nav_items = [
+    ('Home', url_for('store.home')),
+    ('Shop', url_for('store.shop')),
+    ('Deals', url_for('store.shop', sort='price_asc')),
+    ('New arrivals', url_for('store.shop', sort='newest'))
+] %}
+<body class="bg-paper text-ink font-sans antialiased">
+
+    <!-- ================================================== ANNOUNCEMENT -->
+    <div class="lux-ticker">
+        <div class="lux-ticker__track">
+            {% for _ in range(2) %}
+            <span class="lux-ticker__item">Free shipping on orders over $50</span>
+            <span class="lux-ticker__item">Easy 30-day returns</span>
+            <span class="lux-ticker__item">Use WELCOME10 for 10% off</span>
+            {% endfor %}
+        </div>
     </div>
-    <header class="luxora-header sticky top-0 z-40 border-b border-stone-200 bg-cream/95 backdrop-blur">
-        <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-5 px-5 py-5 lg:px-8">
-            <a class="luxora-logo font-display text-2xl tracking-[0.2em]" href="{{ url_for('store.home') }}">LUXORA</a>
-            <nav class="order-3 flex w-full gap-6 overflow-x-auto text-sm text-stone-600 lg:order-2 lg:w-auto lg:flex-1 lg:justify-center">
-                <a class="luxora-nav-link whitespace-nowrap hover:text-ink" href="{{ url_for('store.home') }}">Home</a>
-                <a class="luxora-nav-link whitespace-nowrap hover:text-ink" href="{{ url_for('store.shop') }}">Shop</a>
-                <a class="luxora-nav-link whitespace-nowrap hover:text-ink" href="{{ url_for('store.shop', sort='price_asc') }}">Deals</a>
-                <a class="luxora-nav-link whitespace-nowrap hover:text-ink" href="{{ url_for('store.shop', sort='newest') }}">New arrivals</a>
+
+    <!-- ================================================== HEADER -->
+    <header class="lux-header" data-header>
+        <div class="lux-header__inner mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-5 lg:px-8">
+
+            <a class="lux-logo order-1 text-xl lg:text-2xl" href="{{ url_for('store.home') }}">LUXORA</a>
+
+            <nav class="order-4 hidden w-full items-center gap-7 lg:order-2 lg:flex lg:w-auto lg:flex-1 lg:justify-center">
+                {% for label, href in nav_items %}
+                <a class="lux-nav-link" data-nav-link href="{{ href }}">{{ label }}</a>
+                {% endfor %}
             </nav>
-            <form class="order-2 flex min-w-0 flex-1 border-b border-ink lg:order-3 lg:max-w-xs" action="{{ url_for('store.search') }}">
-                <input class="min-w-0 flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-stone-400" name="q" placeholder="Search products…">
-                <button class="px-2 text-lg" aria-label="Search">⌕</button>
+
+            <form class="lux-search order-3 w-full lg:order-3 lg:w-60" role="search" action="{{ url_for('store.search') }}">
+                <label class="sr-only" for="lux-search-input">Search products</label>
+                <input id="lux-search-input" name="q" placeholder="Search products…" autocomplete="off">
+                <button type="submit" aria-label="Search">{{ icon('search', 'h-4 w-4') }}</button>
             </form>
-	            <div class="order-1 flex items-center gap-4 text-sm lg:order-4">
-	                <a href="{{ url_for('store.wishlist') if session.get('user_id') else url_for('auth.login', next='/wishlist') }}">♡</a>
-                <a class="transition hover:scale-110" href="{{ url_for('auth.login') if not session.get('user_id') else url_for('store.account') }}" aria-label="Account"><img class="h-7 w-7 rounded-full object-cover ring-2 ring-transparent transition hover:ring-gold" src="{{ url_for('static', filename='images/profile-icon.png') }}" alt="Account"></a>
-                <a class="luxora-bag" href="{{ url_for('store.cart') }}">Bag <sup class="rounded-full bg-ink px-1.5 py-0.5 text-[10px] text-white">{{ cart_count }}</sup>
-	</a>
-	                {% if session.get('user_id') %}
-	                    <a class="text-xs text-stone-500 hover:text-ink" href="{{ url_for('auth.logout') }}">Logout</a>
-	                {% endif %}
-	            </div>
+
+            <div class="order-2 ml-auto flex items-center gap-1 lg:order-4 lg:ml-0">
+                <a class="lux-icon-btn" title="Wishlist" aria-label="Wishlist"
+                   href="{{ url_for('store.wishlist') if session.get('user_id') else url_for('auth.login', next='/wishlist') }}">
+                    {{ icon('heart', 'h-5 w-5') }}
+                </a>
+
+                <a class="lux-icon-btn" aria-label="Account"
+                   href="{{ url_for('auth.login') if not session.get('user_id') else url_for('store.account') }}">
+                    <img class="lux-avatar" src="{{ url_for('static', filename='images/profile-icon.png') }}" alt="" width="28" height="28">
+                </a>
+
+                <a class="lux-bag ml-1 mr-1" href="{{ url_for('store.cart') }}">
+                    {{ icon('bag', 'h-5 w-5') }}
+                    <span class="hidden sm:inline">Bag</span>
+                    <sup data-cart-count>{{ cart_count }}</sup>
+                </a>
+
+                {% if session.get('user_id') %}
+                <a class="hidden text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-60 hover:text-ink lg:inline" href="{{ url_for('auth.logout') }}">Logout</a>
+                {% endif %}
+
+                <button class="lux-icon-btn lg:hidden" type="button" data-drawer-open aria-label="Open menu" aria-controls="lux-drawer" aria-expanded="false">
+                    {{ icon('menu', 'h-5 w-5') }}
+                </button>
+            </div>
         </div>
     </header>
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-<div class="fixed right-5 top-24 z-50 space-y-2">
-{% for category, message in messages %}
-<div class="rounded-lg border border-stone-200 bg-white px-5 py-3 text-sm shadow-xl {{ 'text-red-700' if category == 'error' else 'text-emerald-700' }}">{{ message }}</div>
-{% endfor %}
-</div>
-{% endif %}
-{% endwith %}
-{% block content %}
-{% endblock %}
-    <footer class="luxora-footer bg-ink px-6 py-14 text-stone-300 lg:px-16">
-        <div class="mx-auto grid max-w-7xl gap-10 md:grid-cols-4">
-            <div>
-<a class="font-display text-2xl tracking-[0.2em] text-white" href="{{ url_for('store.home') }}">LUXORA</a>
-<p class="mt-4 max-w-xs text-sm leading-6 text-stone-400">Everything you love, all in one place. Premium products for modern living.</p>
-</div>
-            <div>
-<h3 class="text-xs font-bold uppercase tracking-widest text-white">Shop</h3>
-<div class="mt-4 grid gap-3 text-sm">
-<a href="{{ url_for('store.shop') }}">All products</a>
-<a href="{{ url_for('store.shop', category='fashion') }}">Fashion</a>
-<a href="{{ url_for('store.shop', category='electronics') }}">Electronics</a>
-</div>
-</div>
-            <div>
-<h3 class="text-xs font-bold uppercase tracking-widest text-white">Customer service</h3>
-<div class="mt-4 grid gap-3 text-sm text-stone-400">
-<span>Shipping info</span>
-<span>Returns & exchanges</span>
-<span>Contact us</span>
-</div>
-</div>
-            <div>
-<h3 class="text-xs font-bold uppercase tracking-widest text-white">About LUXORA</h3>
-<div class="mt-4 grid gap-3 text-sm text-stone-400">
-<span>Our story</span>
-<span>Sustainability</span>
-<span>Privacy</span>
-</div>
-</div>
+
+    <!-- ================================================== MOBILE DRAWER -->
+    <div class="lux-drawer" id="lux-drawer" data-drawer aria-hidden="true">
+        <div class="lux-drawer__backdrop" data-drawer-close></div>
+        <div class="lux-drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">
+            <div class="flex items-center justify-between">
+                <span class="lux-logo text-lg">LUXORA</span>
+                <button class="lux-icon-btn text-paper" type="button" data-drawer-close aria-label="Close menu">
+                    {{ icon('close', 'h-5 w-5') }}
+                </button>
+            </div>
+
+            <nav class="grid">
+                {% for label, href in nav_items %}
+                <a class="lux-drawer__link" style="--i: {{ loop.index0 }}" href="{{ href }}">
+                    {{ label }} {{ icon('arrow-right', 'h-4 w-4') }}
+                </a>
+                {% endfor %}
+            </nav>
+
+            <div class="mt-auto grid gap-3 border-t border-white/15 pt-5 text-sm">
+                <a class="flex items-center gap-3 py-1 text-white/70 hover:text-white" href="{{ url_for('store.cart') }}">
+                    {{ icon('bag', 'h-4 w-4') }} Bag (<span data-cart-count>{{ cart_count }}</span>)
+                </a>
+                <a class="flex items-center gap-3 py-1 text-white/70 hover:text-white"
+                   href="{{ url_for('store.wishlist') if session.get('user_id') else url_for('auth.login', next='/wishlist') }}">
+                    {{ icon('heart', 'h-4 w-4') }} Wishlist
+                </a>
+                {% if session.get('user_id') %}
+                <a class="flex items-center gap-3 py-1 text-white/70 hover:text-white" href="{{ url_for('store.account') }}">
+                    {{ icon('user', 'h-4 w-4') }} My account
+                </a>
+                <a class="flex items-center gap-3 py-1 text-white/70 hover:text-white" href="{{ url_for('auth.logout') }}">
+                    {{ icon('arrow-right', 'h-4 w-4') }} Logout
+                </a>
+                {% else %}
+                <a class="flex items-center gap-3 py-1 text-white/70 hover:text-white" href="{{ url_for('auth.login') }}">
+                    {{ icon('user', 'h-4 w-4') }} Sign in
+                </a>
+                {% endif %}
+                <p class="lux-eyebrow lux-eyebrow--invert mt-2">Free shipping over $50</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================== TOASTS -->
+    <div class="lux-toast-region" data-toast-region aria-live="polite" aria-atomic="false">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="lux-toast {{ 'lux-toast--error' if category == 'error' }}" data-toast role="status">
+            {{ icon('alert' if category == 'error' else 'check', 'h-4 w-4') }}
+            <span data-toast-text>{{ message }}</span>
+            <button class="lux-toast__close" type="button" data-toast-close aria-label="Dismiss">{{ icon('close', 'h-3.5 w-3.5') }}</button>
+            <span class="lux-toast__bar"></span>
+        </div>
+        {% endfor %}
+        {% endwith %}
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <!-- ================================================== FOOTER -->
+    <footer class="lux-band mt-24 border-t border-ink">
+        <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+            <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+                <div>
+                    <a class="lux-logo text-2xl text-paper" href="{{ url_for('store.home') }}">LUXORA</a>
+                    <p class="mt-5 max-w-xs text-sm leading-7 lux-muted">Everything you love, all in one place. Premium products for modern living.</p>
+                    <div class="mt-7 flex gap-4 text-xs lux-dim">
+                        <span class="lux-eyebrow lux-eyebrow--invert">Est. 2024</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="lux-eyebrow lux-eyebrow--invert">Shop</h3>
+                    <div class="mt-5 grid justify-items-start gap-3 text-sm">
+                        <a class="lux-nav-link" href="{{ url_for('store.shop') }}">All products</a>
+                        <a class="lux-nav-link" href="{{ url_for('store.shop', category='fashion') }}">Fashion</a>
+                        <a class="lux-nav-link" href="{{ url_for('store.shop', category='electronics') }}">Electronics</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="lux-eyebrow lux-eyebrow--invert">Customer service</h3>
+                    <div class="mt-5 grid gap-3 text-sm lux-muted">
+                        <span>Shipping info</span>
+                        <span>Returns &amp; exchanges</span>
+                        <span>Contact us</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="lux-eyebrow lux-eyebrow--invert">About LUXORA</h3>
+                    <div class="mt-5 grid gap-3 text-sm lux-muted">
+                        <span>Our story</span>
+                        <span>Sustainability</span>
+                        <span>Privacy</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-white/15 pt-7">
+                <p class="lux-eyebrow lux-eyebrow--invert">© LUXORA — All rights reserved</p>
+                <p class="lux-eyebrow lux-eyebrow--invert">Secure checkout · 30-day returns</p>
+            </div>
         </div>
     </footer>
+
     <script>
     (() => {
-        const badge = (count) => document.querySelectorAll('.luxora-bag sup').forEach((item) => item.textContent = count);
-        const notice = (text, error = false) => { const item = document.createElement('div'); item.className = 'fixed right-5 top-24 z-50 rounded-lg border border-stone-200 bg-white px-5 py-3 text-sm shadow-xl ' + (error ? 'text-red-700' : 'text-emerald-700'); item.textContent = text; document.body.appendChild(item); setTimeout(() => item.remove(), 3500); };
-        document.querySelectorAll('.luxora-flash').forEach((item) => setTimeout(() => item.remove(), 4200));
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* -------------------------------------------------- scroll reveal */
+        const revealables = document.querySelectorAll('[data-reveal]');
+        const revealAll = () => revealables.forEach((node) => node.classList.add('is-in'));
+        try {
+            if (reduce || !('IntersectionObserver' in window)) {
+                revealAll();
+            } else {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (!entry.isIntersecting) return;
+                        entry.target.classList.add('is-in');
+                        observer.unobserve(entry.target);
+                    });
+                }, { rootMargin: '0px 0px -6% 0px', threshold: 0.04 });
+                revealables.forEach((node) => observer.observe(node));
+            }
+        } catch (error) { revealAll(); }
+
+        /* -------------------------------------------------- header state */
+        const header = document.querySelector('[data-header]');
+        if (header) {
+            const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+            onScroll();
+            window.addEventListener('scroll', onScroll, { passive: true });
+        }
+
+        /* -------------------------------------------------- active nav */
+        document.querySelectorAll('[data-nav-link]').forEach((link) => {
+            const target = new URL(link.href, window.location.origin);
+            if (target.pathname === window.location.pathname && target.search === window.location.search) {
+                link.classList.add('is-active');
+            }
+        });
+
+        /* -------------------------------------------------- mobile drawer */
+        const drawer = document.querySelector('[data-drawer]');
+        if (drawer) {
+            const panel = drawer.querySelector('.lux-drawer__panel');
+            const triggers = document.querySelectorAll('[data-drawer-open]');
+            const focusable = () => Array.from(panel.querySelectorAll('a[href], button:not([disabled])'));
+            let restoreTo = null;
+
+            const open = () => {
+                restoreTo = document.activeElement;
+                drawer.classList.add('is-open');
+                drawer.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('lux-locked');
+                triggers.forEach((trigger) => trigger.setAttribute('aria-expanded', 'true'));
+                const first = focusable()[0];
+                if (first) setTimeout(() => first.focus(), 80);
+            };
+
+            const close = () => {
+                drawer.classList.remove('is-open');
+                drawer.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('lux-locked');
+                triggers.forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
+                if (restoreTo && restoreTo.focus) restoreTo.focus();
+            };
+
+            triggers.forEach((trigger) => trigger.addEventListener('click', open));
+            drawer.querySelectorAll('[data-drawer-close]').forEach((node) => node.addEventListener('click', close));
+
+            document.addEventListener('keydown', (event) => {
+                if (!drawer.classList.contains('is-open')) return;
+                if (event.key === 'Escape') { close(); return; }
+                if (event.key !== 'Tab') return;
+                const list = focusable();
+                if (!list.length) return;
+                const first = list[0];
+                const last = list[list.length - 1];
+                if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+                else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+            });
+        }
+
+        /* -------------------------------------------------- quantity steppers
+           The buttons only nudge the existing number input and fire a change
+           event, so any inline onchange handler behaves exactly as before. */
+        document.querySelectorAll('[data-qty]').forEach((wrap) => {
+            const input = wrap.querySelector('input');
+            if (!input) return;
+            wrap.querySelectorAll('[data-qty-step]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const step = Number(button.dataset.qtyStep) || 0;
+                    const min = input.min === '' ? 1 : Number(input.min);
+                    const max = input.max === '' ? Infinity : Number(input.max);
+                    const current = Number(input.value) || 0;
+                    const next = Math.min(max, Math.max(min, current + step));
+                    if (next === current) return;
+                    input.value = next;
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+            });
+        });
+
+        /* -------------------------------------------------- toasts */
+        const region = document.querySelector('[data-toast-region]');
+
+        const dismiss = (toast) => {
+            toast.classList.add('is-out');
+            setTimeout(() => toast.remove(), reduce ? 0 : 220);
+        };
+
+        const wireToast = (toast) => {
+            const timer = setTimeout(() => dismiss(toast), 4200);
+            const closer = toast.querySelector('[data-toast-close]');
+            if (closer) closer.addEventListener('click', () => { clearTimeout(timer); dismiss(toast); });
+        };
+
+        document.querySelectorAll('[data-toast]').forEach(wireToast);
+
+        const GLYPH = {
+            ok: '<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="m4 12.5 5 5L20 6.5"/></svg>',
+            error: '<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="M12 4 2.5 20h19L12 4Z"/><path d="M12 10v4"/></svg>',
+            close: '<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="M6 6l12 12M18 6 6 18"/></svg>'
+        };
+
+        const notice = (text, error = false) => {
+            if (!region) return;
+            const toast = document.createElement('div');
+            toast.className = 'lux-toast' + (error ? ' lux-toast--error' : '');
+            toast.setAttribute('role', 'status');
+            toast.innerHTML = (error ? GLYPH.error : GLYPH.ok)
+                + '<span data-toast-text></span>'
+                + '<button type="button" class="lux-toast__close" data-toast-close aria-label="Dismiss">' + GLYPH.close + '</button>'
+                + '<span class="lux-toast__bar"></span>';
+            toast.querySelector('[data-toast-text]').textContent = text;
+            region.appendChild(toast);
+            wireToast(toast);
+        };
+
+        /* -------------------------------------------------- cart badge */
+        const badge = (count) => document.querySelectorAll('[data-cart-count]').forEach((node) => {
+            node.textContent = count;
+            node.classList.remove('is-bump');
+            void node.offsetWidth;
+            node.classList.add('is-bump');
+        });
+
+        /* -------------------------------------------------- cart requests */
         document.querySelectorAll('[data-cart-form]').forEach((form) => form.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const button = form.querySelector('button');
-            if (button) { button.disabled = true; button.dataset.label = button.textContent; button.textContent = 'Adding…'; }
+            const button = form.querySelector('[data-cart-submit]') || form.querySelector('button[type=submit]');
+            const label = button ? (button.querySelector('[data-cart-label]') || button) : null;
+            if (button) {
+                button.disabled = true;
+                label.dataset.label = label.textContent;
+                label.textContent = 'Adding…';
+            }
             try {
-                const response = await fetch(form.action, { method:'POST', body:new FormData(form), headers:{'X-Requested-With':'XMLHttpRequest', 'Accept':'application/json'} });
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                });
                 const data = await response.json();
                 if (!response.ok || !data.ok) throw new Error(data.message || 'Unable to update your cart.');
                 badge(data.count);
@@ -148,11 +351,17 @@ LUXORA
                     if (tax) tax.textContent = money(data.totals.tax);
                     if (total) total.textContent = money(data.totals.total);
                     const quantity = form.querySelector('[name=quantity]');
-                    if (quantity && Number(quantity.value) === 0) form.closest('.flex')?.remove();
+                    if (quantity && Number(quantity.value) === 0) form.closest('[data-cart-row]')?.remove();
                 }
                 notice(data.message || 'Cart updated.');
-            } catch (error) { notice(error.message, true); }
-            finally { if (button) { button.disabled = false; button.textContent = button.dataset.label; } }
+            } catch (error) {
+                notice(error.message, true);
+            } finally {
+                if (button) {
+                    button.disabled = false;
+                    label.textContent = label.dataset.label;
+                }
+            }
         }));
     })();
     </script>

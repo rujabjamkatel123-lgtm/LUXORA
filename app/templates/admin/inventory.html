@@ -1,30 +1,61 @@
 {% extends 'layouts/admin_base.html' %}
+{% from 'components/icons.html' import icon %}
+
+{% block title %}Inventory · LUXORA{% endblock %}
+{% block page_heading %}Inventory{% endblock %}
+
 {% block content %}
-<main class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
-<h1 class="font-display text-6xl">Inventory</h1>
-<div class="mt-8 overflow-x-auto bg-white">
-<table class="w-full text-left text-sm">
-<tr class="border-b border-stone-200 text-xs uppercase tracking-wider text-stone-500">
-<th class="p-4">Product</th>
-<th class="p-4">SKU</th>
-<th class="p-4">Stock</th>
-<th class="p-4">Update</th>
-</tr>
-{% for p in products %}
-<tr class="border-b border-stone-100">
-<td class="p-4">{{ p.name }}</td>
-<td class="p-4">{{ p.sku }}</td>
-<td class="p-4">{{ p.stock }}</td>
-<td class="p-4">
-<form class="flex gap-2" method="post">
-<input type="hidden" name="product_id" value="{{ p.id }}">
-<input class="w-20 border border-stone-300 px-2 py-2" name="stock" type="number" value="{{ p.stock }}">
-<button class="border border-ink px-3 text-xs">Save</button>
-</form>
-</td>
-</tr>
-{% endfor %}
-</table>
+<div class="mx-auto max-w-7xl">
+
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4" data-reveal>
+        <p class="text-sm lux-muted">Adjust stock levels one product at a time.</p>
+        <span class="lux-chip lux-chip--ok lux-num">{{ products|length }} products</span>
+    </div>
+
+    <div class="lux-table-wrap" data-reveal>
+        <table class="lux-table min-w-[680px]">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>SKU</th>
+                    <th>Stock</th>
+                    <th>Update</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in products %}
+                <tr>
+                    <td><b class="text-sm">{{ p.name }}</b></td>
+                    <td class="lux-mono text-xs lux-muted">{{ p.sku }}</td>
+                    <td>
+                        {% if p.stock <= 5 %}
+                        <span class="lux-chip lux-chip--warn lux-num">{{ p.stock }} left</span>
+                        {% else %}
+                        <span class="lux-chip lux-chip--ok lux-num">{{ p.stock }} in stock</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form class="flex items-center gap-2" method="post">
+                            <input type="hidden" name="product_id" value="{{ p.id }}">
+                            <label class="sr-only" for="stock-{{ p.id }}">Stock for {{ p.name }}</label>
+                            <input id="stock-{{ p.id }}" class="lux-input lux-input--xs lux-num w-20 text-sm" name="stock" type="number" value="{{ p.stock }}">
+                            <button class="lux-btn lux-btn--sm" type="submit">Save</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="lux-td-flush">
+                        <div class="lux-empty lux-empty--bare">
+                            <span class="mx-auto grid h-14 w-14 place-items-center border border-ink">{{ icon('box', 'h-6 w-6') }}</span>
+                            <h3 class="mt-6 font-display text-2xl uppercase">Nothing to stock</h3>
+                            <p class="mx-auto mt-3 max-w-sm text-sm lux-muted">Add products before managing inventory.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-</main>
 {% endblock %}

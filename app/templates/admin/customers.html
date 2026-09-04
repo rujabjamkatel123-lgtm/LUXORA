@@ -1,24 +1,53 @@
 {% extends 'layouts/admin_base.html' %}
+{% from 'components/icons.html' import icon %}
+
+{% block title %}Customers · LUXORA{% endblock %}
+{% block page_heading %}Customers{% endblock %}
+
 {% block content %}
-<main class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
-<h1 class="font-display text-6xl">Customers</h1>
-<div class="mt-8 overflow-x-auto bg-white">
-<table class="w-full text-left text-sm">
-<tr class="border-b border-stone-200 text-xs uppercase tracking-wider text-stone-500">
-<th class="p-4">Name</th>
-<th class="p-4">Email</th>
-<th class="p-4">Orders</th>
-<th class="p-4">Total spent</th>
-</tr>
-{% for c in customers %}
-<tr class="border-b border-stone-100">
-<td class="p-4">{{ c.name }}</td>
-<td class="p-4">{{ c.email }}</td>
-<td class="p-4">{{ c.order_count }}</td>
-<td class="p-4">${{ c.total_spent }}</td>
-</tr>
-{% endfor %}
-</table>
+<div class="mx-auto max-w-7xl">
+
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4" data-reveal>
+        <p class="text-sm lux-muted">Everyone who has registered, with their lifetime order activity.</p>
+        <span class="lux-chip lux-chip--ok lux-num">{{ customers|length }} customers</span>
+    </div>
+
+    <div class="lux-table-wrap" data-reveal>
+        <table class="lux-table min-w-[640px]">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Orders</th>
+                    <th>Total spent</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in customers %}
+                <tr>
+                    <td>
+                        <span class="flex items-center gap-3">
+                            <span class="grid h-9 w-9 shrink-0 place-items-center border border-ink font-display text-xs uppercase">{{ c.name[:1] }}</span>
+                            <b class="text-sm">{{ c.name }}</b>
+                        </span>
+                    </td>
+                    <td class="lux-muted">{{ c.email }}</td>
+                    <td><span class="lux-chip lux-chip--flat lux-num">{{ c.order_count }}</span></td>
+                    <td><b class="lux-num">${{ c.total_spent }}</b></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="lux-td-flush">
+                        <div class="lux-empty lux-empty--bare">
+                            <span class="mx-auto grid h-14 w-14 place-items-center border border-ink">{{ icon('users', 'h-6 w-6') }}</span>
+                            <h3 class="mt-6 font-display text-2xl uppercase">No customers yet</h3>
+                            <p class="mx-auto mt-3 max-w-sm text-sm lux-muted">Registered shoppers will be listed here.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-</main>
 {% endblock %}

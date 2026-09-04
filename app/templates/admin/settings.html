@@ -1,38 +1,72 @@
 {% extends 'layouts/admin_base.html' %}
-{% block title %}Settings · LUXORA
-{% endblock %}
-{% block page_heading %}Store settings
-{% endblock %}
-{% block content %} <div class="mx-auto max-w-5xl">
-<div class="rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-rose-600 p-8 text-white shadow-xl">
-    <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-white/75">Control center</p>
-    <h2 class="mt-3 font-display text-5xl">Make the store<br>feel like yours.</h2>
-    <p class="mt-4 max-w-lg text-sm leading-6 text-white/80">Update the basics your customers see and the commerce rules used by your storefront.</p>
-</div>
-<form class="mt-8 grid gap-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-stone-200 sm:grid-cols-2" method="post">
-    <div class="col-span-full">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-gold">Store identity</p>
-        <h2 class="mt-2 font-display text-3xl">General settings</h2>
-    </div>
-    <label class="text-xs font-semibold">Store name<input class="mt-2 w-full border border-stone-300 px-4 py-3" name="store_name" value="{{ settings.get('store_name', 'LUXORA') }}
-    ">
-</label>
-<label class="text-xs font-semibold">Currency<input class="mt-2 w-full border border-stone-300 px-4 py-3" name="currency" value="{{ settings.get('currency', 'USD') }}
-">
-</label>
-<div class="col-span-full border-t border-stone-200 pt-6">
-    <p class="text-[10px] font-bold uppercase tracking-widest text-gold">Commerce rules</p>
-</div>
-<label class="text-xs font-semibold">Free shipping threshold<input class="mt-2 w-full border border-stone-300 px-4 py-3" name="free_shipping_threshold" type="number" step=".01" value="{{ settings.get('free_shipping_threshold', '50') }}
-">
-</label>
-<label class="text-xs font-semibold">Tax rate (%)<input class="mt-2 w-full border border-stone-300 px-4 py-3" name="tax_rate" type="number" step=".01" value="{{ settings.get('tax_rate', '8') }}
-">
-</label>
-<div class="col-span-full flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 pt-6">
-    <p class="text-xs text-stone-500">Changes are saved to your database.</p>
-    <button class="bg-ink px-6 py-3 text-sm font-semibold text-white hover:bg-orange-600">Save settings</button>
-</div>
-</form>
+{% from 'components/icons.html' import icon %}
+
+{% block title %}Settings · LUXORA{% endblock %}
+{% block page_heading %}Store settings{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-5xl">
+
+    <!-- ============================================== HERO -->
+    <section class="lux-band relative overflow-hidden border border-ink p-8 lg:p-10" data-reveal>
+        <div class="max-w-2xl">
+            <p class="lux-eyebrow lux-eyebrow--invert">Control center</p>
+            <h2 class="mt-4 font-display text-[clamp(2.25rem,4.5vw,3.5rem)] uppercase leading-[0.95]">
+                Make the store<br>
+                <span class="lux-outline-invert">feel like yours.</span>
+            </h2>
+            <p class="mt-5 max-w-lg text-sm leading-7 lux-muted">Update the basics your customers see and the commerce rules used by your storefront.</p>
+        </div>
+        <div class="pointer-events-none absolute -right-16 top-1/2 hidden h-52 w-52 -translate-y-1/2 border border-white/15 lg:block"></div>
+    </section>
+
+    <!-- ============================================== FORM -->
+    <form class="lux-panel mt-8" method="post" data-reveal>
+        <div class="lux-panel__head">
+            <div>
+                <p class="lux-eyebrow lux-eyebrow--signal">Store identity</p>
+                <h2 class="mt-2 font-display text-2xl uppercase">General settings</h2>
+            </div>
+            {{ icon('settings', 'h-4 w-4') }}
+        </div>
+
+        <div class="lux-panel__body grid gap-6 sm:grid-cols-2">
+            <label class="lux-field">
+                <span class="lux-label">Store name</span>
+                <input class="lux-input" name="store_name" value="{{ settings.get('store_name', 'LUXORA') }}">
+                <small class="text-xs lux-dim">Shown to customers across the storefront.</small>
+            </label>
+
+            <label class="lux-field">
+                <span class="lux-label">Currency</span>
+                <input class="lux-input lux-input--mono" name="currency" value="{{ settings.get('currency', 'USD') }}">
+                <small class="text-xs lux-dim">Three-letter currency code, e.g. USD.</small>
+            </label>
+
+            <div class="sm:col-span-2">
+                <hr class="lux-hairline">
+                <p class="lux-eyebrow lux-eyebrow--signal mt-6">Commerce rules</p>
+            </div>
+
+            <label class="lux-field">
+                <span class="lux-label">Free shipping threshold</span>
+                <input class="lux-input lux-num" name="free_shipping_threshold" type="number" step=".01" value="{{ settings.get('free_shipping_threshold', '50') }}">
+                <small class="text-xs lux-dim">Order value above which shipping is free.</small>
+            </label>
+
+            <label class="lux-field">
+                <span class="lux-label">Tax rate (%)</span>
+                <input class="lux-input lux-num" name="tax_rate" type="number" step=".01" value="{{ settings.get('tax_rate', '8') }}">
+                <small class="text-xs lux-dim">Percentage added to the order subtotal.</small>
+            </label>
+        </div>
+
+        <div class="lux-panel__foot flex flex-wrap items-center justify-between gap-4">
+            <p class="flex items-center gap-2 text-xs lux-muted">
+                {{ icon('info', 'h-3.5 w-3.5') }} Changes are saved to your database.
+            </p>
+            <button class="lux-btn lux-btn--primary" type="submit">Save settings {{ icon('check', 'h-4 w-4') }}</button>
+        </div>
+    </form>
 </div>
 {% endblock %}

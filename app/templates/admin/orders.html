@@ -1,38 +1,65 @@
 {% extends 'layouts/admin_base.html' %}
+{% from 'components/icons.html' import icon %}
+
+{% block title %}Orders · LUXORA{% endblock %}
+{% block page_heading %}Orders{% endblock %}
+
 {% block content %}
-<main class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
-<h1 class="font-display text-6xl">Orders</h1>
-<div class="mt-8 overflow-x-auto bg-white">
-<table class="w-full text-left text-sm">
-<tr class="border-b border-stone-200 text-xs uppercase tracking-wider text-stone-500">
-<th class="p-4">Order</th>
-<th class="p-4">Customer</th>
-<th class="p-4">Total</th>
-<th class="p-4">Status</th>
-</tr>
-{% for o in orders %}
-<tr class="border-b border-stone-100">
-<td class="p-4">#{{ o.id }}<small class="block text-xs text-stone-400">{{ o.created_at }}</small>
-</td>
-<td class="p-4">{{ o.name }}<small class="block text-xs text-stone-400">{{ o.email }}</small>
-</td>
-<td class="p-4">${{ o.total }}</td>
-<td class="p-4">
-<form method="post" action="{{ url_for('admin.status', order_id=o.id) }}">
-<select class="border border-stone-300 px-2 py-2 text-xs" name="status" onchange="this.form.submit()">
-{% for s in ['Pending','Confirmed','Processing','Shipped','Out for Delivery','Delivered','Cancelled','Refunded'] %}
-<option
-{% if s == o.status %}
-selected
-{% endif %}
->{{ s }}</option>
-{% endfor %}
-</select>
-</form>
-</td>
-</tr>
-{% endfor %}
-</table>
+{% set statuses = ['Pending','Confirmed','Processing','Shipped','Out for Delivery','Delivered','Cancelled','Refunded'] %}
+
+<div class="mx-auto max-w-7xl">
+
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4" data-reveal>
+        <p class="text-sm lux-muted">Track fulfillment and move orders through their delivery stages.</p>
+        <span class="lux-chip lux-chip--ok lux-num">{{ orders|length }} orders</span>
+    </div>
+
+    <div class="lux-table-wrap" data-reveal>
+        <table class="lux-table min-w-[720px]">
+            <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in orders %}
+                <tr>
+                    <td>
+                        <b class="lux-mono text-sm">#{{ o.id }}</b>
+                        <small class="lux-eyebrow mt-1 block">{{ o.created_at }}</small>
+                    </td>
+                    <td>
+                        <span class="text-sm font-semibold">{{ o.name }}</span>
+                        <small class="mt-1 block text-xs lux-muted">{{ o.email }}</small>
+                    </td>
+                    <td><b class="lux-num">${{ o.total }}</b></td>
+                    <td>
+                        <form method="post" action="{{ url_for('admin.status', order_id=o.id) }}">
+                            <label class="sr-only" for="order-status-{{ o.id }}">Status for order {{ o.id }}</label>
+                            <select id="order-status-{{ o.id }}" class="lux-select lux-select--xs text-xs" name="status" onchange="this.form.submit()">
+                                {% for s in statuses %}
+                                <option {% if s == o.status %}selected{% endif %}>{{ s }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="lux-td-flush">
+                        <div class="lux-empty lux-empty--bare">
+                            <span class="mx-auto grid h-14 w-14 place-items-center border border-ink">{{ icon('package', 'h-6 w-6') }}</span>
+                            <h3 class="mt-6 font-display text-2xl uppercase">No orders yet</h3>
+                            <p class="mx-auto mt-3 max-w-sm text-sm lux-muted">Orders will appear here as customers check out.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-</main>
 {% endblock %}

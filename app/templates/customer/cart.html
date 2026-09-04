@@ -1,55 +1,122 @@
 {% extends 'layouts/base.html' %}
-{% block title %}
-Your cart · LUXORA
-{% endblock %}
+{% from 'components/icons.html' import icon %}
+
+{% block title %}Your cart · LUXORA{% endblock %}
+
 {% block content %}
-<main class="mx-auto max-w-5xl px-5 py-16 lg:px-8">
-<p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">Your bag</p>
-<h1 class="mt-3 font-display text-6xl">Shopping cart</h1>
-{% if items %}
-<div class="mt-10 grid gap-10 lg:grid-cols-[1fr_340px]"> <div>
-{% for i in items %}
-<div class="flex items-center gap-4 border-b border-stone-200 py-5">
-{% if i.image %}
-<div class="h-20 w-20 shrink-0 overflow-hidden bg-stone-200">
-<img class="h-full w-full object-cover" src="{{ i.image }}" alt="{{ i.name }}">
-</div>
-{% else %}
-<div class="flex h-20 w-20 shrink-0 items-center justify-center bg-stone-200 font-display text-3xl">{{ i.name[:1] }}</div>
-{% endif %}
-<div class="min-w-0 flex-1">
-<h3 class="font-display text-lg">{{ i.name }}</h3>
-<p class="text-xs text-stone-500">${{ '%.2f'|format(i.sale_price or i.price) }} each</p>
-</div>
-<form data-cart-form method="post" action="{{ url_for('store.update_cart', item_id=i.id) }}" class="flex items-center gap-2">
-<input class="w-14 border border-stone-300 px-2 py-2 text-center" type="number" name="quantity" min="0" max="{{ i.stock }}" value="{{ i.quantity }}" onchange="this.form.submit()" aria-label="Quantity for {{ i.name }}">
-</form>
-<strong class="w-20 text-right text-sm">${{ '%.2f'|format((i.sale_price or i.price) * i.quantity) }}</strong>
-</div>
-{% endfor %}
-</div>
-<aside class="h-fit bg-white p-6">
-<h2 class="font-display text-2xl">Order summary</h2>
-<div class="mt-5 space-y-3 text-sm text-stone-500">
-<p class="flex justify-between">Subtotal <b id="cart-subtotal" class="text-ink">${{ '%.2f'|format(totals.subtotal) }}</b>
-</p>
-<p class="flex justify-between">Shipping <b id="cart-shipping" class="text-ink">{{ 'Free' if not totals.shipping else '$%.2f'|format(totals.shipping) }}</b>
-</p>
-<p class="flex justify-between">Tax <b id="cart-tax" class="text-ink">${{ '%.2f'|format(totals.tax) }}</b>
-</p>
-</div>
-<hr class="my-5">
-<p class="flex justify-between font-display text-2xl">Total <b id="cart-total">${{ '%.2f'|format(totals.total) }}</b>
-</p>
-<a class="mt-6 block bg-ink px-5 py-4 text-center text-sm font-semibold text-white" href="{{ url_for('store.checkout') }}">Proceed to checkout →</a>
-</aside>
-</div>
-{% else %}
-<div class="mt-10 bg-white py-24 text-center">
-<h2 class="font-display text-3xl">Your cart is empty</h2>
-<p class="mt-2 text-stone-500">Discover something you'll love.</p>
-<a class="mt-7 inline-block bg-ink px-6 py-3 text-sm font-semibold text-white" href="{{ url_for('store.shop') }}">Continue shopping</a>
-</div>
-{% endif %}
+<main class="mx-auto max-w-6xl px-5 py-14 lg:px-8 lg:py-20">
+
+    <div class="border-b border-ink pb-8" data-reveal>
+        <p class="lux-eyebrow lux-eyebrow--signal">Your bag</p>
+        <h1 class="mt-4 font-display text-[clamp(2.5rem,7vw,5rem)] uppercase">Shopping cart</h1>
+    </div>
+
+    {% if items %}
+    {% set remaining = 50 - totals.subtotal %}
+
+    <div class="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_22rem]">
+
+        <!-- ========================================== ITEMS -->
+        <div>
+            <!-- Free shipping progress -->
+            {% if remaining > 0 %}
+            <div class="lux-panel p-5" data-reveal>
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="lux-eyebrow">{{ icon('truck', 'mr-1 inline h-3.5 w-3.5 align-[-2px]') }} Free shipping progress</span>
+                    <span class="lux-eyebrow lux-eyebrow--signal lux-num">${{ '%.2f'|format(remaining) }} to go</span>
+                </div>
+                <div class="lux-meter mt-4">
+                    <span class="lux-meter__fill is-in" style="width: {{ (totals.subtotal / 50 * 100) | round | int }}%"></span>
+                </div>
+            </div>
+            {% else %}
+            <div class="lux-panel flex items-center gap-3 p-5" data-reveal>
+                <span class="grid h-9 w-9 shrink-0 place-items-center border border-ink bg-signal">{{ icon('check', 'h-4 w-4') }}</span>
+                <p class="text-sm font-semibold">Free shipping unlocked on this order.</p>
+            </div>
+            {% endif %}
+
+            <!-- Line items -->
+            <div class="lux-panel mt-5" data-reveal style="--i: 1">
+                <div class="hidden border-b border-ink px-4 py-3 sm:flex">
+                    <span class="lux-eyebrow flex-1">Item</span>
+                    <span class="lux-eyebrow w-36 text-center">Quantity</span>
+                    <span class="lux-eyebrow w-24 text-right">Total</span>
+                </div>
+
+                {% for i in items %}
+                {% set unit = i.sale_price or i.price %}
+                <div class="flex flex-wrap items-center gap-4 border-b border-line-soft p-4 last:border-b-0" data-cart-row>
+                    <a class="lux-media h-20 w-20 shrink-0 border border-ink" href="{{ url_for('store.product', slug=i.slug) }}">
+                        {% if i.image %}
+                        <img src="{{ i.image }}" alt="{{ i.name }}" loading="lazy" decoding="async">
+                        {% else %}
+                        <div class="lux-media__fallback text-2xl">{{ i.name[:1] }}</div>
+                        {% endif %}
+                    </a>
+
+                    <div class="min-w-0 flex-1">
+                        <h3 class="font-display text-lg uppercase leading-tight">
+                            <a class="hover:text-signal-ink" href="{{ url_for('store.product', slug=i.slug) }}">{{ i.name }}</a>
+                        </h3>
+                        <p class="lux-eyebrow mt-2 lux-num">${{ '%.2f'|format(unit) }} each</p>
+                    </div>
+
+                    <form data-cart-form class="lux-qty" data-qty method="post" action="{{ url_for('store.update_cart', item_id=i.id) }}">
+                        <button class="lux-qty__btn" type="button" data-qty-step="-1" aria-label="Decrease quantity for {{ i.name }}">{{ icon('minus', 'h-4 w-4') }}</button>
+                        <input type="number" name="quantity" min="0" max="{{ i.stock }}" value="{{ i.quantity }}" onchange="this.form.submit()" aria-label="Quantity for {{ i.name }}">
+                        <button class="lux-qty__btn" type="button" data-qty-step="1" aria-label="Increase quantity for {{ i.name }}">{{ icon('plus', 'h-4 w-4') }}</button>
+                    </form>
+
+                    <strong class="w-full text-right text-sm lux-num sm:w-24">${{ '%.2f'|format(unit * i.quantity) }}</strong>
+                </div>
+                {% endfor %}
+            </div>
+
+            <a class="lux-nav-link mt-6 inline-flex items-center gap-2 text-sm" href="{{ url_for('store.shop') }}">
+                {{ icon('arrow-left', 'h-4 w-4') }} Continue shopping
+            </a>
+        </div>
+
+        <!-- ========================================== SUMMARY -->
+        <aside class="lux-panel lux-sticky" data-reveal style="--i: 2">
+            <div class="lux-panel__head">
+                <h2 class="font-display text-xl uppercase">Order summary</h2>
+                <span class="lux-eyebrow lux-num">{{ items|length }} {{ 'item' if items|length == 1 else 'items' }}</span>
+            </div>
+
+            <div class="lux-panel__body">
+                <div class="grid gap-3 text-sm">
+                    <p class="flex justify-between lux-muted">Subtotal <b id="cart-subtotal" class="text-ink lux-num">${{ '%.2f'|format(totals.subtotal) }}</b></p>
+                    <p class="flex justify-between lux-muted">Shipping <b id="cart-shipping" class="text-ink lux-num">{{ 'Free' if not totals.shipping else '$%.2f'|format(totals.shipping) }}</b></p>
+                    <p class="flex justify-between lux-muted">Tax <b id="cart-tax" class="text-ink lux-num">${{ '%.2f'|format(totals.tax) }}</b></p>
+                </div>
+
+                <hr class="lux-rule my-5">
+
+                <p class="flex items-baseline justify-between font-display text-2xl uppercase">
+                    Total <b id="cart-total" class="lux-num">${{ '%.2f'|format(totals.total) }}</b>
+                </p>
+
+                <a class="lux-btn lux-btn--primary lux-btn--block mt-7" href="{{ url_for('store.checkout') }}">
+                    Proceed to checkout {{ icon('arrow-right', 'h-4 w-4') }}
+                </a>
+
+                <div class="mt-6 grid gap-2">
+                    <p class="flex items-center gap-2 text-xs lux-muted">{{ icon('lock', 'h-3.5 w-3.5') }} Secure encrypted checkout</p>
+                    <p class="flex items-center gap-2 text-xs lux-muted">{{ icon('refresh', 'h-3.5 w-3.5') }} 30-day free returns</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    {% else %}
+    <div class="lux-empty mt-10" data-reveal>
+        <span class="mx-auto grid h-16 w-16 place-items-center border border-ink">{{ icon('bag', 'h-7 w-7') }}</span>
+        <h2 class="mt-6 font-display text-3xl uppercase">Your cart is empty</h2>
+        <p class="mx-auto mt-3 max-w-sm text-sm leading-7 lux-muted">Discover something you'll love.</p>
+        <a class="lux-btn lux-btn--primary mt-8" href="{{ url_for('store.shop') }}">Continue shopping</a>
+    </div>
+    {% endif %}
 </main>
 {% endblock %}

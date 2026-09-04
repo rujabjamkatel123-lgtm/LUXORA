@@ -1,32 +1,59 @@
 {% extends 'layouts/base.html' %}
+{% from 'components/icons.html' import icon %}
+
+{% block title %}My account · LUXORA{% endblock %}
+
 {% block content %}
-<main class="mx-auto max-w-5xl px-5 py-16 lg:px-8">
-<p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">My LUXORA</p>
-<h1 class="mt-3 font-display text-6xl">Welcome, {{ session.name }}</h1>
-<div class="mt-8 flex flex-wrap gap-3">
-<a class="bg-ink px-4 py-3 text-xs text-white">Overview</a>
-<a class="border border-stone-300 px-4 py-3 text-xs" href="{{ url_for('store.addresses') }}">Addresses</a>
-<a class="border border-stone-300 px-4 py-3 text-xs" href="{{ url_for('auth.logout') }}">Logout</a>
-<!-- {% if session.role == 'admin' %}
-<a class="border border-stone-300 px-4 py-3 text-xs" href="{{ url_for('admin.dashboard') }}">Admin dashboard</a>
-{% endif %} -->
-</div>
-<h2 class="mt-16 font-display text-3xl">Recent orders</h2>
-{% for o in orders %}
-<div class="mt-4 flex flex-wrap items-center justify-between gap-4 border-b border-stone-200 py-5">
-<span>
-<b>#{{ o.id }}</b>
-<small class="ml-3 text-xs text-stone-500">{{ o.created_at }}</small>
-</span>
-<b>${{ '%.2f'|format(o.total) }}</b>
-<span class="rounded-full bg-emerald-50 px-3 py-1 text-xs text-emerald-700">{{ o.status }}</span>
-<a class="text-sm underline" href="{{ url_for('store.track', order_id=o.id) }}">Track →</a>
-</div>
-{% else %}
-<div class="mt-6 bg-white py-20 text-center">
-<p class="text-stone-500">Your order history will appear here.</p>
-<a class="mt-5 inline-block bg-ink px-5 py-3 text-sm text-white" href="{{ url_for('store.shop') }}">Start shopping</a>
-</div>
-{% endfor %}
+<main class="mx-auto max-w-5xl px-5 py-14 lg:px-8 lg:py-20">
+
+    <div class="border-b border-ink pb-8" data-reveal>
+        <p class="lux-eyebrow lux-eyebrow--signal">My LUXORA</p>
+        <h1 class="mt-4 font-display text-[clamp(2.25rem,6vw,4.5rem)] uppercase">Welcome, {{ session.name }}</h1>
+    </div>
+
+    <!-- ============================================== ACCOUNT NAV -->
+    <div class="mt-8 flex flex-wrap gap-3" data-reveal>
+        <span class="lux-btn lux-btn--primary lux-btn--sm" aria-current="page">Overview</span>
+        <a class="lux-btn lux-btn--sm" href="{{ url_for('store.addresses') }}">{{ icon('pin', 'h-3.5 w-3.5') }} Addresses</a>
+        <a class="lux-btn lux-btn--sm" href="{{ url_for('auth.logout') }}">Logout</a>
+        <!-- {% if session.role == 'admin' %}
+        <a class="lux-btn lux-btn--sm" href="{{ url_for('admin.dashboard') }}">Admin dashboard</a>
+        {% endif %} -->
+    </div>
+
+    <!-- ============================================== ORDERS -->
+    <section class="mt-14" data-reveal>
+        <div class="flex flex-wrap items-end justify-between gap-4">
+            <h2 class="font-display text-3xl uppercase">Recent orders</h2>
+            {% if orders %}
+            <span class="lux-eyebrow lux-num">{{ orders|length }} total</span>
+            {% endif %}
+        </div>
+
+        {% if orders %}
+        <div class="lux-panel mt-6">
+            {% for o in orders %}
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-line-soft p-5 last:border-b-0 transition-colors hover:bg-surface">
+                <span>
+                    <b class="lux-mono text-sm">#{{ o.id }}</b>
+                    <small class="lux-eyebrow ml-3">{{ o.created_at }}</small>
+                </span>
+                <b class="lux-num text-sm">${{ '%.2f'|format(o.total) }}</b>
+                <span class="lux-chip {{ 'lux-chip--warn' if o.status in ['Cancelled', 'Refunded'] else 'lux-chip--ok' }}">{{ o.status }}</span>
+                <a class="lux-nav-link inline-flex items-center gap-1.5 text-sm" href="{{ url_for('store.track', order_id=o.id) }}">
+                    Track {{ icon('arrow-right', 'h-3.5 w-3.5') }}
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="lux-empty mt-6">
+            <span class="mx-auto grid h-14 w-14 place-items-center border border-ink">{{ icon('package', 'h-6 w-6') }}</span>
+            <h3 class="mt-6 font-display text-2xl uppercase">No orders yet</h3>
+            <p class="mx-auto mt-3 max-w-sm text-sm leading-7 lux-muted">Your order history will appear here.</p>
+            <a class="lux-btn lux-btn--primary mt-8" href="{{ url_for('store.shop') }}">Start shopping</a>
+        </div>
+        {% endif %}
+    </section>
 </main>
 {% endblock %}

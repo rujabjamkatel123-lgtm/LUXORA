@@ -1,10 +1,21 @@
 {% extends 'layouts/base.html' %}
+{% from 'components/icons.html' import icon %}
+
+{% block title %}{{ code }} · LUXORA{% endblock %}
+
 {% block content %}
-<main class="grid min-h-[600px] place-items-center px-5 text-center">
-<div>
-<h1 class="font-display text-8xl">{{ code }}</h1>
-<p class="mt-4 text-stone-500">{{ message }}</p>
-<a class="mt-7 inline-block bg-ink px-6 py-3 text-sm text-white" href="{{ url_for('store.home') }}">Return home</a>
-</div>
+<main class="grid min-h-[62vh] place-items-center px-5 py-20 text-center">
+    <div data-reveal>
+        <p class="lux-eyebrow lux-eyebrow--signal">Something went sideways</p>
+        <h1 class="mt-5 font-display text-[clamp(5rem,20vw,12rem)] uppercase leading-none lux-num">{{ code }}</h1>
+        <p class="mx-auto mt-5 max-w-md leading-8 lux-muted">{{ message }}</p>
+
+        <div class="mt-10 flex flex-wrap justify-center gap-3">
+            <a class="lux-btn lux-btn--primary lux-btn--lg" href="{{ url_for('store.home') }}">
+                {{ icon('arrow-left', 'h-4 w-4') }} Return home
+            </a>
+            <a class="lux-btn lux-btn--lg" href="{{ url_for('store.shop') }}">Browse the shop</a>
+        </div>
+    </div>
 </main>
 {% endblock %}

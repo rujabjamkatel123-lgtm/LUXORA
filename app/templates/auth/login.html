@@ -1,25 +1,36 @@
-{% extends 'layouts/base.html' %}
-{% block title %}
-Sign in · LUXORA
-{% endblock %}
-{% block content %}
-<main class="grid min-h-[720px] place-items-center px-5 py-16">
-<div class="w-full max-w-md bg-white p-8 shadow-xl sm:p-12">
-<p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">Welcome back</p>
-<h1 class="mt-3 font-display text-5xl">Sign in</h1>
-<form class="mt-8 grid gap-5" method="post">
-<input type="hidden" name="next" value="{{ next }}">
-<label class="grid gap-2 text-xs font-semibold">Email<input class="border border-stone-300 px-4 py-3 font-normal outline-none focus:border-gold" type="email" name="email" required>
-</label>
-<label class="grid gap-2 text-xs font-semibold">Password<input class="border border-stone-300 px-4 py-3 font-normal outline-none focus:border-gold" type="password" name="password" required>
-</label>
-<button class="bg-ink px-5 py-4 text-sm font-semibold text-white">Sign in</button>
+{% extends 'auth/_shell.html' %}
+{% from 'components/icons.html' import icon %}
+
+{% block title %}Sign in · LUXORA{% endblock %}
+
+{% block auth_body %}
+<p class="lux-eyebrow lux-eyebrow--signal">Welcome back</p>
+<h1 class="mt-4 font-display text-[clamp(2.5rem,6vw,4rem)] uppercase">Sign in</h1>
+<p class="mt-4 text-sm leading-7 lux-muted">Access your orders, wishlist and saved addresses.</p>
+
+<form class="mt-9 grid gap-5" method="post">
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <label class="lux-field">
+        <span class="lux-label">Email</span>
+        <input class="lux-input" type="email" name="email" autocomplete="email" required>
+    </label>
+
+    <label class="lux-field">
+        <span class="lux-label">Password</span>
+        <input class="lux-input" type="password" name="password" autocomplete="current-password" required>
+    </label>
+
+    <button class="lux-btn lux-btn--primary lux-btn--lg lux-btn--block mt-1" type="submit">
+        Sign in {{ icon('arrow-right', 'h-4 w-4') }}
+    </button>
 </form>
-<p class="mt-6 text-sm text-stone-500">
-<a class="underline" href="{{ url_for('auth.forgot') }}">Forgot password?</a>
-</p>
-<p class="mt-4 text-sm text-stone-500">New to LUXORA? <a class="text-gold underline" href="{{ url_for('auth.register', next=next) }}">Create an account</a>
-</p>
+
+<div class="mt-8 grid gap-4 border-t border-line-soft pt-7 text-sm">
+    <a class="lux-nav-link justify-self-start" href="{{ url_for('auth.forgot') }}">Forgot password?</a>
+    <p class="lux-muted">
+        New to LUXORA?
+        <a class="font-semibold text-ink underline decoration-signal decoration-2 underline-offset-4" href="{{ url_for('auth.register', next=next) }}">Create an account</a>
+    </p>
 </div>
-</main>
 {% endblock %}
