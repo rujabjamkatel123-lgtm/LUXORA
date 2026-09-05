@@ -29,6 +29,21 @@ def guard():
     return admin_required(lambda: None)() if False else None
 
 
+@admin_bp.context_processor
+def inject_admin_counts():
+    try:
+        return {
+            "admin_counts": {
+                "products": db.one("SELECT COUNT(*) x FROM products")["x"],
+                "low_stock": db.one("SELECT COUNT(*) x FROM products WHERE stock<=low_stock_threshold")["x"],
+                "pending_orders": db.one("SELECT COUNT(*) x FROM orders WHERE status IN ('Pending', 'Processing')")["x"],
+                "pending_reviews": db.one("SELECT COUNT(*) x FROM reviews WHERE status='Pending'")["x"],
+            }
+        }
+    except Exception:
+        return {"admin_counts": {"products": 0, "low_stock": 0, "pending_orders": 0, "pending_reviews": 0}}
+
+
 @admin_bp.route("")
 @admin_required
 def dashboard():
@@ -41,7 +56,18 @@ def dashboard():
             "SELECT COUNT(*) x FROM products WHERE stock<=low_stock_threshold"
         )["x"],
     }
-    return render_template("admin/dashboard.html", stats=stats)
+    recent_orders = db.query(
+        "SELECT o.*, u.name, u.email FROM orders o JOIN users u ON u.id=o.user_id ORDER BY o.created_at DESC LIMIT 5"
+    )
+    low_stock_products = db.query(
+        "SELECT p.*, c.name category_name FROM products p JOIN categories c ON c.id=p.category_id WHERE p.stock<=p.low_stock_threshold ORDER BY p.stock ASC LIMIT 5"
+    )
+    return render_template(
+        "admin/dashboard.html",
+        stats=stats,
+        recent_orders=recent_orders,
+        low_stock_products=low_stock_products,
+    )
 
 
 @admin_bp.route("/products")
@@ -62,12 +88,31 @@ def products():
                 (name, slug, description),
             )
         categories = db.query("SELECT * FROM categories ORDER BY name")
+
+    query_str = request.args.get("q", "").strip()
+    category_id = request.args.get("category_id")
+
+    sql = "SELECT p.*, c.name category_name FROM products p JOIN categories c ON c.id=p.category_id WHERE 1=1"
+    params = []
+
+    if query_str:
+        sql += " AND (p.name LIKE ? OR p.sku LIKE ? OR p.brand LIKE ?)"
+        term = f"%{query_str}%"
+        params.extend([term, term, term])
+
+    if category_id and category_id.isdigit():
+        sql += " AND p.category_id=?"
+        params.append(int(category_id))
+
+    sql += " ORDER BY p.id DESC"
+    products_list = db.query(sql, tuple(params))
+
     return render_template(
         "admin/products.html",
-        products=db.query(
-            "SELECT p.*,c.name category_name FROM products p JOIN categories c ON c.id=p.category_id ORDER BY p.id DESC"
-        ),
+        products=products_list,
         categories=categories,
+        search_query=query_str,
+        selected_category=int(category_id) if category_id and category_id.isdigit() else None,
     )
 
 
@@ -91,7 +136,7 @@ def create_product():
             request.form.get("stock", 0),
         ),
     )
-    flash("Product created.", "success")
+    flash("Product created successfully.", "success")
     return redirect(url_for("admin.products"))
 
 
@@ -114,7 +159,7 @@ def update_product(product_id):
             product_id,
         ),
     )
-    flash("Product and inventory updated.", "success")
+    flash("Product updated.", "success")
     return redirect(url_for("admin.products"))
 
 
@@ -124,7 +169,34 @@ def delete_product(product_id):
     for table in ("product_variants", "wishlists", "cart_items", "reviews"):
         db.execute(f"DELETE FROM {table} WHERE product_id=?", (product_id,))
     db.execute("DELETE FROM products WHERE id=?", (product_id,))
-    flash("Product deleted.", "success")
+    flash("Product deleted successfully.", "success")
+    return redirect(url_for("admin.products"))
+
+
+@admin_bp.route("/categories/create", methods=["POST"])
+@admin_required
+def create_category():
+    name = request.form.get("name", "").strip()
+    description = request.form.get("description", "").strip()
+    if name:
+        slug = "-".join(name.lower().split())
+        db.execute(
+            "INSERT INTO categories(name,slug,description) VALUES(?,?,?)",
+            (name, slug, description),
+        )
+        flash(f"Category '{name}' created.", "success")
+    return redirect(url_for("admin.products"))
+
+
+@admin_bp.route("/categories/<int:category_id>/delete", methods=["POST"])
+@admin_required
+def delete_category(category_id):
+    count = db.one("SELECT COUNT(*) x FROM products WHERE category_id=?", (category_id,))["x"]
+    if count > 0:
+        flash("Cannot delete category containing existing products. Reassign or delete products first.", "error")
+    else:
+        db.execute("DELETE FROM categories WHERE id=?", (category_id,))
+        flash("Category deleted.", "success")
     return redirect(url_for("admin.products"))
 
 
@@ -146,20 +218,51 @@ def inventory():
 @admin_bp.route("/orders")
 @admin_required
 def orders():
+    status_filter = request.args.get("status", "").strip()
+    sql = "SELECT o.*, u.name, u.email, u.phone FROM orders o JOIN users u ON u.id=o.user_id WHERE 1=1"
+    params = []
+    if status_filter:
+        sql += " AND o.status=?"
+        params.append(status_filter)
+    sql += " ORDER BY o.created_at DESC"
+
+    raw_orders = db.query(sql, tuple(params))
+    orders_list = []
+
+    for o in raw_orders:
+        items = db.query(
+            "SELECT oi.*, p.image FROM order_items oi LEFT JOIN products p ON p.id=oi.product_id WHERE oi.order_id=?",
+            (o["id"],),
+        )
+        order_dict = dict(o)
+        order_dict["items"] = items
+        orders_list.append(order_dict)
+
     return render_template(
         "admin/orders.html",
-        orders=db.query(
-            "SELECT o.*,u.name,u.email FROM orders o JOIN users u ON u.id=o.user_id ORDER BY o.created_at DESC"
-        ),
+        orders=orders_list,
+        selected_status=status_filter,
     )
 
 
 @admin_bp.route("/orders/<int:order_id>/status", methods=["POST"])
 @admin_required
 def status(order_id):
+    new_status = request.form.get("status")
     db.execute(
-        "UPDATE orders SET status=? WHERE id=?", (request.form.get("status"), order_id)
+        "UPDATE orders SET status=? WHERE id=?", (new_status, order_id)
     )
+    flash(f"Order #{order_id} status updated to '{new_status}'.", "success")
+    return redirect(url_for("admin.orders"))
+
+
+@admin_bp.route("/orders/<int:order_id>/delete", methods=["POST"])
+@admin_required
+def delete_order(order_id):
+    db.execute("DELETE FROM order_items WHERE order_id=?", (order_id,))
+    db.execute("DELETE FROM payments WHERE order_id=?", (order_id,))
+    db.execute("DELETE FROM orders WHERE id=?", (order_id,))
+    flash(f"Order #{order_id} removed.", "success")
     return redirect(url_for("admin.orders"))
 
 

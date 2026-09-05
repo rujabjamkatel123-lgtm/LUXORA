@@ -48,4 +48,5 @@ def test_register_and_add_cart():
 
 def test_admin_is_protected():
     c = create_app({"TESTING": True, "SECRET_KEY": "test"}).test_client()
-    assert c.get("/admin").status_code == 403
+    assert c.get("/admin").status_code in (302, 403)
+

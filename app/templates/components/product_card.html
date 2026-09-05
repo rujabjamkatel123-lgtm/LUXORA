@@ -42,30 +42,30 @@
 
     <div class="lux-card__body">
         {% if p.category_name %}
-        <p class="lux-eyebrow">{{ p.category_name }}</p>
+        <p class="lux-eyebrow text-violet-400 font-semibold">{{ p.category_name }}</p>
         {% endif %}
 
         <h3 class="lux-card__title">
-            <a href="{{ url_for('store.product', slug=p.slug) }}">{{ p.name }}</a>
+            <a class="hover:text-amber-400 transition-colors" href="{{ url_for('store.product', slug=p.slug) }}">{{ p.name }}</a>
         </h3>
 
         {% if p.rating %}
         <p class="flex items-center gap-1.5 text-xs">
             <span class="lux-stars">{{ icon('star', 'h-3.5 w-3.5') }}</span>
-            <span class="lux-num font-semibold">{{ p.rating }}</span>
-            <span class="lux-dim lux-num">({{ p.review_count }})</span>
+            <span class="lux-num font-semibold text-amber-300">{{ p.rating }}</span>
+            <span class="lux-dim lux-num text-slate-400">({{ p.review_count }})</span>
         </p>
         {% endif %}
 
         <div class="lux-price mt-auto pt-1 text-base">
-            <strong>${{ '%.2f'|format(unit) }}</strong>
+            <strong class="text-amber-300 font-bold">${{ '%.2f'|format(unit) }}</strong>
             {% if p.sale_price %}
-            <del>${{ '%.2f'|format(p.price) }}</del>
+            <del class="text-slate-500">${{ '%.2f'|format(p.price) }}</del>
             {% endif %}
         </div>
 
         <form data-cart-form method="post" action="{{ url_for('store.add_cart', product_id=p.id) }}">
-            <button class="lux-btn lux-btn--block lux-btn--sm" data-cart-submit type="submit">
+            <button class="lux-btn lux-btn--primary lux-btn--block lux-btn--sm" data-cart-submit type="submit">
                 <span data-cart-label>Add to cart</span>
             </button>
         </form>

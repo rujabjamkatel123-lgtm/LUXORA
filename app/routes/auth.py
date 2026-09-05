@@ -51,6 +51,10 @@ def admin_required(view):
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "GET" and session.get("user_id"):
+        if session.get("role") == "admin":
+            return redirect(url_for("admin.dashboard"))
+        return redirect(url_for("store.home"))
     requested_next = request.args.get("next") or request.form.get("next")
     nxt = safe_next(requested_next)
     if request.method == "POST":
@@ -69,7 +73,7 @@ def login():
                 email=user["email"],
             )
             session.permanent = True
-            if not requested_next or requested_next == url_for("store.home"):
+            if not requested_next or requested_next in (url_for("store.home"), "/"):
                 if user["role"] == "admin":
                     return redirect(url_for("admin.dashboard"))
                 return redirect(url_for("store.home"))

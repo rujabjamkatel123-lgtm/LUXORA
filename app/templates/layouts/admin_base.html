@@ -5,66 +5,103 @@
     {% include 'layouts/_head.html' %}
 </head>
 {% from 'components/icons.html' import icon %}
-{% set admin_nav = [
-    ('Overview', 'admin.dashboard', 'grid'),
-    ('Products & inventory', 'admin.products', 'box'),
-    ('Orders', 'admin.orders', 'package'),
-    ('Customers', 'admin.customers', 'users'),
-    ('Reviews', 'admin.reviews', 'star-line'),
-    ('Discounts', 'admin.discounts', 'tag'),
-    ('Analytics', 'admin.analytics', 'chart'),
-    ('Settings', 'admin.settings', 'settings')
+{% set nav_sections = [
+    ('CORE MANAGEMENT', [
+        ('Overview', 'admin.dashboard', 'grid', None),
+        ('Products & Inventory', 'admin.products', 'box', admin_counts.low_stock if admin_counts and admin_counts.low_stock else None),
+        ('Orders & Fulfillment', 'admin.orders', 'package', admin_counts.pending_orders if admin_counts and admin_counts.pending_orders else None)
+    ]),
+    ('CUSTOMER ENGAGEMENT', [
+        ('Customers', 'admin.customers', 'users', None),
+        ('Reviews', 'admin.reviews', 'star-line', admin_counts.pending_reviews if admin_counts and admin_counts.pending_reviews else None),
+        ('Discounts & Coupons', 'admin.discounts', 'tag', None)
+    ]),
+    ('INSIGHTS & CONFIG', [
+        ('Analytics', 'admin.analytics', 'chart', None),
+        ('Store Settings', 'admin.settings', 'settings', None)
+    ])
 ] %}
-<body class="lux-admin-body min-h-screen font-sans text-ink antialiased">
+<body class="lux-admin-body min-h-screen font-sans text-ink antialiased bg-[#0f172a]">
 
     <div class="lux-admin-scrim" data-admin-close></div>
 
     <!-- ================================================== SIDEBAR -->
     <aside class="lux-admin-sidebar" id="lux-admin-sidebar" data-admin-sidebar>
-        <div class="flex items-start justify-between px-5 pt-7">
+        <div class="flex items-center justify-between px-6 pt-7 pb-4 border-b border-white/10">
             <div>
-                <a class="lux-logo text-xl text-paper" href="{{ url_for('admin.dashboard') }}">LUXORA</a>
-                <p class="lux-eyebrow lux-eyebrow--invert mt-2">Admin workspace</p>
+                <a class="lux-logo text-2xl font-extrabold lux-gradient-text" href="{{ url_for('admin.dashboard') }}">LUXORA</a>
+                <p class="lux-eyebrow text-violet-400 mt-1 font-bold">Management Console</p>
             </div>
-            <button class="lux-icon-btn lg:hidden" type="button" data-admin-close aria-label="Close menu">
+            <button class="lux-icon-btn lg:hidden text-slate-400 hover:text-white" type="button" data-admin-close aria-label="Close menu">
                 {{ icon('close', 'h-5 w-5') }}
             </button>
         </div>
 
-        <nav class="lux-admin-nav mt-10 grid">
-            {% for label, endpoint, name in admin_nav %}
-            <a class="{{ 'is-active' if request.endpoint == endpoint }}" href="{{ url_for(endpoint) }}">
-                {{ icon(name, 'h-4 w-4') }} {{ label }}
-            </a>
+        <nav class="lux-admin-nav px-3 py-6 space-y-6">
+            {% for section_title, items in nav_sections %}
+            <div>
+                <p class="px-3 text-[10px] font-mono font-bold tracking-[0.2em] text-slate-500 uppercase mb-2">{{ section_title }}</p>
+                <div class="space-y-1">
+                    {% for label, endpoint, name, badge in items %}
+                    <a class="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-all {{ 'is-active' if request.endpoint == endpoint else 'text-slate-400 hover:text-white hover:bg-violet-950/30' }}" href="{{ url_for(endpoint) }}">
+                        <span class="flex items-center gap-3">
+                            {{ icon(name, 'h-4 w-4') }}
+                            <span>{{ label }}</span>
+                        </span>
+                        {% if badge %}
+                        <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">
+                            {{ badge }}
+                        </span>
+                        {% endif %}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
             {% endfor %}
         </nav>
 
-        <div class="mt-10 border-t border-white/10 px-5 py-5 text-xs">
-            <a class="flex items-center gap-2 py-2 text-white/55 hover:text-white" href="{{ url_for('store.home') }}">
-                {{ icon('store', 'h-3.5 w-3.5') }} View storefront
+        <div class="mt-auto border-t border-white/10 px-5 py-5 text-xs bg-slate-950/40">
+            <a class="flex items-center gap-2 py-2 text-slate-400 hover:text-white font-medium transition-colors" href="{{ url_for('store.home') }}">
+                {{ icon('store', 'h-4 w-4 text-violet-400') }} Live Storefront
             </a>
-            <a class="flex items-center gap-2 py-2 text-white/55 hover:text-white" href="{{ url_for('auth.logout') }}">
-                {{ icon('arrow-right', 'h-3.5 w-3.5') }} Sign out
+            <a class="flex items-center gap-2 py-2 text-slate-400 hover:text-rose-300 font-medium transition-colors" href="{{ url_for('auth.logout') }}">
+                {{ icon('arrow-right', 'h-4 w-4 text-rose-400') }} Sign out
             </a>
         </div>
     </aside>
 
     <!-- ================================================== MAIN -->
     <div class="lg:pl-64">
-        <header class="lux-admin-header flex items-center justify-between gap-4 px-5 py-4 lg:px-10 lg:py-5">
-            <div class="flex items-center gap-3">
-                <button class="lux-icon-btn lg:hidden" type="button" data-admin-toggle aria-label="Open menu" aria-controls="lux-admin-sidebar" aria-expanded="false">
+        <header class="lux-admin-header flex items-center justify-between gap-4 px-5 py-4 lg:px-10 lg:py-5 border-b border-white/10 bg-slate-950/60 backdrop-blur-xl">
+            <div class="flex items-center gap-4">
+                <button class="lux-icon-btn lg:hidden text-slate-300" type="button" data-admin-toggle aria-label="Open menu" aria-controls="lux-admin-sidebar" aria-expanded="false">
                     {{ icon('menu', 'h-5 w-5') }}
                 </button>
                 <div>
-                    <p class="lux-eyebrow lux-eyebrow--signal">Management console</p>
-                    <h1 class="mt-1 font-display text-xl uppercase lg:text-2xl">{% block page_heading %}Admin workspace{% endblock %}</h1>
+                    <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
+                        <span>Console</span>
+                        <span>/</span>
+                        <span class="text-violet-300 font-semibold">{% block page_heading %}Overview{% endblock %}</span>
+                    </div>
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
-                <span class="hidden text-xs lux-muted sm:inline">{{ session.name }}</span>
-                <a class="lux-btn lux-btn--sm" href="{{ url_for('store.home') }}">Storefront</a>
+                <a class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600/20 text-violet-300 border border-violet-500/30 text-xs font-semibold hover:bg-violet-600/40 transition-all" href="{{ url_for('admin.products') }}">
+                    {{ icon('plus', 'h-3.5 w-3.5') }} Add Item
+                </a>
+
+                <div class="flex items-center gap-2 rounded-full border border-white/10 bg-slate-900/80 px-3 py-1 text-xs">
+                    <span class="grid h-5 w-5 place-items-center rounded-full bg-violet-600 font-bold text-[10px] text-white">
+                        {{ session.name[0]|upper if session.name else 'A' }}
+                    </span>
+                    <span class="hidden font-semibold text-slate-200 sm:inline">{{ session.name }}</span>
+                    <span class="lux-badge lux-badge--violet text-[10px] py-0 px-1.5 font-mono">Admin</span>
+                </div>
+
+                <a class="lux-btn lux-btn--sm flex items-center gap-1.5" href="{{ url_for('store.home') }}">
+                    {{ icon('store', 'h-3.5 w-3.5') }} <span class="hidden sm:inline">Storefront</span>
+                </a>
             </div>
         </header>
 

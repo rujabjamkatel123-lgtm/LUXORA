@@ -15,10 +15,12 @@
     <div class="mt-8 flex flex-wrap gap-3" data-reveal>
         <span class="lux-btn lux-btn--primary lux-btn--sm" aria-current="page">Overview</span>
         <a class="lux-btn lux-btn--sm" href="{{ url_for('store.addresses') }}">{{ icon('pin', 'h-3.5 w-3.5') }} Addresses</a>
+        {% if session.get('role') == 'admin' %}
+        <a class="lux-btn lux-btn--sm bg-violet-600/30 text-violet-300 border-violet-500/40 hover:bg-violet-600/50" href="{{ url_for('admin.dashboard') }}">
+            {{ icon('zap', 'h-3.5 w-3.5 text-violet-300') }} Admin Control Panel
+        </a>
+        {% endif %}
         <a class="lux-btn lux-btn--sm" href="{{ url_for('auth.logout') }}">Logout</a>
-        <!-- {% if session.role == 'admin' %}
-        <a class="lux-btn lux-btn--sm" href="{{ url_for('admin.dashboard') }}">Admin dashboard</a>
-        {% endif %} -->
     </div>
 
     <!-- ============================================== ORDERS -->

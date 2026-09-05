@@ -11,39 +11,50 @@
    -------------------------------------------------------------------------- */
 
 :root {
-    /* Surfaces */
-    --paper: #ffffff;
-    --surface: #fafafa;
-    --surface-2: #f2f2f2;
+    /* Surfaces — Balanced Mid-Tone Slate & Indigo Palette */
+    --paper: #0f172a;          /* Mid-Tone Slate Canvas */
+    --surface: #1e293b;        /* Elevated Slate Surface */
+    --surface-2: #334155;      /* Secondary Mid-Tone Surface */
 
     /* Ink */
-    --ink: #000000;
-    --ink-60: #5c5c5c;
-    --ink-40: #8a8a8a;
+    --ink: #f8fafc;            /* Crisp Primary Text */
+    --ink-60: #cbd5e1;         /* Bright Readable Secondary Text */
+    --ink-40: #94a3b8;         /* Muted Slate Text */
 
     /* Rules */
-    --line: #000000;
-    --line-soft: #e4e4e4;
+    --line: rgba(255, 255, 255, 0.12);
+    --line-soft: rgba(255, 255, 255, 0.06);
 
-    /* Accent — fills and graphics only. Always pair with black text. */
-    --signal: #ff4a1c;
-    /* Accent for small text on white (5.6:1). */
-    --signal-ink: #c4300b;
+    /* Vibrant Color Accents */
+    --signal: #fbbf24;         /* Gold Accent */
+    --signal-ink: #f59e0b;
+    --accent-violet: #8b5cf6;  /* Electric Violet */
+    --accent-indigo: #6366f1;  /* Indigo */
+    --accent-cyan: #06b6d4;    /* Cyan / Sapphire */
+    --accent-rose: #f43f5e;    /* Rose Red */
+    --accent-emerald: #10b981; /* Emerald Green */
 
     /* Type */
-    --font-display: 'Archivo', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-display: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
     --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
     --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
 
-    /* Motion */
-    --ease-out: cubic-bezier(.2, .8, .2, 1);
-    --ease-hard: cubic-bezier(.7, 0, .3, 1);
-    --dur-fast: 180ms;
-    --dur: 280ms;
-    --dur-slow: 420ms;
+    /* Radius */
+    --radius-sm: 8px;
+    --radius: 12px;
+    --radius-lg: 18px;
 
-    /* Hard shadow offsets */
-    --lift: 6px;
+    /* Motion */
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+    --ease-hard: cubic-bezier(.7, 0, .3, 1);
+    --dur-fast: 160ms;
+    --dur: 260ms;
+    --dur-slow: 400ms;
+
+    /* Vibrant Glow Shadows */
+    --lift: 4px;
+    --shadow-card: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    --shadow-card-hover: 0 20px 48px -12px rgba(139, 92, 246, 0.35), 0 0 0 1px rgba(139, 92, 246, 0.5);
 }
 
 /* --------------------------------------------------------------------------
@@ -52,15 +63,33 @@
 
 html {
     scroll-behavior: smooth;
-    scrollbar-color: var(--ink) var(--surface);
+    scrollbar-color: var(--accent-violet) var(--paper);
 }
 
 body {
     background: var(--paper);
+    background-image: 
+        radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.14) 0%, transparent 60%),
+        radial-gradient(circle at 10% 40%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.07) 0%, transparent 50%);
+    background-attachment: fixed;
     color: var(--ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+/* Gradient Text Utilities */
+.lux-gradient-text {
+    background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 40%, #fbbf24 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.lux-gradient-text-alt {
+    background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #10b981 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 ::selection {
@@ -156,35 +185,37 @@ summary:focus-visible,
     outline-color: var(--signal);
 }
 
-/* Inverted surfaces */
+/* Inverted surfaces & hero banner */
 .lux-band {
-    background: var(--ink);
-    color: var(--paper);
+    background: linear-gradient(135deg, rgba(26, 22, 60, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+    color: #ffffff;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: var(--radius-lg);
 }
 
 .lux-band .lux-muted {
-    color: rgb(255 255 255 / .66);
+    color: #94a3b8;
 }
 
 .lux-band .lux-dim {
-    color: rgb(255 255 255 / .48);
+    color: #64748b;
 }
 
 /* Links and icon buttons inherit the inverted treatment automatically. */
 .lux-band .lux-nav-link,
 .lux-drawer__panel .lux-nav-link {
-    color: rgb(255 255 255 / .7);
+    color: #94a3b8;
 }
 
 .lux-band .lux-nav-link:hover,
 .lux-band .lux-nav-link:focus-visible,
 .lux-drawer__panel .lux-nav-link:hover {
-    color: var(--paper);
+    color: #ffffff;
 }
 
 .lux-band .lux-nav-link::after,
 .lux-drawer__panel .lux-nav-link::after {
-    background: var(--signal);
+    background: var(--accent-violet);
 }
 
 /* --------------------------------------------------------------------------
@@ -198,90 +229,112 @@ summary:focus-visible,
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: .5rem;
-    padding: .875rem 1.5rem;
-    border: 1px solid var(--ink);
-    border-radius: 0;
-    background-color: var(--paper);
-    background-image: linear-gradient(var(--ink), var(--ink));
-    background-repeat: no-repeat;
-    background-position: left center;
-    background-size: 0% 100%;
+    gap: .625rem;
+    padding: .875rem 1.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius);
+    background-color: rgba(27, 30, 46, 0.8);
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+    backdrop-filter: blur(12px);
     color: var(--ink);
     font-family: var(--font-sans);
-    font-size: .75rem;
-    font-weight: 700;
-    letter-spacing: .12em;
-    text-transform: uppercase;
+    font-size: .8125rem;
+    font-weight: 600;
+    letter-spacing: .03em;
     line-height: 1;
     text-align: center;
     cursor: pointer;
-    transition: background-size var(--dur) var(--ease-hard),
-                color var(--dur-fast) var(--ease-out),
-                transform var(--dur-fast) var(--ease-out);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transition: all var(--dur) var(--ease-out);
 }
 
 .lux-btn:hover,
 .lux-btn:focus-visible {
-    background-size: 100% 100%;
-    color: var(--paper);
+    border-color: rgba(139, 92, 246, 0.5);
+    background-color: rgba(35, 38, 58, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    color: #ffffff;
 }
 
 .lux-btn:active {
-    transform: translateY(1px);
+    transform: translateY(0);
 }
 
 .lux-btn--primary {
-    background-color: var(--ink);
-    background-image: linear-gradient(var(--paper), var(--paper));
-    color: var(--paper);
+    border-color: transparent;
+    background-color: var(--accent-violet);
+    background-image: linear-gradient(135deg, #7c3aed 0%, #6366f1 50%, #d946ef 100%);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 6px 24px rgba(124, 58, 237, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .lux-btn--primary:hover,
 .lux-btn--primary:focus-visible {
-    color: var(--ink);
+    border-color: transparent;
+    background-image: linear-gradient(135deg, #8b5cf6 0%, #818cf8 50%, #e879f9 100%);
+    color: #ffffff;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(124, 58, 237, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .lux-btn--signal {
+    border-color: transparent;
     background-color: var(--signal);
-    background-image: linear-gradient(var(--ink), var(--ink));
-    color: var(--ink);
+    background-image: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #0b0c10;
+    font-weight: 800;
+    box-shadow: 0 6px 24px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .lux-btn--signal:hover,
 .lux-btn--signal:focus-visible {
-    color: var(--paper);
+    background-image: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+    color: #000000;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(245, 158, 11, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .lux-btn--danger {
-    border-color: var(--signal-ink);
-    background-image: linear-gradient(var(--signal-ink), var(--signal-ink));
-    color: var(--signal-ink);
+    border-color: rgba(244, 63, 94, 0.4);
+    background-image: linear-gradient(135deg, rgba(244, 63, 94, 0.2) 0%, rgba(225, 29, 72, 0.3) 100%);
+    color: #fda4af;
 }
 
 .lux-btn--danger:hover,
 .lux-btn--danger:focus-visible {
-    color: var(--paper);
+    border-color: var(--accent-rose);
+    background-image: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+    color: #ffffff;
+    box-shadow: 0 8px 24px rgba(244, 63, 94, 0.5);
 }
 
 .lux-btn--quiet {
-    border-color: var(--line-soft);
+    border-color: transparent;
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
+    color: var(--ink-60);
 }
 
 .lux-btn--quiet:hover,
 .lux-btn--quiet:focus-visible {
-    border-color: var(--ink);
+    border-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--surface-2);
+    color: var(--ink);
 }
 
 .lux-btn--sm {
-    padding: .5rem .875rem;
-    font-size: .625rem;
-    letter-spacing: .1em;
+    padding: .5rem 1rem;
+    font-size: .75rem;
+    border-radius: var(--radius-sm);
 }
 
 .lux-btn--lg {
-    padding: 1.125rem 2rem;
-    font-size: .8125rem;
+    padding: 1.125rem 2.25rem;
+    font-size: .9375rem;
+    border-radius: var(--radius-lg);
 }
 
 .lux-btn--block {
@@ -290,72 +343,59 @@ summary:focus-visible,
 
 .lux-btn:disabled,
 .lux-btn[aria-disabled='true'] {
-    opacity: .38;
+    opacity: .4;
     cursor: not-allowed;
-    background-size: 0% 100%;
-    color: var(--ink);
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 .lux-btn--primary:disabled {
     color: var(--paper);
 }
 
-/* Buttons sitting on an inverted band */
-.lux-band .lux-btn {
-    border-color: var(--paper);
-    background-color: transparent;
-    background-image: linear-gradient(var(--paper), var(--paper));
-    color: var(--paper);
-}
-
-.lux-band .lux-btn:hover,
-.lux-band .lux-btn:focus-visible {
-    color: var(--ink);
-}
-
+/* Buttons sitting on a band */
 .lux-band .lux-btn--primary {
-    background-color: var(--paper);
-    background-image: linear-gradient(var(--signal), var(--signal));
-    color: var(--ink);
+    background-image: linear-gradient(135deg, #7c3aed 0%, #6366f1 50%, #d946ef 100%);
+    color: #ffffff !important;
 }
 
 .lux-band .lux-btn--primary:hover,
 .lux-band .lux-btn--primary:focus-visible {
-    color: var(--ink);
+    background-image: linear-gradient(135deg, #8b5cf6 0%, #818cf8 50%, #e879f9 100%);
+    color: #ffffff !important;
 }
 
 /* Icon-only control */
 .lux-icon-btn {
     display: inline-grid;
     place-items: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border: 1px solid transparent;
-    background: transparent;
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--ink);
     cursor: pointer;
-    transition: border-color var(--dur-fast), background var(--dur-fast),
-                color var(--dur-fast), transform var(--dur-fast) var(--ease-out);
+    backdrop-filter: blur(8px);
+    transition: all var(--dur-fast) var(--ease-out);
 }
 
 .lux-icon-btn:hover {
-    border-color: var(--ink);
-    transform: translateY(-1px);
+    border-color: rgba(139, 92, 246, 0.5);
+    background: rgba(139, 92, 246, 0.18);
+    color: #c4b5fd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);
+}
+
+.lux-icon-btn--glass {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .lux-icon-btn--filled:hover {
-    background: var(--ink);
-    color: var(--paper);
-}
-
-.lux-band .lux-icon-btn,
-.lux-drawer__panel .lux-icon-btn {
-    color: var(--paper);
-}
-
-.lux-band .lux-icon-btn:hover,
-.lux-drawer__panel .lux-icon-btn:hover {
-    border-color: var(--paper);
+    background: var(--accent-violet);
+    color: #ffffff;
 }
 
 /* --------------------------------------------------------------------------
@@ -371,16 +411,15 @@ summary:focus-visible,
 .lux-select,
 .lux-textarea {
     width: 100%;
-    border: 1px solid var(--ink);
-    border-radius: 0;
-    background: var(--paper);
-    padding: .8125rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.03);
+    padding: .8125rem 1.125rem;
     font-family: var(--font-sans);
     font-size: .875rem;
     font-weight: 500;
     color: var(--ink);
-    transition: box-shadow var(--dur-fast) var(--ease-out),
-                background var(--dur-fast);
+    transition: all var(--dur-fast) var(--ease-out);
 }
 
 .lux-textarea {
@@ -399,7 +438,9 @@ summary:focus-visible,
 .lux-select:focus,
 .lux-textarea:focus {
     outline: none;
-    box-shadow: 0 0 0 3px var(--signal);
+    border-color: var(--signal);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 0 3px rgba(224, 184, 104, 0.2);
 }
 
 .lux-input:disabled,
@@ -490,12 +531,14 @@ summary:focus-visible,
     font-size: .5625rem;
 }
 
-/* Quantity stepper — wraps an existing number input, never replaces it. */
+/* Quantity stepper */
 .lux-qty {
     display: inline-flex;
     align-items: stretch;
-    border: 1px solid var(--ink);
-    background: var(--paper);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    overflow: hidden;
 }
 
 .lux-qty__btn {
@@ -503,15 +546,15 @@ summary:focus-visible,
     place-items: center;
     width: 2.5rem;
     border: 0;
-    background: var(--paper);
+    background: var(--surface-2);
     color: var(--ink);
     cursor: pointer;
     transition: background var(--dur-fast), color var(--dur-fast);
 }
 
 .lux-qty__btn:hover {
-    background: var(--ink);
-    color: var(--paper);
+    background: var(--signal);
+    color: #09090b;
 }
 
 .lux-qty__btn:disabled {
@@ -523,9 +566,9 @@ summary:focus-visible,
 .lux-qty input {
     width: 3rem;
     border: 0;
-    border-left: 1px solid var(--ink);
-    border-right: 1px solid var(--ink);
-    background: var(--paper);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--surface);
     padding: .75rem .25rem;
     font-family: var(--font-mono);
     font-size: .875rem;
@@ -539,7 +582,7 @@ summary:focus-visible,
 
 .lux-qty input:focus {
     outline: none;
-    background: var(--signal);
+    background: rgba(224, 184, 104, 0.15);
 }
 
 .lux-qty input::-webkit-outer-spin-button,
@@ -548,18 +591,17 @@ summary:focus-visible,
     margin: 0;
 }
 
-/* --------------------------------------------------------------------------
-   5. SURFACES
-   -------------------------------------------------------------------------- */
-
+/* Surfaces */
 .lux-panel {
-    background: var(--paper);
-    border: 1px solid var(--ink);
-    border-radius: 0;
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius);
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+    overflow: hidden;
 }
 
 .lux-panel--surface {
-    background: var(--surface);
+    background: var(--surface-2);
 }
 
 .lux-panel__head {
@@ -568,17 +610,17 @@ summary:focus-visible,
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1.125rem 1.5rem;
-    border-bottom: 1px solid var(--ink);
+    padding: 1.25rem 1.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .lux-panel__body {
-    padding: 1.5rem;
+    padding: 1.75rem;
 }
 
 .lux-panel__foot {
-    padding: 1.125rem 1.5rem;
-    border-top: 1px solid var(--line-soft);
+    padding: 1.25rem 1.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* Hard-shadow hover lift. No blur anywhere in this system. */
@@ -617,9 +659,11 @@ summary:focus-visible,
 /* Shop filter bar. Only sticky from md up — the mobile header is two rows
    tall, so a sticky bar would sit under it. */
 .lux-filters {
-    border: 1px solid var(--ink);
-    background: var(--paper);
-    padding: .75rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius);
+    background: var(--surface);
+    padding: .875rem;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.4);
 }
 
 .lux-filters .lux-search input {
@@ -630,26 +674,24 @@ summary:focus-visible,
 @media (min-width: 768px) {
     .lux-filters {
         position: sticky;
-        top: 4.25rem;
+        top: 4.5rem;
         z-index: 20;
     }
 }
 
-/* --------------------------------------------------------------------------
-   6. BADGES, CHIPS, METERS
-   -------------------------------------------------------------------------- */
-
+/* Badges, Chips */
 .lux-badge {
     display: inline-flex;
     align-items: center;
     gap: .35rem;
-    border: 1px solid var(--ink);
-    background: var(--paper);
-    padding: .3rem .55rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 9999px;
+    background: var(--surface-2);
+    padding: .35rem .75rem;
     font-family: var(--font-sans);
-    font-size: .5625rem;
-    font-weight: 800;
-    letter-spacing: .14em;
+    font-size: .625rem;
+    font-weight: 700;
+    letter-spacing: .08em;
     text-transform: uppercase;
     line-height: 1;
     color: var(--ink);
@@ -658,16 +700,32 @@ summary:focus-visible,
 
 .lux-badge--ink {
     background: var(--ink);
-    color: var(--paper);
+    color: #09090b;
 }
 
 .lux-badge--signal {
-    background: var(--signal);
-    color: var(--ink);
+    border: none;
+    background-image: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+    color: #ffffff;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.4);
+}
+
+.lux-badge--violet {
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    background: rgba(139, 92, 246, 0.2);
+    color: #c4b5fd;
+}
+
+.lux-badge--cyan {
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    background: rgba(6, 182, 212, 0.2);
+    color: #67e8f9;
 }
 
 .lux-badge--muted {
-    border-color: var(--line-soft);
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--ink-60);
 }
 
@@ -675,12 +733,14 @@ summary:focus-visible,
     display: inline-flex;
     align-items: center;
     gap: .45rem;
-    border: 1px solid var(--line-soft);
-    padding: .375rem .75rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+    background: rgba(27, 30, 46, 0.6);
+    padding: .375rem .875rem;
     font-size: .6875rem;
     font-weight: 600;
     line-height: 1;
-    color: var(--ink-60);
+    color: var(--ink);
     white-space: nowrap;
 }
 
@@ -688,18 +748,29 @@ summary:focus-visible,
     content: '';
     width: 6px;
     height: 6px;
-    background: currentColor;
+    border-radius: 9999px;
+    background: var(--accent-violet);
     flex: none;
 }
 
 .lux-chip--ok {
-    border-color: var(--ink);
-    color: var(--ink);
+    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+}
+
+.lux-chip--ok::before {
+    background: #34d399;
 }
 
 .lux-chip--warn {
-    border-color: var(--signal-ink);
-    color: var(--signal-ink);
+    border-color: rgba(251, 191, 36, 0.4);
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+}
+
+.lux-chip--warn::before {
+    background: #fbbf24;
 }
 
 .lux-chip--flat::before {
@@ -708,22 +779,24 @@ summary:focus-visible,
 
 .lux-meter {
     height: 6px;
-    border: 1px solid var(--ink);
-    background: var(--paper);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.05);
     overflow: hidden;
 }
 
 .lux-meter__fill {
     display: block;
     height: 100%;
-    background: var(--ink);
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #8b5cf6 0%, #06b6d4 50%, #fbbf24 100%);
     transform: scaleX(0);
     transform-origin: left center;
     transition: transform 900ms var(--ease-out);
 }
 
 .lux-meter__fill--signal {
-    background: var(--signal);
+    background: linear-gradient(90deg, #f43f5e 0%, #fbbf24 100%);
 }
 
 [data-reveal].is-in .lux-meter__fill,
@@ -735,8 +808,9 @@ summary:focus-visible,
 .lux-stars {
     display: inline-flex;
     align-items: center;
-    gap: .1rem;
-    color: var(--ink);
+    gap: .15rem;
+    color: #fbbf24;
+    filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.4));
 }
 
 .lux-stars svg {
@@ -754,15 +828,19 @@ summary:focus-visible,
 
 .lux-ticker {
     overflow: hidden;
-    background: var(--ink);
-    color: var(--paper);
+    background: rgba(19, 21, 31, 0.8);
+    background-image: linear-gradient(90deg, rgba(124, 58, 237, 0.12) 0%, rgba(6, 182, 212, 0.12) 50%, rgba(251, 191, 36, 0.12) 100%);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--ink);
 }
 
 .lux-ticker__track {
     display: flex;
     width: max-content;
     gap: 3.5rem;
-    padding: .6rem 0;
+    padding: .75rem 0;
     white-space: nowrap;
     animation: lux-marquee 30s linear infinite;
 }
@@ -777,58 +855,58 @@ summary:focus-visible,
     align-items: center;
     gap: .75rem;
     font-family: var(--font-mono);
-    font-size: .625rem;
-    font-weight: 500;
+    font-size: .6875rem;
+    font-weight: 600;
     letter-spacing: .18em;
     text-transform: uppercase;
+    color: #e2e8f0;
 }
 
 .lux-ticker__item::before {
     content: '';
-    width: 5px;
-    height: 5px;
-    background: var(--signal);
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #8b5cf6, #fbbf24);
+    box-shadow: 0 0 8px #8b5cf6;
     flex: none;
 }
 
 /* Inverted word band — larger display type on paper. */
 .lux-ticker--invert {
-    background: var(--paper);
+    background: rgba(27, 30, 46, 0.6);
     color: var(--ink);
 }
 
 .lux-ticker--invert .lux-ticker__track {
     gap: 2.5rem;
-    padding: .9rem 0;
+    padding: 1rem 0;
 }
 
 .lux-ticker--invert .lux-ticker__item {
     font-family: var(--font-display);
-    font-size: 1.375rem;
+    font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: -.02em;
+    background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, #fbbf24 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* --------------------------------------------------------------------------
-   7b. HERO
-   -------------------------------------------------------------------------- */
-
+/* Hero Frame */
 .lux-outline {
-    color: var(--ink);
-}
-
-@supports (-webkit-text-stroke: 2px #000) {
-    .lux-outline {
-        color: transparent;
-        -webkit-text-stroke: 2px var(--ink);
-    }
+    background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #fbbf24 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .lux-hero-frame {
     position: relative;
     overflow: hidden;
     background: var(--surface);
-    border: 1px solid var(--ink);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 50px -10px rgba(124, 58, 237, 0.35), 0 0 0 1px rgba(139, 92, 246, 0.2);
 }
 
 .lux-hero-frame::after {
@@ -907,34 +985,34 @@ summary:focus-visible,
     position: sticky;
     top: 0;
     z-index: 40;
-    background: rgb(255 255 255 / .86);
-    backdrop-filter: blur(14px) saturate(1.6);
-    -webkit-backdrop-filter: blur(14px) saturate(1.6);
-    border-bottom: 1px solid var(--ink);
-    transition: background var(--dur), box-shadow var(--dur);
+    background: rgba(9, 9, 11, 0.75);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all var(--dur) var(--ease-out);
 }
 
 .lux-header.is-scrolled {
-    background: rgb(255 255 255 / .96);
-    box-shadow: 0 1px 0 0 var(--ink);
+    background: rgba(9, 9, 11, 0.92);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8), 0 1px 0 0 rgba(255, 255, 255, 0.1);
 }
 
 .lux-header__inner {
-    padding-top: 1.25rem;
-    padding-bottom: 1.25rem;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
     transition: padding var(--dur) var(--ease-out);
 }
 
 .lux-header.is-scrolled .lux-header__inner {
-    padding-top: .8125rem;
-    padding-bottom: .8125rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
 }
 
 .lux-nav-link {
     position: relative;
     display: inline-block;
-    padding-bottom: .3rem;
-    font-size: .8125rem;
+    padding-bottom: .25rem;
+    font-size: .875rem;
     font-weight: 500;
     color: var(--ink-60);
     white-space: nowrap;
@@ -954,10 +1032,11 @@ summary:focus-visible,
     bottom: 0;
     width: 100%;
     height: 2px;
-    background: var(--ink);
+    background: var(--signal);
+    border-radius: 2px;
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform var(--dur) var(--ease-hard);
+    transition: transform var(--dur) var(--ease-out);
 }
 
 .lux-nav-link:hover::after,
@@ -971,14 +1050,17 @@ summary:focus-visible,
     display: flex;
     align-items: center;
     gap: .5rem;
-    border: 1px solid var(--ink);
-    background: var(--paper);
-    padding: 0 .75rem;
-    transition: box-shadow var(--dur-fast) var(--ease-out);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0 1rem;
+    transition: all var(--dur-fast) var(--ease-out);
 }
 
 .lux-search:focus-within {
-    box-shadow: 0 0 0 3px var(--signal);
+    border-color: var(--signal);
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 0 0 3px rgba(224, 184, 104, 0.2);
 }
 
 .lux-search input {
@@ -986,7 +1068,7 @@ summary:focus-visible,
     flex: 1;
     border: 0;
     background: transparent;
-    padding: .625rem 0;
+    padding: .5rem 0;
     font-size: .8125rem;
     color: var(--ink);
 }
@@ -1014,57 +1096,52 @@ summary:focus-visible,
     transform: scale(1.1);
 }
 
-/* Cart bag + count */
+/* Cart bag + count pill */
 .lux-bag {
     display: inline-flex;
     align-items: center;
     gap: .5rem;
+    padding: .4rem .85rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.12) 0%, rgba(245, 158, 11, 0.05) 100%);
+    color: #fbbf24;
     font-size: .8125rem;
-    font-weight: 600;
+    font-weight: 700;
+    transition: all var(--dur-fast) var(--ease-out);
 }
 
 .lux-bag:hover {
-    color: var(--ink);
+    border-color: rgba(251, 191, 36, 0.6);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.22) 0%, rgba(245, 158, 11, 0.12) 100%);
+    color: #fef08a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(251, 191, 36, 0.35);
 }
 
 .lux-bag sup,
 .lux-bag__count {
     display: inline-grid;
     place-items: center;
-    min-width: 1.35rem;
-    height: 1.35rem;
-    padding: 0 .25rem;
-    background: var(--ink);
-    color: var(--paper);
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 .35rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #0b0c10;
     font-family: var(--font-mono);
-    font-size: .625rem;
-    font-weight: 700;
+    font-size: .6875rem;
+    font-weight: 900;
     font-variant-numeric: tabular-nums;
     line-height: 1;
-    /* <sup> defaults to vertical-align:super, which would lift the badge
-       off the baseline of the bag label. */
     vertical-align: middle;
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
 }
 
 .lux-bag sup.is-bump,
 .lux-bag__count.is-bump {
     animation: lux-bump var(--dur-slow) var(--ease-out),
                lux-pulse 700ms var(--ease-out);
-}
-
-/* Account avatar */
-.lux-avatar {
-    width: 1.75rem;
-    height: 1.75rem;
-    object-fit: cover;
-    border: 1px solid var(--ink);
-    transition: box-shadow var(--dur-fast) var(--ease-out),
-                transform var(--dur-fast) var(--ease-out);
-}
-
-a:hover > .lux-avatar {
-    transform: translateY(-1px);
-    box-shadow: 2px 2px 0 var(--signal);
 }
 
 /* --------------------------------------------------------------------------
@@ -1087,7 +1164,9 @@ a:hover > .lux-avatar {
 .lux-drawer__backdrop {
     position: absolute;
     inset: 0;
-    background: rgb(0 0 0 / .55);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     opacity: 0;
     transition: opacity var(--dur) var(--ease-out);
 }
@@ -1104,14 +1183,15 @@ a:hover > .lux-avatar {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    width: min(21rem, 88vw);
-    padding: 1.5rem;
-    background: var(--ink);
-    color: var(--paper);
-    border-left: 1px solid var(--ink);
+    width: min(22rem, 88vw);
+    padding: 1.75rem;
+    background: var(--surface);
+    color: var(--ink);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.8);
     overflow-y: auto;
     transform: translateX(100%);
-    transition: transform var(--dur-slow) var(--ease-hard);
+    transition: transform var(--dur-slow) var(--ease-out);
 }
 
 .lux-drawer.is-open .lux-drawer__panel {
@@ -1182,19 +1262,24 @@ body.lux-locked {
     align-items: flex-start;
     gap: .625rem;
     overflow: hidden;
-    padding: .875rem 2.5rem .875rem 1rem;
-    border: 1px solid var(--ink);
-    background: var(--ink);
-    color: var(--paper);
+    padding: 1rem 2.5rem 1rem 1.125rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius);
+    background: rgba(18, 18, 21, 0.95);
+    backdrop-filter: blur(12px);
+    color: var(--ink);
     font-size: .8125rem;
+    font-weight: 500;
     line-height: 1.45;
     pointer-events: auto;
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
     animation: lux-toast-in var(--dur) var(--ease-out) both;
 }
 
 .lux-toast--error {
-    background: var(--signal);
-    color: var(--ink);
+    border-color: rgba(239, 68, 68, 0.4);
+    background: rgba(35, 15, 15, 0.95);
+    color: #f87171;
 }
 
 .lux-toast.is-out {
@@ -1204,6 +1289,11 @@ body.lux-locked {
 .lux-toast svg {
     flex: none;
     margin-top: 1px;
+    color: var(--signal);
+}
+
+.lux-toast--error svg {
+    color: #f87171;
 }
 
 .lux-toast__bar {
@@ -1276,40 +1366,44 @@ body.lux-locked {
     position: relative;
     display: flex;
     flex-direction: column;
-    background: var(--paper);
-    border: 1px solid var(--ink);
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
     transition: transform var(--dur) var(--ease-out),
-                box-shadow var(--dur) var(--ease-out);
+                box-shadow var(--dur) var(--ease-out),
+                border-color var(--dur) var(--ease-out);
 }
 
 .lux-card:hover,
 .lux-card:focus-within {
-    transform: translate(-3px, -3px);
-    box-shadow: var(--lift) var(--lift) 0 var(--ink);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: rgba(224, 184, 104, 0.3);
 }
 
 .lux-media {
     position: relative;
     display: block;
     overflow: hidden;
-    background: var(--surface);
+    background: var(--surface-2);
+    aspect-ratio: 1 / 1;
 }
 
 .lux-media > img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(.32) contrast(1.04);
-    transition: transform 620ms var(--ease-out), filter 620ms var(--ease-out);
-    /* Opacity only — an animated transform with fill-mode:both would win
-       over the hover transition below and freeze the zoom. */
+    filter: brightness(0.95);
+    transition: transform 700ms var(--ease-out), filter 700ms var(--ease-out);
     animation: lux-img-in 620ms var(--ease-out) both;
 }
 
 .lux-card:hover .lux-media > img,
 .lux-media:hover > img {
-    transform: scale(1.06);
-    filter: none;
+    transform: scale(1.05);
+    filter: brightness(1.05);
 }
 
 .lux-media__fallback {
@@ -1317,13 +1411,11 @@ body.lux-locked {
     place-items: center;
     width: 100%;
     height: 100%;
-    background: var(--surface);
+    background: var(--surface-2);
     font-family: var(--font-display);
-    font-weight: 900;
+    font-weight: 800;
     color: var(--ink-40);
     text-transform: uppercase;
-    background-image:
-        repeating-linear-gradient(45deg, var(--surface-2) 0 8px, transparent 8px 16px);
 }
 
 /* Bottom action bar that slides up out of the image edge */
@@ -1333,15 +1425,16 @@ body.lux-locked {
     right: 0;
     bottom: 0;
     padding: .75rem;
-    background: var(--ink);
-    color: var(--paper);
-    font-size: .625rem;
-    font-weight: 800;
-    letter-spacing: .16em;
+    background: rgba(9, 9, 11, 0.9);
+    backdrop-filter: blur(8px);
+    color: var(--signal);
+    font-size: .6875rem;
+    font-weight: 700;
+    letter-spacing: .12em;
     text-transform: uppercase;
     text-align: center;
     transform: translateY(100%);
-    transition: transform var(--dur) var(--ease-hard);
+    transition: transform var(--dur) var(--ease-out);
 }
 
 .lux-card:hover .lux-media__action,
@@ -1351,8 +1444,8 @@ body.lux-locked {
 
 .lux-media__tags {
     position: absolute;
-    top: .625rem;
-    left: .625rem;
+    top: .75rem;
+    left: .75rem;
     display: grid;
     gap: .375rem;
     justify-items: start;
@@ -1364,20 +1457,20 @@ body.lux-locked {
     flex: 1;
     flex-direction: column;
     gap: .5rem;
-    padding: 1rem;
-    border-top: 1px solid var(--ink);
+    padding: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .lux-card__title {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 1.0625rem;
     font-weight: 700;
-    letter-spacing: -.02em;
-    line-height: 1.2;
+    letter-spacing: -.01em;
+    line-height: 1.3;
 }
 
 .lux-card__title a:hover {
-    color: var(--signal-ink);
+    color: var(--signal);
 }
 
 .lux-price {
@@ -1405,21 +1498,20 @@ body.lux-locked {
     justify-content: space-between;
     gap: 2rem;
     min-height: 13rem;
-    padding: 1.375rem;
-    background: var(--paper);
-    border: 1px solid var(--ink);
+    padding: 1.75rem;
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius);
     overflow: hidden;
-    transition: transform var(--dur) var(--ease-out),
-                box-shadow var(--dur) var(--ease-out),
-                background var(--dur) var(--ease-out),
-                color var(--dur) var(--ease-out);
+    box-shadow: var(--shadow-card);
+    transition: all var(--dur) var(--ease-out);
 }
 
 .lux-tile:hover {
-    background: var(--ink);
-    color: var(--paper);
-    transform: translate(-3px, -3px);
-    box-shadow: var(--lift) var(--lift) 0 var(--signal);
+    background: var(--surface-2);
+    border-color: rgba(224, 184, 104, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(224, 184, 104, 0.15);
 }
 
 .lux-tile__meta {
@@ -1428,7 +1520,7 @@ body.lux-locked {
 }
 
 .lux-tile:hover .lux-tile__meta {
-    color: rgb(255 255 255 / .7);
+    color: var(--signal);
 }
 
 .lux-tile__arrow {
@@ -1436,7 +1528,8 @@ body.lux-locked {
 }
 
 .lux-tile:hover .lux-tile__arrow {
-    transform: translate(4px, -4px);
+    transform: translate(6px, -4px);
+    color: var(--signal);
 }
 
 /* --------------------------------------------------------------------------
@@ -1465,10 +1558,11 @@ body.lux-locked {
     position: sticky;
     top: 0;
     z-index: 2;
-    background: var(--ink);
-    color: var(--paper);
-    padding: .8125rem 1rem;
-    font-size: .5625rem;
+    background: #1e293b;
+    color: #cbd5e1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding: .875rem 1rem;
+    font-size: .625rem;
     font-weight: 700;
     letter-spacing: .14em;
     text-transform: uppercase;
@@ -1694,9 +1788,9 @@ body.lux-locked {
     z-index: 50;
     width: 16rem;
     overflow-y: auto;
-    background: var(--ink);
-    color: rgb(255 255 255 / .72);
-    border-right: 1px solid var(--ink);
+    background: #1e293b;
+    color: #f8fafc;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
     transform: translateX(-100%);
     transition: transform var(--dur-slow) var(--ease-hard);
 }
@@ -1735,10 +1829,10 @@ body.lux-locked {
     display: flex;
     align-items: center;
     gap: .75rem;
-    padding: .75rem .875rem;
-    font-size: .8125rem;
+    padding: .75rem 1rem;
+    font-size: .875rem;
     font-weight: 500;
-    color: rgb(255 255 255 / .66);
+    color: #94a3b8;
     transition: color var(--dur-fast), background var(--dur-fast),
                 padding-left var(--dur-fast) var(--ease-out);
 }
@@ -1750,7 +1844,7 @@ body.lux-locked {
     top: 0;
     bottom: 0;
     width: 3px;
-    background: var(--signal);
+    background: var(--accent-violet);
     transform: scaleY(0);
     transform-origin: center;
     transition: transform var(--dur) var(--ease-hard);
@@ -1758,23 +1852,25 @@ body.lux-locked {
 
 .lux-admin-nav a svg {
     flex: none;
-    opacity: .7;
+    opacity: .75;
     transition: opacity var(--dur-fast);
 }
 
 .lux-admin-nav a:hover {
-    background: rgb(255 255 255 / .07);
-    color: #fff;
-    padding-left: 1.125rem;
+    background: rgba(139, 92, 246, 0.15);
+    color: #ffffff;
+    padding-left: 1.25rem;
 }
 
 .lux-admin-nav a:hover svg {
     opacity: 1;
+    color: #a78bfa;
 }
 
 .lux-admin-nav a.is-active {
-    background: rgb(255 255 255 / .1);
-    color: #fff;
+    background: rgba(139, 92, 246, 0.25);
+    color: #ffffff;
+    font-weight: 600;
 }
 
 .lux-admin-nav a.is-active::before {
@@ -1783,32 +1879,35 @@ body.lux-locked {
 
 .lux-admin-nav a.is-active svg {
     opacity: 1;
+    color: #c4b5fd;
 }
 
 .lux-admin-header {
     position: sticky;
     top: 0;
     z-index: 30;
-    background: rgb(255 255 255 / .9);
-    backdrop-filter: blur(14px) saturate(1.6);
-    -webkit-backdrop-filter: blur(14px) saturate(1.6);
-    border-bottom: 1px solid var(--ink);
+    background: rgba(9, 9, 11, 0.8);
+    backdrop-filter: blur(16px) saturate(1.8);
+    -webkit-backdrop-filter: blur(16px) saturate(1.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .lux-kpi {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-    padding: 1.25rem;
-    background: var(--paper);
-    border: 1px solid var(--ink);
-    transition: transform var(--dur) var(--ease-out),
-                box-shadow var(--dur) var(--ease-out);
+    padding: 1.5rem;
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    transition: all var(--dur) var(--ease-out);
 }
 
 .lux-kpi:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 5px 5px 0 var(--ink);
+    transform: translateY(-3px);
+    border-color: rgba(224, 184, 104, 0.3);
+    box-shadow: var(--shadow-card-hover);
 }
 
 .lux-kpi__icon {

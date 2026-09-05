@@ -17,47 +17,46 @@
         theme: {
             extend: {
                 colors: {
-                    paper: '#ffffff',
-                    surface: '#fafafa',
-                    surface2: '#f2f2f2',
-                    ink: '#000000',
-                    'ink-60': '#5c5c5c',
-                    'ink-40': '#8a8a8a',
-                    line: '#000000',
-                    'line-soft': '#e4e4e4',
-                    signal: '#ff4a1c',
-                    'signal-ink': '#c4300b',
-                    /* Aliases from the previous two palettes. Kept so any
-                       class left behind resolves in-palette instead of
-                       silently rendering nothing (which is what bg-sand did
-                       in the admin layout). */
-                    cream: '#ffffff',
-                    sand: '#fafafa',
-                    gold: '#c4300b',
-                    coral: '#ff4a1c',
-                    lavender: '#f2f2f2'
+                    paper: '#0b0c10',
+                    surface: '#13151f',
+                    surface2: '#1b1e2e',
+                    ink: '#ffffff',
+                    'ink-60': '#94a3b8',
+                    'ink-40': '#64748b',
+                    line: 'rgba(255, 255, 255, 0.12)',
+                    'line-soft': 'rgba(255, 255, 255, 0.06)',
+                    signal: '#fbbf24',
+                    'signal-ink': '#f59e0b',
+                    violet: '#8b5cf6',
+                    indigo: '#6366f1',
+                    cyan: '#06b6d4',
+                    rose: '#f43f5e',
+                    emerald: '#10b981',
+                    cream: '#0b0c10',
+                    sand: '#13151f',
+                    gold: '#fbbf24',
+                    coral: '#f43f5e',
+                    lavender: '#1b1e2e'
                 },
                 fontFamily: {
-                    display: ['Archivo', 'Inter', 'system-ui', 'sans-serif'],
+                    display: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
                     sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
                     mono: ['ui-monospace', 'SF Mono', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace']
                 },
                 borderRadius: {
-                    DEFAULT: '0',
-                    sm: '0',
-                    md: '0',
-                    lg: '0',
-                    xl: '0',
-                    '2xl': '0',
-                    '3xl': '0',
+                    DEFAULT: '0.625rem',
+                    sm: '0.375rem',
+                    md: '0.625rem',
+                    lg: '1rem',
+                    xl: '1.5rem',
+                    '2xl': '2rem',
                     full: '9999px',
                     none: '0'
                 },
                 boxShadow: {
-                    hard: '6px 6px 0 #000000',
-                    'hard-sm': '4px 4px 0 #000000',
-                    'hard-lg': '10px 10px 0 #000000',
-                    'hard-signal': '6px 6px 0 #ff4a1c',
+                    glow: '0 10px 30px -10px rgba(139, 92, 246, 0.4)',
+                    'glow-gold': '0 10px 30px -10px rgba(251, 191, 36, 0.4)',
+                    card: '0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08)',
                     none: 'none'
                 },
                 transitionTimingFunction: {
@@ -74,6 +73,6 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/luxora.css') }}">

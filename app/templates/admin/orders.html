@@ -1,65 +1,161 @@
 {% extends 'layouts/admin_base.html' %}
 {% from 'components/icons.html' import icon %}
 
-{% block title %}Orders · LUXORA{% endblock %}
-{% block page_heading %}Orders{% endblock %}
+{% block title %}Order Control Center · LUXORA Admin{% endblock %}
+{% block page_heading %}Order Control Center{% endblock %}
 
 {% block content %}
 {% set statuses = ['Pending','Confirmed','Processing','Shipped','Out for Delivery','Delivered','Cancelled','Refunded'] %}
 
 <div class="mx-auto max-w-7xl">
 
-    <div class="mb-8 flex flex-wrap items-end justify-between gap-4" data-reveal>
-        <p class="text-sm lux-muted">Track fulfillment and move orders through their delivery stages.</p>
-        <span class="lux-chip lux-chip--ok lux-num">{{ orders|length }} orders</span>
+    <div class="mb-8 flex flex-wrap items-center justify-between gap-4" data-reveal>
+        <div>
+            <p class="text-sm lux-muted">Full fulfillment control: update order statuses, inspect line items, and manage customer shipments.</p>
+        </div>
+        <span class="lux-chip lux-chip--ok lux-num">{{ orders|length }} orders in view</span>
     </div>
 
-    <div class="lux-table-wrap" data-reveal>
-        <table class="lux-table min-w-[720px]">
-            <thead>
-                <tr>
-                    <th>Order</th>
-                    <th>Customer</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for o in orders %}
-                <tr>
-                    <td>
-                        <b class="lux-mono text-sm">#{{ o.id }}</b>
-                        <small class="lux-eyebrow mt-1 block">{{ o.created_at }}</small>
-                    </td>
-                    <td>
-                        <span class="text-sm font-semibold">{{ o.name }}</span>
-                        <small class="mt-1 block text-xs lux-muted">{{ o.email }}</small>
-                    </td>
-                    <td><b class="lux-num">${{ o.total }}</b></td>
-                    <td>
-                        <form method="post" action="{{ url_for('admin.status', order_id=o.id) }}">
-                            <label class="sr-only" for="order-status-{{ o.id }}">Status for order {{ o.id }}</label>
-                            <select id="order-status-{{ o.id }}" class="lux-select lux-select--xs text-xs" name="status" onchange="this.form.submit()">
-                                {% for s in statuses %}
-                                <option {% if s == o.status %}selected{% endif %}>{{ s }}</option>
-                                {% endfor %}
-                            </select>
-                        </form>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="4" class="lux-td-flush">
-                        <div class="lux-empty lux-empty--bare">
-                            <span class="mx-auto grid h-14 w-14 place-items-center border border-ink">{{ icon('package', 'h-6 w-6') }}</span>
-                            <h3 class="mt-6 font-display text-2xl uppercase">No orders yet</h3>
-                            <p class="mx-auto mt-3 max-w-sm text-sm lux-muted">Orders will appear here as customers check out.</p>
+    <!-- ============================================== STATUS FILTER TABS -->
+    <div class="mb-8 flex flex-wrap items-center gap-2 border-b border-line-soft pb-4" data-reveal>
+        <a href="{{ url_for('admin.orders') }}" class="lux-btn lux-btn--sm {{ 'lux-btn--primary' if not selected_status else 'text-slate-400' }}">All Orders</a>
+        {% for s in statuses %}
+        <a href="{{ url_for('admin.orders', status=s) }}" class="lux-btn lux-btn--sm {{ 'lux-btn--primary' if selected_status == s else 'text-slate-400' }}">
+            {{ s }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- ============================================== ORDERS LIST -->
+    <div class="grid gap-6" data-reveal>
+        {% for o in orders %}
+        <div class="rounded-xl border border-white/10 bg-slate-900/80 p-6 shadow-xl backdrop-blur-md">
+            <!-- Order Header Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-line-soft pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="grid h-10 w-10 place-items-center rounded-lg border border-violet-500/30 bg-violet-950/40 text-violet-300 font-bold">
+                        #{{ o.id }}
+                    </span>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <b class="text-base text-white font-semibold">{{ o.name }}</b>
+                            <span class="text-xs text-slate-300">({{ o.email }})</span>
                         </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        <p class="text-xs text-slate-400 mt-0.5">Placed on {{ o.created_at }}</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400 block uppercase tracking-wider">Total Paid</span>
+                        <b class="text-lg text-emerald-400 font-mono">${{ "%.2f"|format(o.total|float) }}</b>
+                    </div>
+
+                    <!-- Quick Status Selector -->
+                    <form method="post" action="{{ url_for('admin.status', order_id=o.id) }}" class="flex items-center gap-2">
+                        <select class="lux-select text-xs font-semibold py-1.5 px-3 rounded-lg border-violet-500/40 bg-slate-950 text-white" name="status" onchange="this.form.submit()">
+                            {% for s in statuses %}
+                            <option value="{{ s }}" {% if s == o.status %}selected{% endif %}>{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+
+                    <!-- Order Delete Action -->
+                    <form method="post" action="{{ url_for('admin.delete_order', order_id=o.id) }}" onsubmit="return confirm('Permanently delete order #{{ o.id }}?')">
+                        <button type="submit" class="lux-icon-btn text-rose-400 hover:text-rose-300" title="Delete Order">
+                            {{ icon('trash', 'h-4 w-4') }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <!-- Order Fulfillment Stepper -->
+            <div class="mt-4 border-b border-line-soft pb-4">
+                {% set steps = ['Pending', 'Processing', 'Shipped', 'Delivered'] %}
+                {% if o.status in ['Cancelled', 'Refunded'] %}
+                <div class="flex items-center gap-2 text-xs text-rose-400 font-semibold bg-rose-950/30 p-2.5 rounded-lg border border-rose-500/30">
+                    {{ icon('alert', 'h-4 w-4') }} Order status marked as <strong class="uppercase font-mono">{{ o.status }}</strong>.
+                </div>
+                {% else %}
+                <div class="flex items-center justify-between max-w-xl mx-auto px-2">
+                    {% for step in steps %}
+                    {% set active = loop.index <= (1 if o.status == 'Pending' else (2 if o.status in ['Confirmed', 'Processing'] else (3 if o.status in ['Shipped', 'Out for Delivery'] else 4))) %}
+                    <div class="flex flex-col items-center relative z-10">
+                        <div class="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold font-mono transition-all {{ 'bg-violet-600 text-white shadow-[0_0_10px_rgba(139,92,246,0.5)]' if active else 'bg-slate-800 text-slate-500 border border-line-soft' }}">
+                            {{ loop.index }}
+                        </div>
+                        <span class="text-[10px] font-mono mt-1 font-semibold {{ 'text-violet-300' if active else 'text-slate-500' }}">{{ step }}</span>
+                    </div>
+                    {% if not loop.last %}
+                    <div class="flex-1 h-0.5 mx-2 {{ 'bg-violet-600' if active else 'bg-slate-800' }}"></div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Order Details Grid -->
+            <div class="mt-5 grid gap-6 md:grid-cols-3">
+                <!-- Line Items Breakdown (Col 1 & 2) -->
+                <div class="md:col-span-2">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+                        {{ icon('package', 'h-3.5 w-3.5') }} Purchased Items ({{ o.items|length }})
+                    </h4>
+                    <div class="space-y-3">
+                        {% for item in o.items %}
+                        <div class="flex items-center justify-between rounded-lg border border-line-soft bg-surface/50 p-3">
+                            <div class="flex items-center gap-3">
+                                {% if item.image %}
+                                <img src="{{ item.image }}" alt="{{ item.name }}" class="h-12 w-12 rounded object-cover border border-line-soft shrink-0">
+                                {% else %}
+                                <div class="h-12 w-12 rounded border border-line-soft bg-slate-800 grid place-items-center text-slate-500 shrink-0">
+                                    {{ icon('box', 'h-5 w-5') }}
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <b class="text-sm text-white block">{{ item.name }}</b>
+                                    <span class="text-xs text-slate-300">Qty: {{ item.quantity }} × ${{ "%.2f"|format(item.price|float) }}</span>
+                                </div>
+                            </div>
+                            <span class="font-mono text-sm text-white font-semibold">${{ "%.2f"|format((item.price|float) * (item.quantity|int)) }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Customer & Shipping Summary (Col 3) -->
+                <div class="rounded-lg border border-line-soft bg-surface/30 p-4 text-xs space-y-3">
+                    <div>
+                        <h4 class="font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1.5">
+                            {{ icon('user', 'h-3.5 w-3.5') }} Customer Info
+                        </h4>
+                        <p class="text-slate-200 font-medium">{{ o.name }}</p>
+                        <p class="text-slate-300 font-mono">{{ o.email }}</p>
+                        {% if o.phone %}<p class="text-slate-300">Phone: {{ o.phone }}</p>{% endif %}
+                    </div>
+
+                    <div class="border-t border-line-soft pt-3">
+                        <h4 class="font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1.5">
+                            {{ icon('store', 'h-3.5 w-3.5') }} Shipping Address
+                        </h4>
+                        <p class="text-slate-200 leading-relaxed">{{ o.shipping_address or 'Standard delivery address' }}</p>
+                    </div>
+
+                    <div class="border-t border-line-soft pt-3">
+                        <h4 class="font-bold uppercase tracking-wider text-slate-400 mb-1">Payment Method</h4>
+                        <p class="text-slate-200 uppercase font-mono">{{ o.payment_method or 'Card Payment' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="lux-empty rounded-xl border border-white/10 bg-slate-900/40 p-12 text-center">
+            <span class="mx-auto grid h-14 w-14 place-items-center rounded-xl border border-line-soft bg-surface text-slate-400">
+                {{ icon('package', 'h-6 w-6') }}
+            </span>
+            <h3 class="mt-6 font-display text-2xl uppercase text-white">No orders found</h3>
+            <p class="mx-auto mt-2 max-w-sm text-sm text-slate-400">There are currently no orders matching the selected status filter.</p>
+        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
