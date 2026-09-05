@@ -134,10 +134,15 @@ def product(slug):
     )
     if not p:
         return render_template("customer/error.html", code=404, message="Product not found"), 404
-    reviews = db.query(
-        'SELECT r.*,u.name FROM reviews r JOIN users u ON u.id=r.user_id WHERE r.product_id=? AND r.status="Approved" ORDER BY r.created_at DESC',
-        (p["id"],),
-    )
+    try:
+        reviews = db.query(
+            'SELECT r.*,u.name FROM reviews r JOIN users u ON u.id=r.user_id WHERE r.product_id=? AND r.status="Approved" ORDER BY r.created_at DESC',
+            (p["id"],),
+        )
+    except Exception:
+        # A product must remain viewable even if an older/partial production
+        # import does not yet contain the optional reviews tables.
+        reviews = []
     return render_template("customer/product.html", product=p, reviews=reviews)
 
 
