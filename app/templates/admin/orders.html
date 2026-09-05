@@ -97,11 +97,11 @@
             <div class="mt-5 grid gap-6 md:grid-cols-3">
                 <!-- Line Items Breakdown (Col 1 & 2) -->
                 <div class="md:col-span-2">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-                        {{ icon('package', 'h-3.5 w-3.5') }} Purchased Items ({{ o.items|length }})
-                    </h4>
-                    <div class="space-y-3">
-                        {% for item in o.items %}
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+                            {{ icon('package', 'h-3.5 w-3.5') }} Purchased Items ({{ o['items']|length }})
+                        </h4>
+                        <div class="space-y-3">
+                        {% for item in o['items'] %}
                         <div class="flex items-center justify-between rounded-lg border border-line-soft bg-surface/50 p-3">
                             <div class="flex items-center gap-3">
                                 {% if item.image %}

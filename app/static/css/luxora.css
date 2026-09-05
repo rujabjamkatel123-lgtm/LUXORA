@@ -11,19 +11,19 @@
    -------------------------------------------------------------------------- */
 
 :root {
-    /* Surfaces — Balanced Mid-Tone Slate & Indigo Palette */
-    --paper: #0f172a;          /* Mid-Tone Slate Canvas */
-    --surface: #1e293b;        /* Elevated Slate Surface */
-    --surface-2: #334155;      /* Secondary Mid-Tone Surface */
+    /* Light cream is the default storefront and admin theme. */
+    --paper: #f7f1e7;
+    --surface: #fffaf2;
+    --surface-2: #eee4d5;
 
     /* Ink */
-    --ink: #f8fafc;            /* Crisp Primary Text */
-    --ink-60: #cbd5e1;         /* Bright Readable Secondary Text */
-    --ink-40: #94a3b8;         /* Muted Slate Text */
+    --ink: #4b5563;
+    --ink-60: #6b7280;
+    --ink-40: #9ca3af;
 
     /* Rules */
-    --line: rgba(255, 255, 255, 0.12);
-    --line-soft: rgba(255, 255, 255, 0.06);
+    --line: rgba(70, 52, 31, 0.18);
+    --line-soft: rgba(70, 52, 31, 0.09);
 
     /* Vibrant Color Accents */
     --signal: #fbbf24;         /* Gold Accent */
@@ -53,9 +53,25 @@
 
     /* Vibrant Glow Shadows */
     --lift: 4px;
+    --shadow-card: 0 12px 32px -8px rgba(77, 54, 29, 0.16), 0 0 0 1px rgba(77, 54, 29, 0.08);
+    --shadow-card-hover: 0 20px 48px -12px rgba(139, 92, 246, 0.24), 0 0 0 1px rgba(139, 92, 246, 0.4);
+}
+
+html[data-theme='dark'] {
+    --paper: #0f172a;
+    --surface: #1e293b;
+    --surface-2: #334155;
+    --ink: #f8fafc;
+    --ink-60: #cbd5e1;
+    --ink-40: #94a3b8;
+    --line: rgba(255, 255, 255, 0.12);
+    --line-soft: rgba(255, 255, 255, 0.06);
     --shadow-card: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
     --shadow-card-hover: 0 20px 48px -12px rgba(139, 92, 246, 0.35), 0 0 0 1px rgba(139, 92, 246, 0.5);
 }
+
+html { color-scheme: light; }
+html[data-theme='dark'] { color-scheme: dark; }
 
 /* --------------------------------------------------------------------------
    2. BASE
@@ -79,16 +95,81 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+html:not([data-theme='dark']) .bg-slate-950\/60,
+html:not([data-theme='dark']) .bg-slate-900\/60,
+html:not([data-theme='dark']) .bg-slate-950\/70,
+html:not([data-theme='dark']) .bg-slate-950\/80,
+html:not([data-theme='dark']) .bg-slate-950\/85,
+html:not([data-theme='dark']) .bg-slate-950\/40,
+html:not([data-theme='dark']) .bg-slate-900\/80 {
+    background-color: color-mix(in srgb, var(--surface) 92%, transparent) !important;
+}
+html:not([data-theme='dark']) .text-slate-200,
+html:not([data-theme='dark']) .text-slate-300,
+html:not([data-theme='dark']) .text-slate-400,
+html:not([data-theme='dark']) .text-slate-500,
+html:not([data-theme='dark']) .text-slate-600 { color: var(--ink-60) !important; }
+html:not([data-theme='dark']) .border-white\/10,
+html:not([data-theme='dark']) .border-white\/15 { border-color: var(--line) !important; }
+
+/* Light mode overrides the original dark-only utility colors as a group. */
+html:not([data-theme='dark']) .text-white,
+html:not([data-theme='dark']) .hover\:text-white:hover { color: var(--ink) !important; }
+html:not([data-theme='dark']) .lux-header {
+    background: rgba(255, 250, 242, .86);
+    border-color: var(--line);
+}
+html:not([data-theme='dark']) .lux-header.is-scrolled {
+    background: rgba(255, 250, 242, .96);
+    box-shadow: 0 10px 30px -10px rgba(77, 54, 29, .18), 0 1px 0 var(--line);
+}
+html:not([data-theme='dark']) .lux-ticker {
+    background: rgba(255, 250, 242, .92);
+    border-color: var(--line);
+}
+html:not([data-theme='dark']) .lux-ticker__item { color: var(--ink-60); }
+html:not([data-theme='dark']) .lux-ticker--invert {
+    background: var(--surface-2);
+    border-color: var(--line);
+}
+html:not([data-theme='dark']) .lux-ticker--invert .lux-ticker__item {
+    background: linear-gradient(135deg, #6d28d9 0%, #0e7490 55%, #a16207 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+html:not([data-theme='dark']) .lux-btn {
+    border-color: var(--line);
+    background-color: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 4px 16px rgba(77, 54, 29, .12), inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+html:not([data-theme='dark']) .lux-btn:hover,
+html:not([data-theme='dark']) .lux-btn:focus-visible { background-color: var(--surface-2); color: var(--ink); }
+html:not([data-theme='dark']) .lux-input,
+html:not([data-theme='dark']) .lux-select,
+html:not([data-theme='dark']) .lux-search {
+    background-color: var(--surface);
+    color: var(--ink);
+    border-color: var(--line);
+}
+html:not([data-theme='dark']) .lux-drawer__panel {
+    background: var(--surface);
+    color: var(--ink);
+}
+
 /* Gradient Text Utilities */
 .lux-gradient-text {
     background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 40%, #fbbf24 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .lux-gradient-text-alt {
     background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #10b981 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -880,16 +961,17 @@ summary:focus-visible,
 
 .lux-ticker--invert .lux-ticker__track {
     gap: 2.5rem;
-    padding: 1rem 0;
+    padding: .5rem 0;
 }
 
 .lux-ticker--invert .lux-ticker__item {
     font-family: var(--font-display);
-    font-size: 1.5rem;
+    font-size: .9rem;
     font-weight: 800;
     letter-spacing: -.02em;
     background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, #fbbf24 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -897,6 +979,7 @@ summary:focus-visible,
 .lux-outline {
     background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #fbbf24 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -1507,6 +1590,26 @@ body.lux-locked {
     transition: all var(--dur) var(--ease-out);
 }
 
+.lux-tile__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: .34;
+    filter: saturate(.8);
+    transition: transform var(--dur-slow) var(--ease-out), opacity var(--dur) var(--ease-out);
+}
+.lux-tile::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 23, 42, .2), rgba(15, 23, 42, .92));
+    pointer-events: none;
+}
+.lux-tile__content { position: relative; z-index: 1; }
+.lux-tile:hover .lux-tile__image { opacity: .5; transform: scale(1.06); }
+
 .lux-tile:hover {
     background: var(--surface-2);
     border-color: rgba(224, 184, 104, 0.4);
@@ -1779,6 +1882,20 @@ body.lux-locked {
 .lux-admin-body {
     background: var(--surface);
 }
+html:not([data-theme='dark']) .lux-admin-sidebar {
+    background: #fffaf2;
+    color: var(--ink);
+    border-color: var(--line);
+}
+html:not([data-theme='dark']) .lux-admin-header {
+    background: rgba(255, 250, 242, .88);
+    border-color: var(--line);
+}
+html:not([data-theme='dark']) .lux-admin-nav a { color: var(--ink-60); }
+html:not([data-theme='dark']) .lux-admin-nav a:hover,
+html:not([data-theme='dark']) .lux-admin-nav a.is-active { color: var(--ink); }
+html:not([data-theme='dark']) .lux-admin-nav a.is-active { background: rgba(139, 92, 246, .12); }
+html:not([data-theme='dark']) .lux-table thead th { background: var(--surface-2); color: var(--ink); border-color: var(--line); }
 
 .lux-admin-sidebar {
     position: fixed;
@@ -2143,4 +2260,189 @@ body.lux-locked {
     @view-transition {
         navigation: none;
     }
+}
+
+/* Final theme pass: these rules intentionally come after all component rules. */
+html:not([data-theme='dark']) .lux-admin-body {
+    background: var(--paper) !important;
+    color: var(--ink);
+}
+html:not([data-theme='dark']) .lux-admin-sidebar {
+    background: var(--surface) !important;
+    color: var(--ink);
+    border-color: var(--line);
+}
+html:not([data-theme='dark']) .lux-admin-header {
+    background: rgba(255, 250, 242, .94) !important;
+    border-color: var(--line) !important;
+}
+html:not([data-theme='dark']) .lux-admin-nav a { color: var(--ink-60); }
+html:not([data-theme='dark']) .lux-admin-nav a:hover,
+html:not([data-theme='dark']) .lux-admin-nav a.is-active { color: var(--ink); }
+html:not([data-theme='dark']) .lux-admin-nav a.is-active { background: rgba(139, 92, 246, .12); }
+html:not([data-theme='dark']) .lux-admin-sidebar .border-white\/10,
+html:not([data-theme='dark']) .lux-admin-header .border-white\/10 { border-color: var(--line) !important; }
+html:not([data-theme='dark']) .lux-admin-body .text-slate-200,
+html:not([data-theme='dark']) .lux-admin-body .text-slate-300,
+html:not([data-theme='dark']) .lux-admin-body .text-slate-400,
+html:not([data-theme='dark']) .lux-admin-body .text-slate-500 { color: var(--ink-60) !important; }
+html:not([data-theme='dark']) .lux-table thead th { background: var(--surface-2); color: var(--ink); border-color: var(--line); }
+
+/* Whole-page color modes: no dark-only panels remain in light mode. */
+html:not([data-theme='dark']) .lux-band,
+html:not([data-theme='dark']) footer,
+html:not([data-theme='dark']) .lux-panel,
+html:not([data-theme='dark']) .lux-card,
+html:not([data-theme='dark']) .lux-media,
+html:not([data-theme='dark']) .lux-tile,
+html:not([data-theme='dark']) .lux-table-wrap,
+html:not([data-theme='dark']) .lux-modal__panel {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--line);
+}
+html:not([data-theme='dark']) .lux-band {
+    background: linear-gradient(135deg, #fffaf2 0%, #f2e7d5 100%);
+}
+html:not([data-theme='dark']) .lux-band .lux-eyebrow--invert,
+html:not([data-theme='dark']) .lux-band .lux-muted,
+html:not([data-theme='dark']) .lux-band .lux-dim { color: var(--ink-60); }
+html:not([data-theme='dark']) .lux-tile__image { opacity: .78; }
+html:not([data-theme='dark']) .lux-tile::after {
+    background: linear-gradient(180deg, rgba(255, 250, 242, .08), rgba(36, 31, 26, .72));
+}
+html[data-theme='dark'] .lux-tile__image { opacity: .78; }
+html[data-theme='dark'] .lux-tile::after {
+    background: linear-gradient(180deg, rgba(15, 23, 42, .08), rgba(15, 23, 42, .78));
+}
+html:not([data-theme='dark']) footer .text-slate-400,
+html:not([data-theme='dark']) footer .text-slate-300 { color: var(--ink-60) !important; }
+
+/* Homepage sections must switch as a complete canvas, not band by band. */
+html[data-theme='light'] body.bg-paper,
+html:not([data-theme='dark']) body.bg-paper {
+    background-color: var(--paper) !important;
+    color: var(--ink) !important;
+}
+html[data-theme='light'] main,
+html:not([data-theme='dark']) main {
+    background: var(--paper) !important;
+    color: var(--ink) !important;
+}
+html[data-theme='light'] main > section,
+html:not([data-theme='dark']) main > section {
+    background-color: var(--paper) !important;
+    background-image: none !important;
+    color: var(--ink);
+}
+html[data-theme='light'] .lux-hero-frame,
+html:not([data-theme='dark']) .lux-hero-frame {
+    background: var(--surface) !important;
+}
+html[data-theme='light'] .bg-gradient-to-r,
+html:not([data-theme='dark']) .bg-gradient-to-r {
+    background-image: linear-gradient(135deg, #fffaf2 0%, #f2e7d5 100%) !important;
+    background-color: var(--surface) !important;
+    color: var(--ink) !important;
+}
+html[data-theme='light'] .bg-gradient-to-r .text-slate-200,
+html[data-theme='light'] .bg-gradient-to-r .text-slate-300,
+html:not([data-theme='dark']) .bg-gradient-to-r .text-slate-200,
+html:not([data-theme='dark']) .bg-gradient-to-r .text-slate-300 {
+    color: var(--ink-60) !important;
+}
+html[data-theme='light'] .bg-gradient-to-r .bg-slate-950\/70,
+html:not([data-theme='dark']) .bg-gradient-to-r .bg-slate-950\/70 {
+    background: color-mix(in srgb, var(--surface-2) 70%, transparent) !important;
+}
+
+/* Admin Orders page: replace remaining dark-only utility surfaces in light mode. */
+html:not([data-theme='dark']) .lux-admin-body .bg-slate-900\/80,
+html:not([data-theme='dark']) .lux-admin-body .bg-slate-900\/40,
+html:not([data-theme='dark']) .lux-admin-body .bg-slate-950,
+html:not([data-theme='dark']) .lux-admin-body .bg-slate-800,
+html:not([data-theme='dark']) .lux-admin-body .bg-surface\/50,
+html:not([data-theme='dark']) .lux-admin-body .bg-surface\/30 {
+    background-color: var(--surface) !important;
+    color: var(--ink) !important;
+}
+html:not([data-theme='dark']) .lux-admin-body .bg-violet-950\/40 {
+    background-color: rgba(139, 92, 246, .1) !important;
+    color: #6d28d9 !important;
+}
+html:not([data-theme='dark']) .lux-admin-body .bg-rose-950\/30 {
+    background-color: rgba(244, 63, 94, .08) !important;
+}
+html:not([data-theme='dark']) .lux-admin-body .border-white\/10,
+html:not([data-theme='dark']) .lux-admin-body .border-line-soft { border-color: var(--line) !important; }
+html:not([data-theme='dark']) .lux-admin-body select.bg-slate-950,
+html:not([data-theme='dark']) .lux-admin-body .lux-select {
+    background-color: var(--surface) !important;
+    color: var(--ink) !important;
+    border-color: var(--line) !important;
+}
+html:not([data-theme='dark']) .lux-admin-body .text-white { color: var(--ink) !important; }
+html:not([data-theme='dark']) .lux-admin-body .text-slate-200,
+html:not([data-theme='dark']) .lux-admin-body .text-slate-300,
+html:not([data-theme='dark']) .lux-admin-body .text-slate-400,
+html:not([data-theme='dark']) .lux-admin-body .text-slate-500 { color: var(--ink-60) !important; }
+
+/* Brand mark and shared shopping CTA treatment. */
+.lux-logo-image {
+    display: block;
+    width: 3.4rem;
+    height: 3.4rem;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 10px rgba(139, 92, 246, .22));
+}
+.lux-logo-image--drawer { width: 2.7rem; height: 2.7rem; }
+.lux-logo-image--footer { width: 4.25rem; height: 4.25rem; }
+.lux-btn--primary {
+    border-color: transparent !important;
+    background: linear-gradient(135deg, #6d28d9 0%, #db2777 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 24px rgba(109, 40, 217, .28), inset 0 1px 0 rgba(255, 255, 255, .3);
+}
+.lux-btn--primary:hover,
+.lux-btn--primary:focus-visible {
+    background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 12px 30px rgba(219, 39, 119, .32), inset 0 1px 0 rgba(255, 255, 255, .4);
+}
+
+/* Small hover labels for compact navbar controls. */
+[data-tooltip] { position: relative; }
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50%;
+    top: calc(100% + .65rem);
+    z-index: 100;
+    padding: .38rem .6rem;
+    border: 1px solid var(--line);
+    border-radius: .45rem;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, .16);
+    font-family: var(--font-sans);
+    font-size: .6875rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -4px);
+    transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+html[data-theme='dark'] [data-tooltip]::after {
+    background: #1e293b;
+    color: #f8fafc;
+    border-color: rgba(255, 255, 255, .14);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .35);
 }

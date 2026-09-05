@@ -1,6 +1,13 @@
 {% extends 'layouts/base.html' %}
 {% from 'components/icons.html' import icon %}
 {% from 'components/product_card.html' import product_card with context %}
+{% set category_images = {
+    'fashion': 'category-fashion.jpg',
+    'electronics': 'category-electronics.jpg',
+    'beauty': 'category-beauty.jpg',
+    'home-living': 'category-home-living.jpg',
+    'accessories': 'category-accessories.jpg'
+} %}
 
 {% block title %}LUXORA · Everything You Love{% endblock %}
 
@@ -81,11 +88,12 @@
             <div class="mt-11 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
                 {% for c in nav_categories %}
                 <a class="lux-tile group hover:shadow-glow" href="{{ url_for('store.category', slug=c.slug) }}" data-reveal style="--i: {{ loop.index0 }}">
-                    <div class="flex items-start justify-between">
+                    <img class="lux-tile__image" src="{{ url_for('static', filename='images/' ~ category_images.get(c.slug, 'cotton-hoodie.jpg')) }}" alt="{{ c.name }}" loading="lazy" decoding="async">
+                    <div class="lux-tile__content flex items-start justify-between">
                         <span class="lux-eyebrow lux-num text-violet-400 font-bold">{{ '%02d'|format(loop.index) }}</span>
                         <span class="lux-tile__arrow text-violet-400 group-hover:text-amber-400">{{ icon('arrow-up-right', 'h-5 w-5') }}</span>
                     </div>
-                    <div>
+                    <div class="lux-tile__content">
                         <h3 class="font-display text-2xl uppercase leading-tight group-hover:text-amber-300 transition-colors">{{ c.name }}</h3>
                         <p class="lux-tile__meta mt-2 text-xs text-slate-400">Curated essentials</p>
                     </div>

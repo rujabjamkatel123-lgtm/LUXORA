@@ -28,7 +28,9 @@
     <header class="lux-header" data-header>
         <div class="lux-header__inner mx-auto flex max-w-7xl items-center justify-between gap-x-4 px-4 sm:px-6 lg:px-8">
 
-            <a class="lux-logo text-xl font-extrabold lux-gradient-text flex-none lg:text-2xl" href="{{ url_for('store.home') }}">LUXORA</a>
+            <a class="lux-logo flex-none" href="{{ url_for('store.home') }}" aria-label="LUXORA home">
+                <img class="lux-logo-image" src="{{ url_for('static', filename='images/luxora-logo.png') }}" alt="LUXORA">
+            </a>
 
             <nav class="hidden items-center gap-7 lg:flex lg:flex-1 lg:justify-center">
                 {% for label, href in nav_items %}
@@ -43,17 +45,21 @@
                     <button type="submit" aria-label="Search">{{ icon('search', 'h-4 w-4') }}</button>
                 </form>
 
-                <a class="lux-icon-btn lux-icon-btn--glass" title="Wishlist" aria-label="Wishlist"
+                <a class="lux-icon-btn lux-icon-btn--glass" title="Wishlist" data-tooltip="Wishlist" aria-label="Wishlist"
                    href="{{ url_for('store.wishlist') if session.get('user_id') else url_for('auth.login', next='/wishlist') }}">
                     {{ icon('heart', 'h-4.5 w-4.5') }}
                 </a>
 
-                <a class="lux-icon-btn lux-icon-btn--glass" title="Account" aria-label="Account"
+                <a class="lux-icon-btn lux-icon-btn--glass" title="Account" data-tooltip="Account" aria-label="Account"
                    href="{{ url_for('auth.login') if not session.get('user_id') else url_for('store.account') }}">
                     {{ icon('user', 'h-4.5 w-4.5') }}
                 </a>
 
-                <a class="lux-bag" href="{{ url_for('store.cart') }}">
+                <button class="lux-icon-btn lux-icon-btn--glass" type="button" data-theme-toggle data-tooltip="Switch theme" aria-label="Switch theme" title="Switch theme">
+                    <span data-theme-icon>☾</span>
+                </button>
+
+                <a class="lux-bag" href="{{ url_for('store.cart') }}" data-tooltip="Cart" title="Cart" aria-label="Cart">
                     {{ icon('bag', 'h-4.5 w-4.5') }}
                     <span class="hidden sm:inline">Bag</span>
                     <sup data-cart-count>{{ cart_count }}</sup>
@@ -70,7 +76,7 @@
                 <a class="hidden text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400 hover:text-white lg:inline ml-1" href="{{ url_for('auth.logout') }}">Logout</a>
                 {% endif %}
 
-                <button class="lux-icon-btn lux-icon-btn--glass lg:hidden" type="button" data-drawer-open aria-label="Open menu" aria-controls="lux-drawer" aria-expanded="false">
+                <button class="lux-icon-btn lux-icon-btn--glass lg:hidden" type="button" data-drawer-open data-tooltip="Menu" aria-label="Open menu" aria-controls="lux-drawer" aria-expanded="false">
                     {{ icon('menu', 'h-4.5 w-4.5') }}
                 </button>
             </div>
@@ -82,7 +88,7 @@
         <div class="lux-drawer__backdrop" data-drawer-close></div>
         <div class="lux-drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">
             <div class="flex items-center justify-between">
-                <span class="lux-logo text-lg">LUXORA</span>
+                <span class="lux-logo"><img class="lux-logo-image lux-logo-image--drawer" src="{{ url_for('static', filename='images/luxora-logo.png') }}" alt="LUXORA"></span>
                 <button class="lux-icon-btn text-paper" type="button" data-drawer-close aria-label="Close menu">
                     {{ icon('close', 'h-5 w-5') }}
                 </button>
@@ -147,7 +153,9 @@
         <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
             <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
                 <div>
-                    <a class="lux-logo text-2xl font-extrabold lux-gradient-text" href="{{ url_for('store.home') }}">LUXORA</a>
+                    <a class="lux-logo" href="{{ url_for('store.home') }}" aria-label="LUXORA home">
+                        <img class="lux-logo-image lux-logo-image--footer" src="{{ url_for('static', filename='images/luxora-logo.png') }}" alt="LUXORA">
+                    </a>
                     <p class="mt-5 max-w-xs text-sm leading-7 text-slate-400">Everything you love, all in one place. Premium products for modern living.</p>
                     <div class="mt-6 flex gap-3 text-xs">
                         <span class="lux-badge lux-badge--violet">Est. 2024</span>
@@ -219,6 +227,21 @@
             onScroll();
             window.addEventListener('scroll', onScroll, { passive: true });
         }
+
+        /* -------------------------------------------------- light / dark theme */
+        const themeToggle = document.querySelector('[data-theme-toggle]');
+        const setTheme = (theme) => {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('luxora-theme', theme);
+            if (themeToggle) {
+                themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+                themeToggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+                const icon = themeToggle.querySelector('[data-theme-icon]');
+                if (icon) icon.textContent = theme === 'dark' ? '☀' : '☾';
+            }
+        };
+        setTheme(document.documentElement.dataset.theme || 'light');
+        if (themeToggle) themeToggle.addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
 
         /* -------------------------------------------------- active nav */
         document.querySelectorAll('[data-nav-link]').forEach((link) => {

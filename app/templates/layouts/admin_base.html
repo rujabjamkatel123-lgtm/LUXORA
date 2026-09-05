@@ -29,7 +29,9 @@
     <aside class="lux-admin-sidebar" id="lux-admin-sidebar" data-admin-sidebar>
         <div class="flex items-center justify-between px-6 pt-7 pb-4 border-b border-white/10">
             <div>
-                <a class="lux-logo text-2xl font-extrabold lux-gradient-text" href="{{ url_for('admin.dashboard') }}">LUXORA</a>
+                <a class="lux-logo" href="{{ url_for('admin.dashboard') }}" aria-label="LUXORA admin dashboard">
+                    <img class="lux-logo-image" src="{{ url_for('static', filename='images/luxora-logo.png') }}" alt="LUXORA">
+                </a>
                 <p class="lux-eyebrow text-violet-400 mt-1 font-bold">Management Console</p>
             </div>
             <button class="lux-icon-btn lg:hidden text-slate-400 hover:text-white" type="button" data-admin-close aria-label="Close menu">
@@ -74,7 +76,7 @@
     <div class="lg:pl-64">
         <header class="lux-admin-header flex items-center justify-between gap-4 px-5 py-4 lg:px-10 lg:py-5 border-b border-white/10 bg-slate-950/60 backdrop-blur-xl">
             <div class="flex items-center gap-4">
-                <button class="lux-icon-btn lg:hidden text-slate-300" type="button" data-admin-toggle aria-label="Open menu" aria-controls="lux-admin-sidebar" aria-expanded="false">
+                <button class="lux-icon-btn lg:hidden text-slate-300" type="button" data-admin-toggle data-tooltip="Menu" aria-label="Open menu" aria-controls="lux-admin-sidebar" aria-expanded="false">
                     {{ icon('menu', 'h-5 w-5') }}
                 </button>
                 <div>
@@ -87,7 +89,7 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <a class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600/20 text-violet-300 border border-violet-500/30 text-xs font-semibold hover:bg-violet-600/40 transition-all" href="{{ url_for('admin.products') }}">
+                <a class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600/20 text-violet-300 border border-violet-500/30 text-xs font-semibold hover:bg-violet-600/40 transition-all" data-tooltip="Add item" href="{{ url_for('admin.products') }}">
                     {{ icon('plus', 'h-3.5 w-3.5') }} Add Item
                 </a>
 
@@ -99,7 +101,11 @@
                     <span class="lux-badge lux-badge--violet text-[10px] py-0 px-1.5 font-mono">Admin</span>
                 </div>
 
-                <a class="lux-btn lux-btn--sm flex items-center gap-1.5" href="{{ url_for('store.home') }}">
+                <button class="lux-icon-btn text-slate-300" type="button" data-theme-toggle data-tooltip="Switch theme" aria-label="Switch theme" title="Switch theme">
+                    <span data-theme-icon>☾</span>
+                </button>
+
+                <a class="lux-btn lux-btn--sm flex items-center gap-1.5" data-tooltip="Storefront" href="{{ url_for('store.home') }}">
                     {{ icon('store', 'h-3.5 w-3.5') }} <span class="hidden sm:inline">Storefront</span>
                 </a>
             </div>
@@ -143,6 +149,21 @@
                 revealables.forEach((node) => observer.observe(node));
             }
         } catch (error) { revealAll(); }
+
+        /* -------------------------------------------------- light / dark theme */
+        const themeToggle = document.querySelector('[data-theme-toggle]');
+        const setTheme = (theme) => {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('luxora-theme', theme);
+            if (themeToggle) {
+                themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+                themeToggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+                const icon = themeToggle.querySelector('[data-theme-icon]');
+                if (icon) icon.textContent = theme === 'dark' ? '☀' : '☾';
+            }
+        };
+        setTheme(document.documentElement.dataset.theme || 'light');
+        if (themeToggle) themeToggle.addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
 
         /* -------------------------------------------------- sidebar */
         const sidebar = document.querySelector('[data-admin-sidebar]');
