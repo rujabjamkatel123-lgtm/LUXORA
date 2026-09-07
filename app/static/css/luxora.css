@@ -17,9 +17,9 @@
     --surface-2: #eee4d5;
 
     /* Ink */
-    --ink: #4b5563;
-    --ink-60: #6b7280;
-    --ink-40: #9ca3af;
+    --ink: #0f172a;
+    --ink-60: #334155;
+    --ink-40: #64748b;
 
     /* Rules */
     --line: rgba(70, 52, 31, 0.18);
@@ -104,17 +104,35 @@ html:not([data-theme='dark']) .bg-slate-950\/40,
 html:not([data-theme='dark']) .bg-slate-900\/80 {
     background-color: color-mix(in srgb, var(--surface) 92%, transparent) !important;
 }
+html:not([data-theme='dark']) .text-white,
+html:not([data-theme='dark']) .text-white\/70,
+html:not([data-theme='dark']) .text-slate-100,
 html:not([data-theme='dark']) .text-slate-200,
+html:not([data-theme='dark']) .text-violet-100,
+html:not([data-theme='dark']) .text-violet-200,
+html:not([data-theme='dark']) .hover\:text-white:hover { color: var(--ink) !important; }
+
 html:not([data-theme='dark']) .text-slate-300,
 html:not([data-theme='dark']) .text-slate-400,
+html:not([data-theme='dark']) .text-violet-300 { color: var(--ink-60) !important; }
+
 html:not([data-theme='dark']) .text-slate-500,
-html:not([data-theme='dark']) .text-slate-600 { color: var(--ink-60) !important; }
+html:not([data-theme='dark']) .text-slate-600,
+html:not([data-theme='dark']) .text-violet-400 { color: var(--ink-40) !important; }
+
+html:not([data-theme='dark']) .text-emerald-300,
+html:not([data-theme='dark']) .text-emerald-400 { color: #047857 !important; }
+
+html:not([data-theme='dark']) .text-rose-300,
+html:not([data-theme='dark']) .text-rose-400 { color: #be123c !important; }
+
+html:not([data-theme='dark']) .text-amber-300,
+html:not([data-theme='dark']) .text-amber-400 { color: #b45309 !important; }
+
+html:not([data-theme='dark']) .text-cyan-400 { color: #0e7490 !important; }
+
 html:not([data-theme='dark']) .border-white\/10,
 html:not([data-theme='dark']) .border-white\/15 { border-color: var(--line) !important; }
-
-/* Light mode overrides the original dark-only utility colors as a group. */
-html:not([data-theme='dark']) .text-white,
-html:not([data-theme='dark']) .hover\:text-white:hover { color: var(--ink) !important; }
 html:not([data-theme='dark']) .lux-header {
     background: rgba(255, 250, 242, .86);
     border-color: var(--line);
@@ -161,6 +179,13 @@ html:not([data-theme='dark']) .lux-drawer__panel {
 /* Gradient Text Utilities */
 .lux-gradient-text {
     background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 40%, #fbbf24 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+html:not([data-theme='dark']) .lux-gradient-text {
+    background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 40%, #b45309 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -2282,10 +2307,10 @@ html:not([data-theme='dark']) .lux-admin-nav a.is-active { color: var(--ink); }
 html:not([data-theme='dark']) .lux-admin-nav a.is-active { background: rgba(139, 92, 246, .12); }
 html:not([data-theme='dark']) .lux-admin-sidebar .border-white\/10,
 html:not([data-theme='dark']) .lux-admin-header .border-white\/10 { border-color: var(--line) !important; }
-html:not([data-theme='dark']) .lux-admin-body .text-slate-200,
+html:not([data-theme='dark']) .lux-admin-body .text-slate-200 { color: var(--ink) !important; }
 html:not([data-theme='dark']) .lux-admin-body .text-slate-300,
-html:not([data-theme='dark']) .lux-admin-body .text-slate-400,
-html:not([data-theme='dark']) .lux-admin-body .text-slate-500 { color: var(--ink-60) !important; }
+html:not([data-theme='dark']) .lux-admin-body .text-slate-400 { color: var(--ink-60) !important; }
+html:not([data-theme='dark']) .lux-admin-body .text-slate-500 { color: var(--ink-40) !important; }
 html:not([data-theme='dark']) .lux-table thead th { background: var(--surface-2); color: var(--ink); border-color: var(--line); }
 
 /* Whole-page color modes: no dark-only panels remain in light mode. */
@@ -2346,8 +2371,10 @@ html:not([data-theme='dark']) .bg-gradient-to-r {
     color: var(--ink) !important;
 }
 html[data-theme='light'] .bg-gradient-to-r .text-slate-200,
+html:not([data-theme='dark']) .bg-gradient-to-r .text-slate-200 {
+    color: var(--ink) !important;
+}
 html[data-theme='light'] .bg-gradient-to-r .text-slate-300,
-html:not([data-theme='dark']) .bg-gradient-to-r .text-slate-200,
 html:not([data-theme='dark']) .bg-gradient-to-r .text-slate-300 {
     color: var(--ink-60) !important;
 }
@@ -2382,10 +2409,10 @@ html:not([data-theme='dark']) .lux-admin-body .lux-select {
     border-color: var(--line) !important;
 }
 html:not([data-theme='dark']) .lux-admin-body .text-white { color: var(--ink) !important; }
-html:not([data-theme='dark']) .lux-admin-body .text-slate-200,
+html:not([data-theme='dark']) .lux-admin-body .text-slate-200 { color: var(--ink) !important; }
 html:not([data-theme='dark']) .lux-admin-body .text-slate-300,
-html:not([data-theme='dark']) .lux-admin-body .text-slate-400,
-html:not([data-theme='dark']) .lux-admin-body .text-slate-500 { color: var(--ink-60) !important; }
+html:not([data-theme='dark']) .lux-admin-body .text-slate-400 { color: var(--ink-60) !important; }
+html:not([data-theme='dark']) .lux-admin-body .text-slate-500 { color: var(--ink-40) !important; }
 
 /* Brand mark and shared shopping CTA treatment. */
 .lux-logo-image {
