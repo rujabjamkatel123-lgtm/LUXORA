@@ -1,3 +1,7 @@
-from app import create_app
+"""Vercel entry point for the LUXORA Flask application."""
 
-app = create_app()
+from run import app
+
+
+# Vercel's Python runtime discovers the Flask WSGI application through this
+# module-level variable.
